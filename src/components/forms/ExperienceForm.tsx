@@ -29,12 +29,25 @@ export default function ExperienceForm({ initialData, onSave, onBack }: Experien
 
     return (
         <form onSubmit={handleSubmit(onSave)} className="space-y-6">
-            <FormInput
-                label="Anos de Experiência"
-                {...register("experience_years")}
-                error={errors.experience_years?.message}
-                placeholder="Ex: 5 anos"
-            />
+            <div className="space-y-2">
+                <label htmlFor="experience_years" className="block text-sm font-medium leading-6 text-gray-900">
+                    Anos de Experiência
+                </label>
+                <select
+                    id="experience_years"
+                    {...register("experience_years")}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-amber-600 sm:text-sm sm:leading-6"
+                >
+                    <option value="">Selecione uma opção</option>
+                    <option value="Até 2 anos">Até 2 anos</option>
+                    <option value="3 a 5 anos">3 a 5 anos</option>
+                    <option value="6 a 10 anos">6 a 10 anos</option>
+                    <option value="Mais de 10 anos">Mais de 10 anos</option>
+                </select>
+                {errors.experience_years?.message && (
+                    <p className="mt-2 text-sm text-red-600">{errors.experience_years.message}</p>
+                )}
+            </div>
 
             <FormTextarea
                 label="Resumo Profissional"

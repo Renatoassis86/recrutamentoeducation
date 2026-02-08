@@ -7,7 +7,7 @@ import EducationForm from "@/components/forms/EducationForm";
 import ExperienceForm from "@/components/forms/ExperienceForm";
 import DocumentUpload from "@/components/forms/DocumentUpload";
 import DeclarationsForm from "@/components/forms/DeclarationsForm";
-import { saveProfile, saveEducation, saveExperience } from "./actions";
+import { saveProfile, saveEducation, saveExperience, saveDeclarations } from "./actions";
 import { PersonalFormData, EducationFormData, ExperienceFormData } from "@/schemas/application";
 
 const initialSteps = [
@@ -65,10 +65,9 @@ export default function ApplicationPage() {
         updateSteps(2);
     };
 
-    const handleDeclarationsSave = () => {
-        // Declarations are client-side confirmed via checkbox validation in the form itself.
-        // We don't save to DB specifically as columns yet, but we could.
-        // For now, passing validation allows moving forward.
+    const handleDeclarationsSave = async (data: any) => {
+        const res = await saveDeclarations(data);
+        if (res?.error) { alert(res.error); return; }
         updateSteps(3);
     };
 

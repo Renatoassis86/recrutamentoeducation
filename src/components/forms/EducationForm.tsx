@@ -28,12 +28,8 @@ export default function EducationForm({ initialData, onSave, onBack }: Education
         if (initialData) reset(initialData);
     }, [initialData, reset]);
 
-    const onSubmit = (data: EducationFormData) => {
-        onSave(data);
-    };
-
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={handleSubmit((data) => onSave(data))} className="space-y-6">
             <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
                 <FormInput
                     label="Curso de Graduação"
@@ -56,6 +52,41 @@ export default function EducationForm({ initialData, onSave, onBack }: Education
                     error={errors.graduation_institution?.message}
                     className="sm:col-span-6"
                 />
+            </div>
+
+            <div className="border-t pt-6 mt-6">
+                <h3 className="text-base font-semibold leading-7 text-gray-900 mb-4">Pós-graduação ou Formação Complementar</h3>
+                <div className="space-y-3">
+                    {["Educação Cristã Clássica", "Psicopedagogia", "Gestão Escolar", "Educação / Pedagogia (outras)"].map((area) => (
+                        <label key={area} className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                value={area}
+                                {...register("postgrad_areas")}
+                                className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                            />
+                            <span className="text-sm text-gray-700">{area}</span>
+                        </label>
+                    ))}
+                    <label className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            value="Não possuo"
+                            {...register("postgrad_areas")}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                        />
+                        <span className="text-sm text-gray-700">Não possuo</span>
+                    </label>
+                    <label className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            value="Outros"
+                            {...register("postgrad_areas")}
+                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                        />
+                        <span className="text-sm text-gray-700">Outros</span>
+                    </label>
+                </div>
             </div>
 
             <div className="flex items-center justify-end gap-x-4">

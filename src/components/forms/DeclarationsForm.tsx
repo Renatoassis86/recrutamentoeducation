@@ -6,7 +6,7 @@ import { declarationsSchema, DeclarationsFormData } from "@/schemas/application"
 import { useEffect } from "react";
 
 interface DeclarationsFormProps {
-    onSave: () => void; // No data needed to be passed up really, just success, but we can if we want to store it (not in DB currently as columns, but implied)
+    onSave: (data: DeclarationsFormData) => void;
     onBack: () => void;
 }
 
@@ -20,8 +20,8 @@ export default function DeclarationsForm({ onSave, onBack }: DeclarationsFormPro
         mode: "onChange",
     });
 
-    const onSubmit = () => {
-        onSave();
+    const onSubmit = (data: DeclarationsFormData) => {
+        onSave(data);
     };
 
     return (
@@ -42,10 +42,10 @@ export default function DeclarationsForm({ onSave, onBack }: DeclarationsFormPro
                     </div>
                     <div className="ml-3 text-sm leading-6">
                         <label htmlFor="declaration_private_nature" className="font-medium text-gray-900">
-                            Natureza Privada da Chamada
+                            Declaração de Ciência da Natureza Privada da Chamada (Anexo II)
                         </label>
-                        <p className="text-gray-500">
-                            Declaro ciência de que esta chamada tem natureza exclusivamente privada, não gera direito à contratação ou vínculo trabalhista. (Anexo II)
+                        <p className="text-gray-500 text-justify">
+                            Declaro ciência de que a Chamada Editorial possui natureza exclusivamente privada, não gera direito subjetivo à contratação, expectativa de convocação ou exclusividade.
                         </p>
                         {errors.declaration_private_nature && <p className="text-red-600 text-xs mt-1">Obrigatório</p>}
                     </div>
@@ -62,10 +62,10 @@ export default function DeclarationsForm({ onSave, onBack }: DeclarationsFormPro
                     </div>
                     <div className="ml-3 text-sm leading-6">
                         <label htmlFor="declaration_availability" className="font-medium text-gray-900">
-                            Disponibilidade
+                            Declaração de Disponibilidade (Anexo III)
                         </label>
-                        <p className="text-gray-500">
-                            Declaro possuir disponibilidade para participar dos projetos editoriais e cumprir prazos. (Anexo III)
+                        <p className="text-gray-500 text-justify">
+                            Declaro que possuo disponibilidade para, caso venha a ser convidado(a), participar de projetos editoriais, cumprindo prazos, etapas e entregas definidas contratualmente.
                         </p>
                         {errors.declaration_availability && <p className="text-red-600 text-xs mt-1">Obrigatório</p>}
                     </div>
@@ -82,10 +82,10 @@ export default function DeclarationsForm({ onSave, onBack }: DeclarationsFormPro
                     </div>
                     <div className="ml-3 text-sm leading-6">
                         <label htmlFor="declaration_copyright" className="font-medium text-gray-900">
-                            Direitos Autorais (Cessão)
+                            Declaração de Ciência sobre Direitos Autorais (Anexo IV)
                         </label>
-                        <p className="text-gray-500">
-                            Estou ciente de que eventual contratação implicará a cessão total de direitos autorais ao Sistema Cidade Viva Education. (Anexo IV)
+                        <p className="text-gray-500 text-justify">
+                            Declaro ciência de que eventual participação em projetos editoriais será formalizada por meio de cessão patrimonial total dos direitos autorais (Lei nº 9.610/1998).
                         </p>
                         {errors.declaration_copyright && <p className="text-red-600 text-xs mt-1">Obrigatório</p>}
                     </div>
@@ -102,10 +102,10 @@ export default function DeclarationsForm({ onSave, onBack }: DeclarationsFormPro
                     </div>
                     <div className="ml-3 text-sm leading-6">
                         <label htmlFor="declaration_institutional_alignment" className="font-medium text-gray-900">
-                            Alinhamento Institucional
+                            Declaração de Alinhamento Institucional (Anexo V)
                         </label>
-                        <p className="text-gray-500">
-                            Aceito a identidade pedagógica (Educação Cristã Clássica) e comprometo-me a produzir materiais alinhados a esta cosmovisão. (Anexo V)
+                        <p className="text-gray-500 text-justify">
+                            Declaro que compreendo e aceito a identidade pedagógica, editorial e institucional, comprometendo-me a produzir materiais alinhados à educação cristã clássica e ao Currículo Paideia.
                         </p>
                         {errors.declaration_institutional_alignment && <p className="text-red-600 text-xs mt-1">Obrigatório</p>}
                     </div>

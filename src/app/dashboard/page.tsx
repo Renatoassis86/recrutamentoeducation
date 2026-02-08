@@ -17,7 +17,7 @@ export default async function DashboardPage() {
             <div className="bg-white shadow sm:rounded-lg">
                 <div className="px-4 py-5 sm:p-6">
                     <h3 className="text-base font-semibold leading-6 text-gray-900">
-                        Bem-vindo ao Dashboard
+                        Minha Área - Cidade Viva Education
                     </h3>
                     <div className="mt-2 text-sm text-gray-500">
                         <p>Você está logado como: {user.email}</p>

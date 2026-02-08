@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, UploadCloud, X, FileText } from "lucide-react";
+import { sendConfirmation } from "@/app/application/actions";
 
 interface DocumentUploadProps {
     onComplete: () => void;
@@ -90,6 +91,9 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                 .update({ status: 'received' })
                 .eq("id", application.id);
 
+            // 4. Send Email (Server Action)
+            await sendConfirmation();
+
             onComplete();
 
         } catch (err: any) {
@@ -108,11 +112,16 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                     Conforme o edital, você deve enviar <strong>UM ÚNICO ARQUIVO PDF</strong> contendo, na seguinte ordem:
                 </p>
                 <ol className="list-decimal list-inside text-sm text-blue-700 space-y-1 ml-2">
-                    <li>Currículo acadêmico-profissional atualizado;</li>
-                    <li>Documentos comprobatórios de formação (Diplomas, Certificados);</li>
-                    <li>Documentos comprobatórios de experiência (se houver);</li>
-                    <li>Atestado(s) de Capacidade Técnica (Anexo VI);</li>
-                    <li><strong>Escrita Autoral Manuscrita digitalizada</strong> (ver tema abaixo).</li>
+                    <li>Currículo acadêmico-profissional atualizado (preferencialmente Lattes);</li>
+                    <li>Documentos comprobatórios de formação acadêmica;</li>
+                    <li>Documentos comprobatórios de experiência profissional (se houver);</li>
+                    <li className="flex items-center gap-2">
+                        Atestado de capacidade técnica (Anexo VI);
+                        <a href="/modelo_atestado_anexo_vi.txt" download="modelo_atestado_anexo_vi.txt" className="text-xs bg-blue-100 px-2 py-0.5 rounded text-blue-800 hover:bg-blue-200 underline">
+                            Baixar Modelo
+                        </a>
+                    </li>
+                    <li><strong>Escrita autoral manuscrita</strong> (ver tema abaixo).</li>
                 </ol>
             </div>
 
