@@ -128,7 +128,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
             <div className="border border-gray-200 rounded-md p-4">
                 <h4 className="font-semibold text-gray-900 mb-2">Tema da Escrita Autoral</h4>
                 <p className="text-sm text-gray-600 italic">
-                    "O que você entende por educação cristã, clássica e integral na área do conhecimento escolhida? Em sua perspectiva, o que um material didático dessa área precisa contemplar para ser excelente?"
+                    &quot;O que você entende por educação cristã, clássica e integral na área do conhecimento escolhida? Em sua perspectiva, o que um material didático dessa área precisa contemplar para ser excelente?&quot;
                 </p>
                 <ul className="mt-2 text-xs text-gray-500 list-disc list-inside">
                     <li>Mínimo 20 linhas, Máximo 40 linhas.</li>

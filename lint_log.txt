@@ -1,0 +1,59 @@
+
+> recrutamento@0.1.0 lint
+> eslint
+
+
+D:\repositorio_geral\recrutamento\src\app\admin\actions.ts
+  84:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\repositorio_geral\recrutamento\src\app\admin\applications\[id]\page.tsx
+    4:10  warning  'format' is defined but never used        @typescript-eslint/no-unused-vars
+    5:10  warning  'ptBR' is defined but never used          @typescript-eslint/no-unused-vars
+  113:60  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\repositorio_geral\recrutamento\src\app\admin\page.tsx
+  28:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  36:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  92:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\repositorio_geral\recrutamento\src\app\application\actions.ts
+  74:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\repositorio_geral\recrutamento\src\app\application\page.tsx
+  23:5   error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+  24:40  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+  68:49  error  Unexpected any. Specify a different type                                                                             @typescript-eslint/no-explicit-any
+
+D:\repositorio_geral\recrutamento\src\app\page.tsx
+    5:41   warning  'Video' is defined but never used                                @typescript-eslint/no-unused-vars
+    5:155  warning  'Palette' is defined but never used                              @typescript-eslint/no-unused-vars
+    5:164  warning  'Music' is defined but never used                                @typescript-eslint/no-unused-vars
+    5:171  warning  'Microscope' is defined but never used                           @typescript-eslint/no-unused-vars
+    5:183  warning  'Code2' is defined but never used                                @typescript-eslint/no-unused-vars
+    5:190  warning  'Anchor' is defined but never used                               @typescript-eslint/no-unused-vars
+  156:19   error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  156:156  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+D:\repositorio_geral\recrutamento\src\components\forms\DeclarationsForm.tsx
+   6:10  warning  'useEffect' is defined but never used         @typescript-eslint/no-unused-vars
+  17:30  warning  'isValid' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+D:\repositorio_geral\recrutamento\src\components\forms\DocumentUpload.tsx
+   99:23   error  Unexpected any. Specify a different type                         @typescript-eslint/no-explicit-any
+  131:21   error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  131:213  error  `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+D:\repositorio_geral\recrutamento\src\components\forms\EducationForm.tsx
+  22:9  error  Use "@ts-expect-error" instead of "@ts-ignore", as "@ts-ignore" will do nothing if the following line is error-free  @typescript-eslint/ban-ts-comment
+
+D:\repositorio_geral\recrutamento\src\components\forms\ExperienceForm.tsx
+  6:10  warning  'FormInput' is defined but never used  @typescript-eslint/no-unused-vars
+
+D:\repositorio_geral\recrutamento\src\components\forms\PersonalForm.tsx
+  46:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+D:\repositorio_geral\recrutamento\src\utils\supabase\middleware.ts
+  20:58  warning  'options' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 28 problems (16 errors, 12 warnings)
+

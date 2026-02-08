@@ -153,7 +153,7 @@ export default function Home() {
                   <h3 className="text-2xl font-bold text-slate-900 font-serif">Nossa Visão</h3>
                 </div>
                 <p className="text-slate-700 leading-relaxed text-2xl font-serif font-medium">
-                  "Ser uma ponte que resgata presentes do passado, educando mentes e corações para a contemplação, a virtude, o serviço e a glória de Deus."
+                  &quot;Ser uma ponte que resgata presentes do passado, educando mentes e corações para a contemplação, a virtude, o serviço e a glória de Deus.&quot;
                 </p>
               </div>
             </div>

@@ -43,7 +43,15 @@ export default function PersonalForm({ onSave }: PersonalFormProps) {
                     .single();
 
                 if (profile) {
-                    reset(profile as any); // Type casting for simplicity, ideally map fields
+                    reset({
+                        ...profile,
+                        licensure_area: profile.licensure_area || "",
+                        pedagogy_areas: profile.pedagogy_areas || [],
+                        full_name: profile.full_name || "",
+                        phone: profile.phone || "",
+                        city: profile.city || "",
+                        state: profile.state || "",
+                    } as any);
                 } else {
                     // Pre-fill email/name if avail from auth meta
                     setValue("full_name", user.user_metadata.full_name || "");

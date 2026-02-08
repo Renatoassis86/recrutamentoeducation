@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { experienceSchema, ExperienceFormData } from "@/schemas/application";
 import { FormInput, FormTextarea } from "@/components/ui/form-elements";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface ExperienceFormProps {
     initialData?: Partial<ExperienceFormData>;
@@ -23,9 +23,44 @@ export default function ExperienceForm({ initialData, onSave, onBack }: Experien
         defaultValues: initialData,
     });
 
+    const [loadingInfo, setLoadingInfo] = useState(true);
+
     useEffect(() => {
-        if (initialData) reset(initialData);
+        async function loadData() {
+            if (initialData) {
+                reset(sanitizeData(initialData));
+                setLoadingInfo(false);
+                return;
+            }
+
+            // Fetch from Supabase if no initialData
+            const { createClient } = await import("@/utils/supabase/client");
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (user) {
+                const { data: profile } = await supabase
+                    .from("applications")
+                    .select("*")
+                    .eq("user_id", user.id)
+                    .single();
+
+                if (profile) {
+                    reset(sanitizeData(profile));
+                }
+            }
+            setLoadingInfo(false);
+        }
+        loadData();
     }, [initialData, reset]);
+
+    function sanitizeData(data: any) {
+        return {
+            ...data,
+            experience_years: data.experience_years || "",
+            experience_summary: data.experience_summary || "",
+        };
+    }
 
     return (
         <form onSubmit={handleSubmit(onSave)} className="space-y-6">

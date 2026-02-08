@@ -1,0 +1,149 @@
+
+> recrutamento@0.1.0 build
+> next build
+
+▲ Next.js 16.1.6 (Turbopack)
+- Environments: .env.local
+
+⚠ The "middleware" file convention is deprecated. Please use "proxy" instead. Learn more: https://nextjs.org/docs/messages/middleware-to-proxy
+  Creating an optimized production build ...
+
+> Build error occurred
+Error: Turbopack build failed with 5 errors:
+./src/app/globals.css
+Error evaluating Node.js code
+Error: Cannot find module '@alloc/quick-lru'
+Require stack:
+- D:\repositorio_geral\recrutamento\node_modules\@tailwindcss\postcss\dist\index.js
+- D:\repositorio_geral\recrutamento\.next\build\chunks\[root-of-the-server]__51225daf._.js
+- D:\repositorio_geral\recrutamento\.next\build\chunks\[turbopack]_runtime.js
+- D:\repositorio_geral\recrutamento\.next\build\postcss.js
+    [at Function._resolveFilename (node:internal/modules/cjs/loader:1383:15)]
+    [at defaultResolveImpl (node:internal/modules/cjs/loader:1025:19)]
+    [at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1030:22)]
+    [at Function._load (node:internal/modules/cjs/loader:1192:37)]
+    [at TracingChannel.traceSync (node:diagnostics_channel:322:14)]
+    [at wrapModuleLoad (node:internal/modules/cjs/loader:237:24)]
+    [at Module.require (node:internal/modules/cjs/loader:1463:12)]
+    [at require (node:internal/modules/helpers:147:16)]
+    [at Object.<anonymous> (D:\repositorio_geral\recrutamento\node_modules\@tailwindcss\postcss\dist\index.js:1:1297)]
+    [at Module._compile (node:internal/modules/cjs/loader:1706:14)]
+
+Import trace:
+  Client Component Browser:
+    ./src/app/globals.css [Client Component Browser]
+    ./src/app/layout.tsx [Server Component]
+
+
+./src/components/forms/DeclarationsForm.tsx:4:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+[0m [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m { useForm } [36mfrom[39m [32m"react-hook-form"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { zodResolver } [36mfrom[39m [32m"@hookform/resolvers/zod"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { declarationsSchema[33m,[39m [33mDeclarationsFormData[39m } [36mfrom[39m [32m"@/schemas/application"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { useEffect } [36mfrom[39m [32m"react"[39m[33m;[39m
+ [90m 7 |[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/forms/DeclarationsForm.tsx [Client Component Browser]
+    ./src/app/application/page.tsx [Client Component Browser]
+    ./src/app/application/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/forms/DeclarationsForm.tsx [Client Component SSR]
+    ./src/app/application/page.tsx [Client Component SSR]
+    ./src/app/application/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/components/forms/EducationForm.tsx:4:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+[0m [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m { useForm } [36mfrom[39m [32m"react-hook-form"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { zodResolver } [36mfrom[39m [32m"@hookform/resolvers/zod"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { educationSchema[33m,[39m [33mEducationFormData[39m } [36mfrom[39m [32m"@/schemas/application"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { [33mFormInput[39m } [36mfrom[39m [32m"@/components/ui/form-elements"[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { useEffect } [36mfrom[39m [32m"react"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/forms/EducationForm.tsx [Client Component Browser]
+    ./src/app/application/page.tsx [Client Component Browser]
+    ./src/app/application/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/forms/EducationForm.tsx [Client Component SSR]
+    ./src/app/application/page.tsx [Client Component SSR]
+    ./src/app/application/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/components/forms/ExperienceForm.tsx:4:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+[0m [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m { useForm } [36mfrom[39m [32m"react-hook-form"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { zodResolver } [36mfrom[39m [32m"@hookform/resolvers/zod"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { experienceSchema[33m,[39m [33mExperienceFormData[39m } [36mfrom[39m [32m"@/schemas/application"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { [33mFormInput[39m[33m,[39m [33mFormTextarea[39m } [36mfrom[39m [32m"@/components/ui/form-elements"[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { useEffect } [36mfrom[39m [32m"react"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/forms/ExperienceForm.tsx [Client Component Browser]
+    ./src/app/application/page.tsx [Client Component Browser]
+    ./src/app/application/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/forms/ExperienceForm.tsx [Client Component SSR]
+    ./src/app/application/page.tsx [Client Component SSR]
+    ./src/app/application/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+./src/components/forms/PersonalForm.tsx:4:1
+Module not found: Can't resolve '@hookform/resolvers/zod'
+[0m [90m 2 |[39m
+ [90m 3 |[39m [36mimport[39m { useForm[33m,[39m useWatch } [36mfrom[39m [32m"react-hook-form"[39m[33m;[39m
+[31m[1m>[22m[39m[90m 4 |[39m [36mimport[39m { zodResolver } [36mfrom[39m [32m"@hookform/resolvers/zod"[39m[33m;[39m
+ [90m   |[39m [31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m[31m[1m^[22m[39m
+ [90m 5 |[39m [36mimport[39m { personalSchema[33m,[39m [33mPersonalFormData[39m[33m,[39m areasEnum } [36mfrom[39m [32m"@/schemas/application"[39m[33m;[39m
+ [90m 6 |[39m [36mimport[39m { [33mFormInput[39m } [36mfrom[39m [32m"@/components/ui/form-elements"[39m[33m;[39m
+ [90m 7 |[39m [36mimport[39m { useEffect[33m,[39m useState } [36mfrom[39m [32m"react"[39m[33m;[39m[0m
+
+
+
+Import traces:
+  Client Component Browser:
+    ./src/components/forms/PersonalForm.tsx [Client Component Browser]
+    ./src/app/application/page.tsx [Client Component Browser]
+    ./src/app/application/page.tsx [Server Component]
+
+  Client Component SSR:
+    ./src/components/forms/PersonalForm.tsx [Client Component SSR]
+    ./src/app/application/page.tsx [Client Component SSR]
+    ./src/app/application/page.tsx [Server Component]
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+    at <unknown> (./src/components/forms/DeclarationsForm.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/components/forms/EducationForm.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/components/forms/ExperienceForm.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)
+    at <unknown> (./src/components/forms/PersonalForm.tsx:4:1)
+    at <unknown> (https://nextjs.org/docs/messages/module-not-found)

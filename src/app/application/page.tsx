@@ -20,7 +20,6 @@ const initialSteps = [
 
 export default function ApplicationPage() {
     const [currentStep, setCurrentStep] = useState(0);
-    // @ts-ignore
     const [steps, setSteps] = useState<any[]>(initialSteps);
 
     const updateSteps = (currentIndex: number) => {

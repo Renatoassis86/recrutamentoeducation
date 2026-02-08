@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { educationSchema, EducationFormData } from "@/schemas/application";
 import { FormInput } from "@/components/ui/form-elements";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface EducationFormProps {
     initialData?: Partial<EducationFormData>;
@@ -19,17 +19,54 @@ export default function EducationForm({ initialData, onSave, onBack }: Education
         formState: { errors, isSubmitting },
         reset,
     } = useForm<EducationFormData>({
-        // @ts-ignore
+
         resolver: zodResolver(educationSchema),
         defaultValues: initialData,
     });
 
+    const [loadingInfo, setLoadingInfo] = useState(true);
+
     useEffect(() => {
-        if (initialData) reset(initialData);
+        async function loadData() {
+            if (initialData) {
+                reset(sanitizeData(initialData));
+                setLoadingInfo(false);
+                return;
+            }
+
+            // Fetch from Supabase if no initialData
+            const { createClient } = await import("@/utils/supabase/client");
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (user) {
+                const { data: profile } = await supabase
+                    .from("applications")
+                    .select("*")
+                    .eq("user_id", user.id)
+                    .single();
+
+                if (profile) {
+                    reset(sanitizeData(profile));
+                }
+            }
+            setLoadingInfo(false);
+        }
+        loadData();
     }, [initialData, reset]);
 
+    function sanitizeData(data: any) {
+        return {
+            ...data,
+            graduation_course: data.graduation_course || "",
+            graduation_institution: data.graduation_institution || "",
+            graduation_year: data.graduation_year || undefined, // undefined for number input
+            postgrad_areas: data.postgrad_areas || [],
+        };
+    }
+
     return (
-        <form onSubmit={handleSubmit((data) => onSave(data))} className="space-y-6">
+        <form onSubmit={handleSubmit((data) => onSave(data as any))} className="space-y-6">
             <div className="grid grid-cols-1 gap-x-6 gap-y-6 sm:grid-cols-6">
                 <FormInput
                     label="Curso de Graduação"

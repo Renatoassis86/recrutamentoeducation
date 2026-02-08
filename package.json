@@ -9,7 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.2.2",
+    "@hookform/resolvers": "^3.9.1",
     "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.95.3",
     "clsx": "^2.1.1",
@@ -24,6 +24,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
+    "jiti": "^1.21.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
