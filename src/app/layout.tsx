@@ -4,6 +4,8 @@ import "./globals.css";
 import LandingNav from "@/components/layout/LandingNav";
 import { createClient } from "@/utils/supabase/server";
 
+export const dynamic = "force-dynamic";
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const cormorant = Cormorant_Garamond({
   subsets: ["latin"],
