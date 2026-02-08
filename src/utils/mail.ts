@@ -1,13 +1,16 @@
 
-import { Resend } from 'resend';
-
+// import { Resend } from 'resend';
 
 export async function sendConfirmationEmail(email: string, name: string) {
+    console.log(`[DISABLED] Would send email to ${email} for ${name}`);
+    return { success: true };
+
+    /* 
     const resend = new Resend(process.env.RESEND_API_KEY);
 
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Cidade Viva Education <nao-responda@cidadeviva.education>', // User needs to verify domain or use onboard
+            from: 'Cidade Viva Education <nao-responda@cidadeviva.education>', 
             to: [email],
             subject: 'Confirmação de Inscrição - Chamada Editorial',
             html: `
@@ -33,4 +36,5 @@ export async function sendConfirmationEmail(email: string, name: string) {
         console.error('Exception sending email:', err);
         return { success: false, error: err };
     }
+    */
 }
