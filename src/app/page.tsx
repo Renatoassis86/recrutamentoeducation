@@ -16,7 +16,7 @@ export default function Home() {
         <div className="absolute inset-0 w-full h-full z-0">
           <iframe
             className="w-full h-full object-cover scale-150 pointer-events-none opacity-90"
-            src="https://www.youtube.com/embed/gU00NwWoG8w?autoplay=1&mute=1&controls=0&loop=1&playlist=gU00NwWoG8w&start=20&end=50"
+            src="https://www.youtube.com/embed/gU00NwWoG8w?autoplay=1&mute=1&controls=0&loop=1&playlist=gU00NwWoG8w&start=25&end=50"
             title="Cidade Viva Education Background"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           ></iframe>
