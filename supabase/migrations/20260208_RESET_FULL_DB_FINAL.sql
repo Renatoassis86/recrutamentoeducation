@@ -14,6 +14,13 @@ DROP TYPE IF EXISTS app_role CASCADE;
 CREATE TYPE app_role AS ENUM ('candidate', 'admin');
 CREATE TYPE app_status AS ENUM ('draft', 'received', 'under_review', 'info_requested', 'interview_invited', 'closed');
 
+-- 2.1 Criar Buckets (Storage)
+INSERT INTO storage.buckets (id, name, public) VALUES ('avatars', 'avatars', true) ON CONFLICT (id) DO NOTHING;
+INSERT INTO storage.buckets (id, name, public) VALUES ('applications', 'applications', false) ON CONFLICT (id) DO NOTHING;
+
+-- 2.2 Storage Policies (Simplificadas)
+-- Avatars (Public Read, Auth Insert) / Applications (Auth Read/Insert) - Policies are usually created specifically, checking below...
+
 -- 3. Recriar tabela APPLICATIONS (SEM trava de CPF)
 CREATE TABLE public.applications (
     id UUID DEFAULT uuid_generate_v4() PRIMARY KEY,
