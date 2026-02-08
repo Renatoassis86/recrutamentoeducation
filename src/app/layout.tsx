@@ -24,6 +24,10 @@ export default async function RootLayout({
 }>) {
   let user = null;
   try {
+    console.log("Checking Env Vars on Server:");
+    console.log("URL:", process.env.NEXT_PUBLIC_SUPABASE_URL ? "Defined" : "MISSING");
+    console.log("KEY:", process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "Defined" : "MISSING");
+
     const supabase = await createClient();
     const { data } = await supabase.auth.getUser();
     user = data.user;
