@@ -6,6 +6,7 @@ import { personalSchema, PersonalFormData, areasEnum } from "@/schemas/applicati
 import { FormInput } from "@/components/ui/form-elements";
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
+import { formatCPF } from "@/utils/format";
 
 interface PersonalFormProps {
     onSave: (data: PersonalFormData) => Promise<void>;
@@ -48,6 +49,7 @@ export default function PersonalForm({ onSave }: PersonalFormProps) {
                         licensure_area: profile.licensure_area || "",
                         pedagogy_areas: profile.pedagogy_areas || [],
                         full_name: profile.full_name || "",
+                        cpf: profile.cpf ? formatCPF(profile.cpf) : "",
                         phone: profile.phone || "",
                         city: profile.city || "",
                         state: profile.state || "",
@@ -74,6 +76,17 @@ export default function PersonalForm({ onSave }: PersonalFormProps) {
                         label="Nome Completo"
                         {...register("full_name")}
                         error={errors.full_name?.message}
+                        className="sm:col-span-3"
+                    />
+                    <FormInput
+                        label="CPF"
+                        {...register("cpf")}
+                        onChange={(e) => {
+                            e.target.value = formatCPF(e.target.value);
+                            register("cpf").onChange(e);
+                        }}
+                        error={errors.cpf?.message}
+                        placeholder="000.000.000-00"
                         className="sm:col-span-3"
                     />
                     <FormInput

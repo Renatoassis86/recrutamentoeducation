@@ -24,6 +24,9 @@ export const documentSchema = z.object({
 // --- Personal & Profile ---
 export const personalSchema = z.object({
     full_name: z.string().min(3, "Nome completo é obrigatório"),
+    lattes_url: z.string().url("URL inválida").optional().or(z.literal("")).or(z.null()),
+
+    cpf: z.string().min(11, "CPF incompleto").max(14, "CPF inválido").transform(val => val.replace(/\D/g, '')).refine((val) => val.length === 11, "CPF deve ter 11 dígitos"),
     email: z.string().email("Email inválido"),
     phone: z.string().min(10, "Telefone inválido (mínimo 10 dígitos)"),
     city: z.string().min(2, "Cidade obrigatória"),

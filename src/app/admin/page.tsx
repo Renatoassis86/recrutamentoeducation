@@ -2,6 +2,7 @@ import { getAdminStats, getApplications } from "./actions";
 import Link from "next/link";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import ApplicationActions from "./ApplicationActions";
 
 export default async function AdminDashboard({
     searchParams,
@@ -72,7 +73,10 @@ export default async function AdminDashboard({
                     <div className="ml-4 mt-2">
                         <h3 className="text-base font-semibold leading-6 text-gray-900">Candidaturas</h3>
                     </div>
-                    <div className="ml-4 mt-2 flex-shrink-0">
+                    <div className="ml-4 mt-2 flex-shrink-0 flex gap-4">
+                        <Link href="/admin/documents" className="inline-flex items-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
+                            Ver Documentos
+                        </Link>
                         <div className="flex gap-2">
                             <Link href="/admin?status=all" className={`px-3 py-1 text-sm rounded-md ${statusFilter === 'all' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700'}`}>Todos</Link>
                             <Link href="/admin?status=received" className={`px-3 py-1 text-sm rounded-md ${statusFilter === 'received' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-700'}`}>Recebidos</Link>
@@ -93,12 +97,17 @@ export default async function AdminDashboard({
                             <li key={app.id} className="relative flex justify-between gap-x-6 px-4 py-5 hover:bg-gray-50 sm:px-6">
                                 <div className="flex min-w-0 gap-x-4">
                                     <div className="min-w-0 flex-auto">
-                                        <p className="text-sm font-semibold leading-6 text-gray-900">
-                                            <Link href={`/admin/applications/${app.id}`}>
-                                                <span className="absolute inset-x-0 -top-px bottom-0" />
-                                                {app.full_name}
-                                            </Link>
-                                        </p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="text-sm font-semibold leading-6 text-gray-900">
+                                                <Link href={`/admin/applications/${app.id}`}>
+                                                    <span className="absolute inset-x-0 -top-px bottom-0" />
+                                                    {app.full_name}
+                                                </Link>
+                                            </p>
+                                            <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ring-gray-500/10 ${statusColors[app.status] || 'bg-gray-50 text-gray-600'}`}>
+                                                {statusLabels[app.status] || app.status}
+                                            </span>
+                                        </div>
                                         <p className="mt-1 flex text-xs leading-5 text-gray-500">
                                             <a href={`mailto:${app.email}`} className="relative truncate hover:underline">{app.email}</a>
                                         </p>
@@ -107,21 +116,15 @@ export default async function AdminDashboard({
                                         </p>
                                     </div>
                                 </div>
-                                <div className="flex shrink-0 items-center gap-x-4">
+                                <div className="flex shrink-0 items-center gap-x-4 z-10 relative">
                                     <div className="hidden sm:flex sm:flex-col sm:items-end">
-                                        <p className="text-sm leading-6 text-gray-900">
-                                            <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ring-gray-500/10 ${statusColors[app.status] || 'bg-gray-50 text-gray-600'}`}>
-                                                {statusLabels[app.status] || app.status}
-                                            </span>
-                                        </p>
-                                        <p className="mt-1 text-xs leading-5 text-gray-500">
+                                        <p className="text-xs leading-5 text-gray-500">
                                             Enviado em {format(new Date(app.created_at), "dd 'de' MMM, yy", { locale: ptBR })}
                                         </p>
                                     </div>
-                                    <svg className="h-5 w-5 flex-none text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                        <path fillRule="evenodd" d="M7.21 14.77a.75.75 0 01.02-1.06L11.168 10 7.23 6.29a.75.75 0 111.04-1.08l4.5 4.25a.75.75 0 010 1.08l-4.5 4.25a.75.75 0 01-1.06-.02z" clipRule="evenodd" />
-                                    </svg>
+                                    <ApplicationActions id={app.id} currentStatus={app.status} />
                                 </div>
+
                             </li>
                         ))
                     )}

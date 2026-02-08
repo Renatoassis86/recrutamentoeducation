@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, UploadCloud, X, FileText } from "lucide-react";
+import { Loader2, UploadCloud, X, FileText, Link as LinkIcon, CheckCircle } from "lucide-react";
 import { sendConfirmation } from "@/app/application/actions";
 
 interface DocumentUploadProps {
@@ -11,23 +11,31 @@ interface DocumentUploadProps {
 }
 
 export default function DocumentUpload({ onComplete, onBack }: DocumentUploadProps) {
-    const [file, setFile] = useState<File | null>(null);
+    const [lattesUrl, setLattesUrl] = useState("");
+
+    // File states
+    const [lattesFile, setLattesFile] = useState<File | null>(null);
+    const [atestadoFile, setAtestadoFile] = useState<File | null>(null);
+    const [escritaFile, setEscritaFile] = useState<File | null>(null);
+
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const validateFile = (file: File) => {
+        if (file.type !== 'application/pdf') return "O arquivo deve ser um PDF.";
+        if (file.size > 10 * 1024 * 1024) return "O arquivo excede o tamanho máximo de 10MB.";
+        return null;
+    };
+
+    const handleFileChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        setFile: (f: File | null) => void
+    ) => {
         if (e.target.files && e.target.files[0]) {
             const selectedFile = e.target.files[0];
-
-            // Validation: Type PDF
-            if (selectedFile.type !== 'application/pdf') {
-                setError("O arquivo deve ser um PDF.");
-                return;
-            }
-
-            // Validation: Size 10MB (Increased for single file)
-            if (selectedFile.size > 10 * 1024 * 1024) {
-                setError("O arquivo excede o tamanho máximo de 10MB.");
+            const validationError = validateFile(selectedFile);
+            if (validationError) {
+                setError(validationError);
                 return;
             }
             setFile(selectedFile);
@@ -36,8 +44,13 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
     };
 
     const handleUpload = async () => {
-        if (!file) {
-            setError("Selecione o arquivo PDF para enviar.");
+        // Validação básica
+        if (!lattesUrl.trim()) {
+            setError("Por favor, preencha o link do seu Currículo Lattes.");
+            return;
+        }
+        if (!lattesFile || !atestadoFile || !escritaFile) {
+            setError("Por favor, anexe todos os 3 documentos solicitados.");
             return;
         }
 
@@ -50,17 +63,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
 
             if (!user) throw new Error("Usuário não autenticado");
 
-            // Unique name
-            const fileName = `${user.id}/candidatura_completa_${Date.now()}.pdf`;
-
-            // 1. Upload to Supabase Storage
-            const { error: uploadError } = await supabase.storage
-                .from('applications')
-                .upload(fileName, file);
-
-            if (uploadError) throw uploadError;
-
-            // 2. Save metadata
+            // 1. Get Application ID
             const { data: application } = await supabase
                 .from("applications")
                 .select("id")
@@ -69,118 +72,237 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
 
             if (!application) throw new Error("Candidatura não encontrada.");
 
-            // Clear previous docs if any (replace logic for single file)
+            // 2. Save Lattes URL
+            const { error: urlError } = await supabase
+                .from("applications")
+                .update({ lattes_url: lattesUrl })
+                .eq("id", application.id);
+
+            if (urlError) throw urlError;
+
+            // 3. Upload Files Helper
+            const uploadToStorage = async (file: File, folder: string, label: string) => {
+                const uniqueName = `${user.id}/${folder}_${Date.now()}.pdf`;
+                const { error: uploadError } = await supabase.storage
+                    .from('applications')
+                    .upload(uniqueName, file);
+
+                if (uploadError) throw new Error(`Erro ao enviar ${label}: ${uploadError.message}`);
+
+                return {
+                    path: uniqueName,
+                    name: file.name,
+                    size: file.size,
+                    type: file.type
+                };
+            };
+
+            // Upload all 3 files in parallel
+            const [lattesUploaded, atestadoUploaded, escritaUploaded] = await Promise.all([
+                uploadToStorage(lattesFile, "lattes_comprovantes", "Currículo Lattes"),
+                uploadToStorage(atestadoFile, "atestado_tecnico", "Atestado Técnico"),
+                uploadToStorage(escritaFile, "escrita_autoral", "Escrita Autoral")
+            ]);
+
+            // 4. Save Metadata to Documents Table
+            // First, clear old ones to avoid duplicates/confusion
             await supabase.from("documents").delete().eq("application_id", application.id);
+
+            const documentsToInsert = [
+                {
+                    application_id: application.id,
+                    user_id: user.id,
+                    storage_path: lattesUploaded.path,
+                    original_name: lattesUploaded.name,
+                    mime_type: lattesUploaded.type,
+                    size_bytes: lattesUploaded.size,
+                },
+                {
+                    application_id: application.id,
+                    user_id: user.id,
+                    storage_path: atestadoUploaded.path,
+                    original_name: atestadoUploaded.name,
+                    mime_type: atestadoUploaded.type,
+                    size_bytes: atestadoUploaded.size,
+                },
+                {
+                    application_id: application.id,
+                    user_id: user.id,
+                    storage_path: escritaUploaded.path,
+                    original_name: escritaUploaded.name,
+                    mime_type: escritaUploaded.type,
+                    size_bytes: escritaUploaded.size,
+                }
+            ];
 
             const { error: dbError } = await supabase
                 .from("documents")
-                .insert({
-                    application_id: application.id,
-                    user_id: user.id,
-                    storage_path: fileName,
-                    original_name: file.name,
-                    mime_type: file.type,
-                    size_bytes: file.size,
-                });
+                .insert(documentsToInsert);
 
             if (dbError) throw dbError;
 
-            // 3. Update status
-            await supabase
-                .from("applications")
-                .update({ status: 'received' })
-                .eq("id", application.id);
+            // 5. Update Status to Received - MOVED TO REVIEW STEP
+            // await supabase.from("applications").update({ status: 'received' }).eq("id", application.id);
 
-            // 4. Send Email (Server Action)
-            await sendConfirmation();
+            // 6. Send Confirmation Email - MOVED TO REVIEW STEP
+            // await sendConfirmation();
 
             onComplete();
 
         } catch (err: any) {
             console.error(err);
-            setError(err.message || "Erro ao enviar documento.");
+            setError(err.message || "Ocorreu um erro inesperado. Tente novamente.");
         } finally {
             setUploading(false);
         }
     };
 
-    return (
-        <div className="space-y-6">
-            <div className="bg-blue-50 p-4 rounded-md">
-                <h3 className="text-lg font-medium leading-6 text-blue-900 mb-2">Envio da Documentação e Escrita Autoral</h3>
-                <p className="text-sm text-blue-700 mb-2">
-                    Conforme o edital, você deve enviar <strong>UM ÚNICO ARQUIVO PDF</strong> contendo, na seguinte ordem:
-                </p>
-                <ol className="list-decimal list-inside text-sm text-blue-700 space-y-1 ml-2">
-                    <li>Currículo acadêmico-profissional atualizado (preferencialmente Lattes);</li>
-                    <li>Documentos comprobatórios de formação acadêmica;</li>
-                    <li>Documentos comprobatórios de experiência profissional (se houver);</li>
-                    <li className="flex items-center gap-2">
-                        Atestado de capacidade técnica (Anexo VI);
-                        <a href="/modelo_atestado_anexo_vi.txt" download="modelo_atestado_anexo_vi.txt" className="text-xs bg-blue-100 px-2 py-0.5 rounded text-blue-800 hover:bg-blue-200 underline">
-                            Baixar Modelo
+    // Helper Component for File Input
+    const FileInput = ({
+        label,
+        subLabel,
+        file,
+        onChange,
+        downloadLink
+    }: {
+        label: string,
+        subLabel?: string,
+        file: File | null,
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
+        downloadLink?: { url: string, text: string }
+    }) => (
+        <div className="border border-gray-200 rounded-lg p-5 bg-white hover:border-blue-300 transition-colors">
+            <div className="flex justify-between items-start mb-3">
+                <div>
+                    <h4 className="font-semibold text-gray-900">{label}</h4>
+                    {subLabel && <p className="text-xs text-gray-500 mt-1">{subLabel}</p>}
+                    {downloadLink && (
+                        <a href={downloadLink.url} download className="text-xs text-blue-600 hover:underline mt-1 inline-flex items-center">
+                            <LinkIcon className="w-3 h-3 mr-1" /> {downloadLink.text}
                         </a>
-                    </li>
-                    <li><strong>Escrita autoral manuscrita</strong> (ver tema abaixo).</li>
-                </ol>
-            </div>
-
-            <div className="border border-gray-200 rounded-md p-4">
-                <h4 className="font-semibold text-gray-900 mb-2">Tema da Escrita Autoral</h4>
-                <p className="text-sm text-gray-600 italic">
-                    &quot;O que você entende por educação cristã, clássica e integral na área do conhecimento escolhida? Em sua perspectiva, o que um material didático dessa área precisa contemplar para ser excelente?&quot;
-                </p>
-                <ul className="mt-2 text-xs text-gray-500 list-disc list-inside">
-                    <li>Mínimo 20 linhas, Máximo 40 linhas.</li>
-                    <li>Manuscrito à mão e digitalizado.</li>
-                    <li>Texto dissertativo.</li>
-                </ul>
-            </div>
-
-            <div className="flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
-                <div className="text-center">
-                    {file ? (
-                        <div className="flex flex-col items-center">
-                            <FileText className="h-12 w-12 text-blue-500 mb-2" />
-                            <p className="text-sm text-gray-700 font-medium mb-2">{file.name}</p>
-                            <p className="text-xs text-gray-500 mb-4">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                            <button
-                                type="button"
-                                onClick={() => setFile(null)}
-                                className="text-red-500 hover:text-red-700 text-sm flex items-center font-semibold"
-                            >
-                                <X className="h-4 w-4 mr-1" /> Substituir Arquivo
-                            </button>
-                        </div>
-                    ) : (
-                        <>
-                            <UploadCloud className="mx-auto h-12 w-12 text-gray-300" aria-hidden="true" />
-                            <div className="mt-4 flex text-sm leading-6 text-gray-600 justify-center">
-                                <label
-                                    htmlFor="file-upload"
-                                    className="relative cursor-pointer rounded-md bg-white font-semibold text-blue-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-600 focus-within:ring-offset-2 hover:text-blue-500"
-                                >
-                                    <span>Selecione o PDF Único</span>
-                                    <input id="file-upload" name="file-upload" type="file" className="sr-only" onChange={handleFileChange} accept="application/pdf" />
-                                </label>
-                            </div>
-                            <p className="text-xs leading-5 text-gray-600">PDF até 10MB</p>
-                        </>
                     )}
                 </div>
+                {file && <CheckCircle className="w-5 h-5 text-green-500" />}
+            </div>
+
+            {file ? (
+                <div className="flex items-center justify-between bg-blue-50 p-3 rounded-md">
+                    <div className="flex items-center overflow-hidden">
+                        <FileText className="h-5 w-5 text-blue-500 flex-shrink-0 mr-2" />
+                        <span className="text-sm text-gray-700 truncate">{file.name}</span>
+                    </div>
+                    <button
+                        type="button"
+                        onClick={() => {
+                            // reset logic would need state passing or wrapping, simple way:
+                            // Re-rendering handles it if we pass a 'clear' prop, but easiest is just let user click input to replace
+                            // For this UI, we'll just show the remove button logic in parent or just allow replace
+                            const inputId = `file-${label.replace(/\s/g, '')}`;
+                            const el = document.getElementById(inputId) as HTMLInputElement;
+                            if (el) el.click();
+                        }}
+                        className="text-xs text-blue-700 font-medium hover:text-blue-900 ml-2"
+                    >
+                        Alterar
+                    </button>
+                </div>
+            ) : (
+                <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <UploadCloud className="w-8 h-8 mb-3 text-gray-400" />
+                        <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Clique para enviar</span></p>
+                        <p className="text-xs text-gray-500">PDF (MAX. 10MB)</p>
+                    </div>
+                    <input
+                        id={`file-${label.replace(/\s/g, '')}`}
+                        type="file"
+                        className="hidden"
+                        accept="application/pdf"
+                        onChange={onChange}
+                    />
+                </label>
+            )}
+        </div>
+    );
+
+    return (
+        <div className="space-y-8">
+            <div className="bg-blue-50 p-4 rounded-md">
+                <h3 className="text-lg font-medium leading-6 text-blue-900 mb-2">Etapa Final da Documentação</h3>
+                <p className="text-sm text-blue-700">
+                    Preencha o link do seu Lattes e anexe os 3 arquivos PDF solicitados. Na próxima etapa, você poderá revisar tudo antes de enviar.
+                </p>
+            </div>
+
+            {/* 1. Lattes URL */}
+            <div className="space-y-2">
+                <label htmlFor="lattes_url" className="block text-sm font-medium leading-6 text-gray-900">
+                    Link do Currículo Lattes
+                </label>
+                <div className="relative mt-2 rounded-md shadow-sm">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                        <LinkIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                    </div>
+                    <input
+                        type="url"
+                        name="lattes_url"
+                        id="lattes_url"
+                        className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                        placeholder="http://lattes.cnpq.br/..."
+                        value={lattesUrl}
+                        onChange={(e) => setLattesUrl(e.target.value)}
+                    />
+                </div>
+                <p className="text-xs text-gray-500">Copie e cole a URL do seu currículo Lattes.</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+
+                {/* 2. File Uploads */}
+                <FileInput
+                    label="1. Currículo + Comprovações"
+                    subLabel="Junte seu currículo Lattes (PDF gerado) e todos os documentos comprobatórios em um único arquivo."
+                    file={lattesFile}
+                    onChange={(e) => handleFileChange(e, setLattesFile)}
+                />
+
+                <FileInput
+                    label="2. Atestado de Capacidade Técnica"
+                    subLabel="Anexo VI preenchido e assinado."
+                    downloadLink={{ url: "/modelo_atestado_anexo_vi.txt", text: "Baixar Modelo" }}
+                    file={atestadoFile}
+                    onChange={(e) => handleFileChange(e, setAtestadoFile)}
+                />
+
+                <div className="border border-gray-200 rounded-lg p-5 bg-white">
+                    <div className="mb-4">
+                        <h4 className="font-semibold text-gray-900">3. Escrita Autoral</h4>
+                        <p className="text-sm text-gray-600 italic mt-1 bg-gray-50 p-3 rounded border border-gray-100">
+                            &quot;O que você entende por educação cristã, clássica e integral na área do conhecimento escolhida? Em sua perspectiva, o que um material didático dessa área precisa contemplar para ser excelente?&quot; (20 a 40 linhas, manuscrito)
+                        </p>
+                    </div>
+                    <FileInput
+                        label="Arquivo da Escrita Autoral"
+                        subLabel="Digitalização do texto manuscrito."
+                        file={escritaFile}
+                        onChange={(e) => handleFileChange(e, setEscritaFile)}
+                    />
+                </div>
+
             </div>
 
             {error && (
-                <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
+                <div className="rounded-md bg-red-50 p-4 text-sm text-red-700 flex items-center">
+                    <AlertCircle className="w-5 h-5 mr-2" />
                     {error}
                 </div>
             )}
 
-            <div className="flex items-center justify-end gap-x-4">
+            <div className="flex items-center justify-end gap-x-4 pt-4 border-t border-gray-100">
                 <button
                     type="button"
                     onClick={onBack}
-                    className="text-sm font-semibold leading-6 text-gray-900"
+                    className="text-sm font-semibold leading-6 text-gray-900 px-4 py-2 rounded hover:bg-gray-100"
                     disabled={uploading}
                 >
                     Voltar
@@ -188,13 +310,23 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                 <button
                     type="button"
                     onClick={handleUpload}
-                    disabled={uploading || !file}
-                    className="rounded-md bg-green-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-green-500 disabled:opacity-50 flex items-center"
+                    disabled={uploading}
+                    className="rounded-md bg-blue-600 px-8 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50 flex items-center transition-all"
                 >
                     {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                    {uploading ? "Enviando e Finalizando..." : "Finalizar Inscrição"}
+                    {uploading ? "Salvando..." : "Salvar e Continuar"}
                 </button>
             </div>
         </div>
     );
+}
+
+function AlertCircle({ className, ...props }: any) {
+    return (
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" x2="12" y1="8" y2="12" />
+            <line x1="12" x2="12.01" y1="16" y2="16" />
+        </svg>
+    )
 }

@@ -1,7 +1,33 @@
-"use server";
-
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+
+export async function getAllDocuments() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
+
+    // Admin check
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
+    if (profile?.role !== "admin") return [];
+
+    const { data, error } = await supabase
+        .from("documents")
+        .select(`
+            *,
+            applications (
+                full_name,
+                email
+            )
+        `)
+        .order("created_at", { ascending: false });
+
+    if (error) {
+        console.error("Error fetching documents:", error);
+        return [];
+    }
+    return data;
+}
 
 export async function getAdminStats() {
     const supabase = await createClient();
@@ -86,6 +112,8 @@ export async function updateApplicationStatus(id: string, newStatus: string) {
 
     if (error) return { error: error.message };
 
-    // Revalidate
+    if (error) return { error: error.message };
+
+    revalidatePath("/admin");
     return { success: true };
 }

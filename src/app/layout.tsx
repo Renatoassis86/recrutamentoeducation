@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Inter, Cormorant_Garamond } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import LandingNav from "@/components/layout/LandingNav";
+import { createClient } from "@/utils/supabase/server";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const cormorant = Cormorant_Garamond({
@@ -16,16 +17,21 @@ export const metadata: Metadata = {
   description: "Plataforma de recrutamento para autores do Sistema Cidade Viva Education.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
   return (
     <html lang="pt-BR">
-      <body className={`${inter.variable} ${cormorant.variable} font-sans`}>
-        <Navbar />
-        <main className="pt-16 min-h-screen">
+      <body className={`${inter.variable} ${cormorant.variable} font-sans bg-white`}>
+        <LandingNav user={user} />
+        <main className="min-h-screen">
           {children}
         </main>
       </body>

@@ -34,6 +34,7 @@ export async function saveProfile(data: PersonalFormData) {
 
     const payload = {
         full_name: validated.data.full_name,
+        cpf: validated.data.cpf,
         email: validated.data.email,
         phone: validated.data.phone,
         city: validated.data.city,
@@ -57,17 +58,44 @@ export async function saveProfile(data: PersonalFormData) {
             .insert({
                 ...payload,
                 user_id: user.id,
-                status: 'received',
+                status: 'draft',
             });
         appError = error;
     }
 
     if (appError) {
         console.error("Error saving profile:", appError);
+        if (appError.code === '23505' || appError.message.includes('cpf')) {
+            return { error: "CPF já cadastrado. Por favor, verifique seus dados ou entre em contato." };
+        }
         return { error: "Erro ao salvar: " + appError.message };
     }
 
     revalidatePath("/application");
+    return { success: true };
+}
+
+export async function submitApplication() {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: "Unauthorized" };
+
+    // Update status to received
+    const { error } = await supabase
+        .from("applications")
+        .update({
+            status: 'received',
+            updated_at: new Date().toISOString()
+        })
+        .eq("user_id", user.id);
+
+    if (error) return { error: error.message };
+
+    // Send confirmation email
+    await sendConfirmation();
+
+    revalidatePath("/application");
+    revalidatePath("/dashboard");
     return { success: true };
 }
 

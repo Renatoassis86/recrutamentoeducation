@@ -5,6 +5,22 @@
   --font-serif: var(--font-cormorant);
 }
 
+h1,
+h2,
+h3 {
+  font-family: var(--font-serif);
+}
+
+p,
+span,
+div,
+a,
+li,
+input,
+button {
+  font-family: var(--font-sans);
+}
+
 :root {
   --font-inter: "Inter", sans-serif;
   --font-cormorant: "Cormorant Garamond", serif;

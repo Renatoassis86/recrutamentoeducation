@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/utils/supabase/server";
+import AuthButtons from "@/components/layout/AuthButtons";
 
 export default async function Navbar() {
     const supabase = await createClient();
@@ -18,36 +19,11 @@ export default async function Navbar() {
                             </span>
                         </Link>
                     </div>
-                    <div className="flex items-center space-x-4">
-                        {user ? (
-                            <div className="flex items-center gap-4">
-                                <span className="text-sm text-gray-700 hidden sm:block">{user.email}</span>
-                                <form action="/auth/signout" method="post">
-                                    <button type="submit" className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">Sign out</button>
-                                </form>
-                                <Link
-                                    href="/dashboard"
-                                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 transition-colors"
-                                >
-                                    Minha Inscrição
-                                </Link>
-                            </div>
-                        ) : (
-                            <div className="flex items-center space-x-4">
-                                <Link
-                                    href="/login"
-                                    className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
-                                >
-                                    Sign in
-                                </Link>
-                                <Link
-                                    href="/login?signup=true"
-                                    className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 transition-colors"
-                                >
-                                    Sign up
-                                </Link>
-                            </div>
-                        )}
+                    <div className="flex items-center space-x-6">
+                        <Link href="/about" className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
+                            Quem Somos
+                        </Link>
+                        <AuthButtons user={user} />
                     </div>
                 </div>
             </div>
