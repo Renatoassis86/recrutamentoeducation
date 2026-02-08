@@ -116,66 +116,73 @@ export default function Home() {
       </section>
 
       {/* 4. CONTATO */}
-      <section id="contato" className="py-24 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      <section id="contato" className="py-24 bg-slate-900 relative overflow-hidden">
+        {/* Decorative background elements */}
+        <div className="absolute top-0 left-0 w-full h-full overflow-hidden z-0 pointer-events-none opacity-20">
+          <div className="absolute -top-24 -left-24 w-96 h-96 bg-amber-500/20 rounded-full blur-3xl"></div>
+          <div className="absolute top-1/2 right-0 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl font-serif mb-4">
+            <h2 className="text-3xl font-bold tracking-tight text-white sm:text-5xl font-serif mb-6">
               Fale Conosco
             </h2>
-            <div className="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
-            <p className="mt-6 text-lg text-gray-600 max-w-2xl mx-auto font-light">
-              Dúvidas sobre o processo seletivo ou sobre o currículo? Entre em contato com nossa equipe.
+            <div className="w-24 h-1 bg-amber-500 mx-auto rounded-full shadow-[0_0_15px_rgba(245,158,11,0.5)]"></div>
+            <p className="mt-6 text-lg text-gray-300 max-w-2xl mx-auto font-light leading-relaxed">
+              Dúvidas sobre o processo seletivo ou sobre o currículo? <br />Nossa equipe está pronta para atender você.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="flex flex-col items-center text-center p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-all">
-              <div className="p-4 bg-amber-100 rounded-full mb-6 text-amber-600">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+            {/* Address Card */}
+            <div className="group flex flex-col items-center text-center p-8 bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 hover:border-amber-500/50 hover:bg-slate-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-amber-900/10">
+              <div className="p-4 bg-slate-900 rounded-full mb-6 text-amber-500 group-hover:scale-110 transition-transform duration-300 border border-slate-700 group-hover:border-amber-500/30">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" /><circle cx="12" cy="10" r="3" /></svg>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2 font-serif">Endereço</h3>
-              <p className="text-gray-600 text-sm">
+              <h3 className="text-xl font-bold text-white mb-3 font-serif">Endereço</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">
                 R. Profa. Luzia Simões Bartolini, 100<br />
                 Aeroclube, João Pessoa - PB<br />
-                CEP: 58036-630
+                <span className="text-amber-500/80 mt-2 block">CEP: 58036-630</span>
               </p>
             </div>
 
-            <div className="flex flex-col items-center text-center p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-all">
-              <div className="p-4 bg-green-100 rounded-full mb-6 text-green-600">
+            {/* WhatsApp Card */}
+            <a href="https://wa.me/5583993322457" target="_blank" className="group flex flex-col items-center text-center p-8 bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 hover:border-green-500/50 hover:bg-slate-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-green-900/10 cursor-pointer">
+              <div className="p-4 bg-slate-900 rounded-full mb-6 text-green-500 group-hover:scale-110 transition-transform duration-300 border border-slate-700 group-hover:border-green-500/30">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" /></svg>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2 font-serif">WhatsApp</h3>
-              <p className="text-gray-600 text-sm">
-                <a href="https://wa.me/5583993322457" target="_blank" className="hover:text-amber-600 transition-colors">
-                  (83) 99332-2457
-                </a>
+              <h3 className="text-xl font-bold text-white mb-3 font-serif">WhatsApp</h3>
+              <p className="text-green-400 font-semibold text-lg group-hover:text-green-300 transition-colors">
+                (83) 99332-2457
               </p>
-            </div>
+              <span className="text-gray-500 text-xs mt-2">Clique para iniciar conversa</span>
+            </a>
 
-            <div className="flex flex-col items-center text-center p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-all">
-              <div className="p-4 bg-blue-100 rounded-full mb-6 text-blue-600">
+            {/* Email Card */}
+            <a href="mailto:administrativo.education@cidadeviva.org" className="group flex flex-col items-center text-center p-8 bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 hover:border-blue-500/50 hover:bg-slate-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-blue-900/10 cursor-pointer">
+              <div className="p-4 bg-slate-900 rounded-full mb-6 text-blue-500 group-hover:scale-110 transition-transform duration-300 border border-slate-700 group-hover:border-blue-500/30">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="16" x="2" y="4" rx="2" /><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" /></svg>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2 font-serif">E-mail</h3>
-              <p className="text-gray-600 text-sm">
-                <a href="mailto:administrativo.education@cidadeviva.org" className="hover:text-amber-600 transition-colors break-all">
-                  administrativo.education@cidadeviva.org
-                </a>
+              <h3 className="text-xl font-bold text-white mb-3 font-serif">E-mail</h3>
+              <p className="text-gray-400 text-sm break-all group-hover:text-white transition-colors">
+                administrativo.education@<br />cidadeviva.org
               </p>
-            </div>
+            </a>
 
-            <div className="flex flex-col items-center text-center p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-all">
-              <div className="p-4 bg-pink-100 rounded-full mb-6 text-pink-600">
+            {/* Instagram Card */}
+            <a href="https://instagram.com/cidadeviva.education" target="_blank" className="group flex flex-col items-center text-center p-8 bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700 hover:border-pink-500/50 hover:bg-slate-800 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-pink-900/10 cursor-pointer">
+              <div className="p-4 bg-slate-900 rounded-full mb-6 text-pink-500 group-hover:scale-110 transition-transform duration-300 border border-slate-700 group-hover:border-pink-500/30">
                 <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
               </div>
-              <h3 className="text-lg font-bold text-slate-900 mb-2 font-serif">Instagram</h3>
-              <p className="text-gray-600 text-sm">
-                <a href="https://instagram.com/cidadeviva.education" target="_blank" className="hover:text-amber-600 transition-colors">
-                  @cidadeviva.education
-                </a>
+              <h3 className="text-xl font-bold text-white mb-3 font-serif">Instagram</h3>
+              <p className="text-pink-400 font-medium group-hover:text-pink-300 transition-colors">
+                @cidadeviva.education
               </p>
-            </div>
+              <span className="text-gray-500 text-xs mt-2">Acompanhe as novidades</span>
+            </a>
           </div>
         </div>
       </section>
