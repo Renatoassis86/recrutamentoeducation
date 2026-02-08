@@ -54,7 +54,7 @@ export default function AboutPage() {
                     {/* Mission & Vision Cards - Below Text/Video */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16">
                         {/* Missão */}
-                        <div className="bg-amber-50 p-10 rounded-2xl border border-amber-100 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 flex flex-col justify-center h-full group relative overflow-hidden">
+                        <div className="bg-amber-100 p-10 rounded-2xl border border-amber-200 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 flex flex-col justify-center h-full group relative overflow-hidden">
                             <div className="absolute -right-6 -bottom-6 opacity-5 group-hover:opacity-10 transition-opacity transform rotate-12">
                                 <CheckCircle2 className="w-32 h-32 text-amber-900" />
                             </div>
@@ -65,26 +65,26 @@ export default function AboutPage() {
                                     </div>
                                     <h3 className="text-2xl font-bold text-amber-900 font-serif">Nossa Missão</h3>
                                 </div>
-                                <p className="text-amber-900/80 leading-relaxed text-2xl font-serif font-medium">
+                                <p className="text-amber-900/90 leading-relaxed text-2xl font-serif font-medium">
                                     Conduzir pessoas ao deslumbramento a partir de uma educação cristã de excelência.
                                 </p>
                             </div>
                         </div>
 
                         {/* Visão */}
-                        <div className="bg-slate-50 p-10 rounded-2xl border border-slate-200 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 flex flex-col justify-center h-full group relative overflow-hidden">
+                        <div className="bg-blue-100 p-10 rounded-2xl border border-blue-200 shadow-xl hover:shadow-2xl transition-all hover:-translate-y-1 flex flex-col justify-center h-full group relative overflow-hidden">
                             <div className="absolute -right-6 -bottom-6 opacity-5 group-hover:opacity-10 transition-opacity transform rotate-12">
                                 <Lightbulb className="w-32 h-32 text-slate-900" />
                             </div>
                             <div className="relative z-10">
                                 <div className="flex items-center gap-4 mb-6">
-                                    <div className="p-3 bg-white rounded-xl shadow-sm border border-slate-200">
+                                    <div className="p-3 bg-white rounded-xl shadow-sm border border-blue-100">
                                         <Lightbulb className="h-8 w-8 text-slate-700" />
                                     </div>
                                     <h3 className="text-2xl font-bold text-slate-900 font-serif">Nossa Visão</h3>
                                 </div>
-                                <p className="text-slate-700 leading-relaxed text-2xl font-serif font-medium">
-                                    &quot;Ser uma ponte que resgata presentes do passado, educando mentes e corações para a contemplação, a virtude, o serviço e a glória de Deus.&quot;
+                                <p className="text-slate-800 leading-relaxed text-2xl font-serif font-medium">
+                                    Ser uma ponte que resgata presentes do passado, educando mentes e corações para a contemplação, a virtude, o serviço e a glória de Deus.
                                 </p>
                             </div>
                         </div>

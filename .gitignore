@@ -42,3 +42,6 @@ next-env.d.ts
 
 # large media files
 *.mp4
+
+# scripts
+scripts/reset-db-prod.js

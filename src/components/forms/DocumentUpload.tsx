@@ -268,7 +268,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
 
                 <FileInput
                     label="2. Atestado de Capacidade Técnica"
-                    subLabel="Anexo VI preenchido e assinado."
+                    subLabel="Documento emitido por pessoa jurídica que comprove experiência profissional anterior em atividades compatíveis com o objeto da seleção (produção editorial, docência, etc)."
                     downloadLink={{ url: "/modelo_atestado_anexo_vi.txt", text: "Baixar Modelo" }}
                     file={atestadoFile}
                     onChange={(e) => handleFileChange(e, setAtestadoFile)}
@@ -283,7 +283,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                     </div>
                     <FileInput
                         label="Arquivo da Escrita Autoral"
-                        subLabel="Digitalização do texto manuscrito."
+                        subLabel="O texto deve ser obrigatoriamente manuscrito e digitalizado (formato PDF)."
                         file={escritaFile}
                         onChange={(e) => handleFileChange(e, setEscritaFile)}
                     />

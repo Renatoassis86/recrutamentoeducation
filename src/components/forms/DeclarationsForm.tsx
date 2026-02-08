@@ -42,10 +42,10 @@ export default function DeclarationsForm({ onSave, onBack }: DeclarationsFormPro
                     </div>
                     <div className="ml-3 text-sm leading-6">
                         <label htmlFor="declaration_private_nature" className="font-medium text-gray-900">
-                            Declaração de Ciência da Natureza Privada da Chamada (Anexo II)
+                            DECLARAÇÃO DE CIÊNCIA DA NATUREZA PRIVADA DA CHAMADA (ANEXO II)
                         </label>
                         <p className="text-gray-500 text-justify">
-                            Declaro ciência de que a Chamada Editorial possui natureza exclusivamente privada, não gera direito subjetivo à contratação, expectativa de convocação ou exclusividade.
+                            Declaro que tenho ciência de que a Chamada Editorial para Prospecção de Autores do Sistema Cidade Viva Education possui natureza exclusivamente privada, não se caracterizando como edital público, chamamento público nos termos da Lei nº 13.019/2014, procedimento licitatório ou qualquer modalidade prevista em legislação administrativa. Declaro, ainda, que compreendo que minha participação não gera direito subjetivo à contratação, expectativa de convocação ou exclusividade, constituindo-se apenas como manifestação de interesse editorial.
                         </p>
                         {errors.declaration_private_nature && <p className="text-red-600 text-xs mt-1">Obrigatório</p>}
                     </div>
@@ -62,10 +62,10 @@ export default function DeclarationsForm({ onSave, onBack }: DeclarationsFormPro
                     </div>
                     <div className="ml-3 text-sm leading-6">
                         <label htmlFor="declaration_availability" className="font-medium text-gray-900">
-                            Declaração de Disponibilidade (Anexo III)
+                            DECLARAÇÃO DE DISPONIBILIDADE (ANEXO III)
                         </label>
                         <p className="text-gray-500 text-justify">
-                            Declaro que possuo disponibilidade para, caso venha a ser convidado(a), participar de projetos editoriais, cumprindo prazos, etapas e entregas definidas contratualmente.
+                            Declaro que possuo disponibilidade para, caso venha a ser convidado(a), participar de projetos editoriais do Sistema Cidade Viva Education, cumprindo prazos, etapas e entregas que venham a ser definidos contratualmente.
                         </p>
                         {errors.declaration_availability && <p className="text-red-600 text-xs mt-1">Obrigatório</p>}
                     </div>
@@ -82,10 +82,10 @@ export default function DeclarationsForm({ onSave, onBack }: DeclarationsFormPro
                     </div>
                     <div className="ml-3 text-sm leading-6">
                         <label htmlFor="declaration_copyright" className="font-medium text-gray-900">
-                            Declaração de Ciência sobre Direitos Autorais (Anexo IV)
+                            DECLARAÇÃO DE CIÊNCIA SOBRE DIREITOS AUTORAIS (ANEXO IV)
                         </label>
                         <p className="text-gray-500 text-justify">
-                            Declaro ciência de que eventual participação em projetos editoriais será formalizada por meio de cessão patrimonial total dos direitos autorais (Lei nº 9.610/1998).
+                            Declaro que estou ciente de que eventual participação em projetos editoriais do Sistema Cidade Viva Education será formalizada por meio de Contrato de Prestação de Serviços por Obra Certa, no qual constarão as disposições relativas à cessão patrimonial total dos direitos autorais, nos termos da Lei nº 9.610/1998. Declaro, ainda, que compreendo que não há cessão antecipada de direitos autorais nesta fase, constituindo-se esta declaração apenas como ciência prévia das condições editoriais que regerão eventual contratação.
                         </p>
                         {errors.declaration_copyright && <p className="text-red-600 text-xs mt-1">Obrigatório</p>}
                     </div>
@@ -102,11 +102,18 @@ export default function DeclarationsForm({ onSave, onBack }: DeclarationsFormPro
                     </div>
                     <div className="ml-3 text-sm leading-6">
                         <label htmlFor="declaration_institutional_alignment" className="font-medium text-gray-900">
-                            Declaração de Alinhamento Institucional (Anexo V)
+                            DECLARAÇÃO DE CIÊNCIA E ALINHAMENTO EDITORIAL
                         </label>
-                        <p className="text-gray-500 text-justify">
-                            Declaro que compreendo e aceito a identidade pedagógica, editorial e institucional, comprometendo-me a produzir materiais alinhados à educação cristã clássica e ao Currículo Paideia.
-                        </p>
+                        <div className="text-gray-500 text-justify text-sm">
+                            <p>Declaro que:</p>
+                            <ul className="list-disc pl-5 mt-1 space-y-1">
+                                <li>Tenho ciência de que os projetos editoriais do Sistema Cidade Viva Education integram o Currículo Paideia...</li>
+                                <li>Compreendo que esta manifestação de interesse não garante contratação...</li>
+                                <li>Estou ciente de que eventual participação ocorrerá apenas mediante convite formal...</li>
+                                <li>Comprometo-me, caso venha a ser contratado(a), a produzir materiais didáticos alinhados...</li>
+                            </ul>
+                            <p className="mt-2 font-medium text-gray-900">Declaro ciência e concordância.</p>
+                        </div>
                         {errors.declaration_institutional_alignment && <p className="text-red-600 text-xs mt-1">Obrigatório</p>}
                     </div>
                 </div>

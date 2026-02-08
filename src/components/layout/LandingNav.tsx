@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Menu, X, User as UserIcon, LogOut } from "lucide-react";
+import { X, User as UserIcon, LogOut, Menu as MenuIcon } from "lucide-react";
+import { Menu, Transition } from "@headlessui/react";
 import Image from "next/image";
 import { User } from "@supabase/supabase-js";
 
@@ -51,23 +52,49 @@ export default function LandingNav({ user }: LandingNavProps) {
                 </Link>
                 <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse gap-4 items-center">
                     {user ? (
-                        <div className="flex items-center gap-4">
-                            <span className="text-sm text-gray-300 hidden sm:block font-medium">
-                                {getUserName()}
-                            </span>
-                            <form action="/auth/signout" method="post">
-                                <button type="submit" className="text-sm font-medium text-gray-400 hover:text-white transition-colors flex items-center gap-2">
-                                    <LogOut className="w-4 h-4" />
-                                    Sair
-                                </button>
-                            </form>
-                            <Link href="/dashboard">
-                                <button type="button" className="text-slate-900 bg-amber-500 hover:bg-amber-600 focus:ring-4 focus:outline-none focus:ring-amber-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center transition-transform hover:scale-105 flex items-center gap-2">
-                                    <UserIcon className="w-4 h-4" />
-                                    Minha Inscrição
-                                </button>
-                            </Link>
-                        </div>
+                        <Menu as="div" className="relative ml-3">
+                            <div>
+                                <Menu.Button className="flex items-center gap-2 rounded-full bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-slate-900 p-2 pr-4 transition-colors hover:bg-slate-700">
+                                    <span className="sr-only">Open user menu</span>
+                                    <div className="h-8 w-8 rounded-full bg-amber-500 flex items-center justify-center text-slate-900 font-bold">
+                                        {getUserName().charAt(0).toUpperCase()}
+                                    </div>
+                                    <span className="text-gray-200 font-medium hidden sm:block">
+                                        {getUserName()}
+                                    </span>
+                                </Menu.Button>
+                            </div>
+                            <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                <Menu.Items>
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <Link
+                                                href="/dashboard"
+                                                className={`${active ? 'bg-gray-100' : ''
+                                                    } flex items-center gap-2 px-4 py-2 text-sm text-gray-700 w-full`}
+                                            >
+                                                <UserIcon className="w-4 h-4" />
+                                                Minha Inscrição
+                                            </Link>
+                                        )}
+                                    </Menu.Item>
+                                    <Menu.Item>
+                                        {({ active }) => (
+                                            <form action="/auth/signout" method="post" className="w-full">
+                                                <button
+                                                    type="submit"
+                                                    className={`${active ? 'bg-gray-100' : ''
+                                                        } flex items-center gap-2 px-4 py-2 text-sm text-gray-700 w-full text-left`}
+                                                >
+                                                    <LogOut className="w-4 h-4" />
+                                                    Sair
+                                                </button>
+                                            </form>
+                                        )}
+                                    </Menu.Item>
+                                </Menu.Items>
+                            </div>
+                        </Menu>
                     ) : (
                         <>
                             <Link href="/login" className="hidden sm:block">
@@ -90,7 +117,7 @@ export default function LandingNav({ user }: LandingNavProps) {
                         aria-expanded={isOpen}
                     >
                         <span className="sr-only">Open main menu</span>
-                        {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+                        {isOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
                     </button>
                 </div>
                 <div

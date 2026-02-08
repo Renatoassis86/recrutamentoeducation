@@ -35,46 +35,126 @@ export default function TermoPage() {
                             <span className="bg-blue-600 text-xs font-bold px-2 py-1 rounded text-white uppercase">Vigente</span>
                         </div>
 
-                        <div className="p-8 prose prose-lg max-w-none text-gray-600 leading-relaxed font-light">
-                            <p>
-                                O <strong>Termo de Referência Pedagógico-Metodológico</strong> estabelece as diretrizes mínimas para a
-                                produção editorial de materiais didáticos do Sistema Cidade Viva Education, no âmbito do Currículo
-                                Paideia, destinados aos Anos Iniciais do Ensino Fundamental (2º ao 5º ano).
-                            </p>
+                        <div className="space-y-12">
+                            {/* SEÇÃO 6 */}
+                            <section>
+                                <h3 className="font-serif text-slate-900 font-bold mb-4 text-2xl">6. DECLARAÇÃO DE CIÊNCIA E ALINHAMENTO EDITORIAL</h3>
+                                <p className="mb-4">Declaro que:</p>
+                                <ul className="list-disc pl-5 space-y-2 mb-4">
+                                    <li>Tenho ciência de que os projetos editoriais do Sistema Cidade Viva Education integram o Currículo Paideia, fundamentado na educação cristã clássica e na formação integral da pessoa humana;</li>
+                                    <li>Compreendo que esta manifestação de interesse não garante contratação, nem gera direito subjetivo à participação em projetos editoriais;</li>
+                                    <li>Estou ciente de que eventual participação ocorrerá apenas mediante convite formal e contratação específica;</li>
+                                    <li>Comprometo-me, caso venha a ser contratado(a), a produzir materiais didáticos alinhados às diretrizes pedagógicas, editoriais e institucionais do Sistema Cidade Viva Education.</li>
+                                </ul>
+                                <p className="font-semibold">( ) Declaro ciência e concordância</p>
+                            </section>
 
-                            <h3 className="font-serif text-slate-900 font-bold mt-8 mb-4 text-2xl">Apresentação e Finalidade</h3>
-                            <p>
-                                Este documento tem por finalidade:
-                            </p>
-                            <ul className="space-y-2 list-none pl-0">
-                                <li className="flex items-start gap-3">
-                                    <CheckCircle className="h-6 w-6 text-blue-500 shrink-0 mt-0.5" />
-                                    <span>Orientar tecnicamente a produção das obras didáticas;</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <CheckCircle className="h-6 w-6 text-blue-500 shrink-0 mt-0.5" />
-                                    <span>Definir parâmetros pedagógicos, metodológicos e editoriais mínimos;</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <CheckCircle className="h-6 w-6 text-blue-500 shrink-0 mt-0.5" />
-                                    <span>Estabelecer a organização do trabalho autoral colaborativo;</span>
-                                </li>
-                                <li className="flex items-start gap-3">
-                                    <CheckCircle className="h-6 w-6 text-blue-500 shrink-0 mt-0.5" />
-                                    <span>Garantir unidade pedagógica, identidade institucional e qualidade editorial.</span>
-                                </li>
-                            </ul>
+                            {/* SEÇÃO 7 */}
+                            <section>
+                                <h3 className="font-serif text-slate-900 font-bold mb-4 text-2xl">7. ENVIO DE DOCUMENTAÇÃO (ARQUIVO ÚNICO – PDF)</h3>
+                                <p className="mb-4">O participante deverá anexar <strong>UM ÚNICO ARQUIVO EM FORMATO PDF</strong>, contendo, na ordem indicada:</p>
+                                <ol className="list-decimal pl-5 space-y-2 mb-4">
+                                    <li>Currículo acadêmico-profissional atualizado (preferencialmente Currículo Lattes);</li>
+                                    <li>Documentos comprobatórios de formação acadêmica;</li>
+                                    <li>Documentos comprobatórios de experiência profissional, quando houver;</li>
+                                    <li>Atestado de capacidade técnica, conforme modelo (Anexo VI);</li>
+                                    <li>Escrita autoral manuscrita, conforme orientações abaixo.</li>
+                                </ol>
+                                <p className="mb-4 text-red-600 font-medium">
+                                    O envio de documentos fora da ordem, em arquivos separados ou por meios diversos dos oficialmente indicados poderá resultar na desconsideração da manifestação de interesse.
+                                </p>
+                            </section>
 
-                            <h3 className="font-serif text-slate-900 font-bold mt-8 mb-4 text-2xl">Objeto</h3>
-                            <p>
-                                Produção de materiais didáticos do Currículo Paideia para o Ensino Fundamental (2º ao 5º ano) nas áreas de:
-                                Língua Portuguesa, Matemática, Geografia, História, Ciências e Arte.
-                            </p>
+                            {/* SEÇÃO 8 */}
+                            <section>
+                                <h3 className="font-serif text-slate-900 font-bold mb-4 text-2xl">8. ESCRITA AUTORAL (MANUSCRITA)</h3>
 
-                            <h3 className="font-serif text-slate-900 font-bold mt-8 mb-4 text-2xl">Identidade Pedagógica</h3>
-                            <p>
-                                Os materiais integram o Currículo Paideia, fundamentado na educação cristã clássica. A produção deverá respeitar a cosmovisão cristã, dialogar com a tradição clássica, promover rigor acadêmico e contribuir para a formação integral dos estudantes.
-                            </p>
+                                <div className="mb-6">
+                                    <h4 className="font-bold text-lg mb-2">8.1. Tema da Escrita Autoral</h4>
+                                    <p className="italic bg-gray-50 p-4 border-l-4 border-amber-500">
+                                        “O que você entende por educação cristã, clássica e integral na área do conhecimento escolhida? Em sua perspectiva, o que um material didático dessa área precisa contemplar para ser excelente?”
+                                    </p>
+                                </div>
+
+                                <div className="mb-6">
+                                    <h4 className="font-bold text-lg mb-2">8.2. Forma de Produção</h4>
+                                    <p className="mb-2">A escrita autoral deverá:</p>
+                                    <ul className="list-disc pl-5 space-y-1">
+                                        <li>Ser escrita integralmente à mão, pelo próprio participante;</li>
+                                        <li>Ser produzida em papel, de forma legível;</li>
+                                        <li>Ser digitalizada (escaneada ou fotografada com qualidade adequada);</li>
+                                        <li>Integrar o arquivo PDF único enviado no formulário.</li>
+                                    </ul>
+                                </div>
+
+                                <div className="mb-6">
+                                    <h4 className="font-bold text-lg mb-2">8.3. Critérios Obrigatórios</h4>
+                                    <ul className="list-disc pl-5 space-y-1">
+                                        <li>Texto dissertativo;</li>
+                                        <li>Extensão mínima de 20 (vinte) linhas e máxima de 40 (quarenta) linhas;</li>
+                                        <li>Estrutura com introdução, desenvolvimento e conclusão;</li>
+                                        <li>Clareza, coesão, coerência textual;</li>
+                                        <li>Domínio da norma culta da língua portuguesa;</li>
+                                        <li>Adequação didática ao Ensino Fundamental;</li>
+                                        <li>Aderência à proposta pedagógica e editorial institucional.</li>
+                                    </ul>
+                                </div>
+
+                                <div className="mb-6">
+                                    <h4 className="font-bold text-lg mb-2">8.4. DA AUTORALIDADE E DO USO DE INTELIGÊNCIA ARTIFICIAL</h4>
+                                    <p className="mb-2">
+                                        A escrita autoral deverá ser produzida exclusivamente pelo participante, sendo vedada a utilização de ferramentas de inteligência artificial generativa, em qualquer etapa do processo, inclusive para redação, estruturação, reformulação ou revisão do texto.
+                                    </p>
+                                    <p className="mb-2">
+                                        O material submetido poderá ser analisado por meio de ferramentas de verificação de originalidade e detecção de uso de IA.
+                                    </p>
+                                    <p>
+                                        A constatação de uso indevido desses recursos poderá resultar na desconsideração da manifestação de interesse, sem prejuízo de eventuais medidas cabíveis nos termos da legislação vigente.
+                                    </p>
+                                </div>
+                            </section>
+
+                            {/* SEÇÃO 9 */}
+                            <section>
+                                <h3 className="font-serif text-slate-900 font-bold mb-4 text-2xl">9. DECLARAÇÃO FINAL</h3>
+                                <p className="mb-4">
+                                    Declaro que as informações prestadas neste formulário são verdadeiras e estou ciente de que informações falsas, incompletas ou inconsistentes poderão resultar na desconsideração desta manifestação de interesse, a qualquer tempo.
+                                </p>
+                            </section>
+
+                            {/* ANEXOS */}
+                            <section className="pt-8 border-t border-gray-200">
+                                <h3 className="font-serif text-slate-900 font-bold mb-6 text-2xl text-center">ANEXOS</h3>
+
+                                <div className="space-y-8">
+                                    <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                                        <h4 className="font-bold text-lg mb-4 text-center">ANEXO II - DECLARAÇÃO DE CIÊNCIA DA NATUREZA PRIVADA DA CHAMADA</h4>
+                                        <p className="mb-4">
+                                            Declaro que tenho ciência de que a Chamada Editorial para Prospecção de Autores do Sistema Cidade Viva Education possui natureza exclusivamente privada, não se caracterizando como edital público, chamamento público nos termos da Lei nº 13.019/2014, procedimento licitatório ou qualquer modalidade prevista em legislação administrativa.
+                                        </p>
+                                        <p>
+                                            Declaro, ainda, que compreendo que minha participação não gera direito subjetivo à contratação, expectativa de convocação ou exclusividade, constituindo-se apenas como manifestação de interesse editorial.
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                                        <h4 className="font-bold text-lg mb-4 text-center">ANEXO III - DECLARAÇÃO DE DISPONIBILIDADE</h4>
+                                        <p>
+                                            Declaro que possuo disponibilidade para, caso venha a ser convidado(a), participar de projetos editoriais do Sistema Cidade Viva Education, cumprindo prazos, etapas e entregas que venham a ser definidos contratualmente.
+                                        </p>
+                                    </div>
+
+                                    <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
+                                        <h4 className="font-bold text-lg mb-4 text-center">ANEXO IV - DECLARAÇÃO DE CIÊNCIA SOBRE DIREITOS AUTORAIS</h4>
+                                        <p className="mb-4">
+                                            Declaro que estou ciente de que eventual participação em projetos editoriais do Sistema Cidade Viva Education será formalizada por meio de Contrato de Prestação de Serviços por Obra Certa, no qual constarão as disposições relativas à cessão patrimonial total dos direitos autorais, nos termos da Lei nº 9.610/1998.
+                                        </p>
+                                        <p>
+                                            Declaro, ainda, que compreendo que não há cessão antecipada de direitos autorais nesta fase, constituindo-se esta declaração apenas como ciência prévia das condições editoriais que regerão eventual contratação.
+                                        </p>
+                                    </div>
+                                </div>
+                            </section>
                         </div>
 
                         <div className="bg-gray-50 px-8 py-6 border-t border-gray-100 flex flex-col sm:flex-row items-center justify-between gap-4">

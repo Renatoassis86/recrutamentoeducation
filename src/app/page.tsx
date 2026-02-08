@@ -51,37 +51,72 @@ export default function Home() {
       </section>
 
       {/* 2. O QUE É O PAIDEIA (Brief Intro) */}
-      <section id="paideia" className="py-24 bg-white">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
+      {/* 2. O QUE É O PAIDEIA (Brief Intro) */}
+      <section id="paideia" className="py-24 bg-slate-50 relative overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl"></div>
+
+        <div className="mx-auto max-w-7xl px-6 lg:px-8 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl font-serif mb-4">
+            <span className="text-amber-600 font-bold tracking-wider uppercase text-sm mb-2 block">Nossa Cosmovisão</span>
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-5xl font-serif mb-6">
               O Propósito do Currículo Paideia
             </h2>
             <div className="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
-            <p className="mt-6 text-lg text-gray-600 max-w-4xl mx-auto font-light leading-relaxed">
-              O Paideia não é apenas um material didático, é uma proposta educacional coerente, fundamentada na tradição cristã e no modelo clássico. Nosso objetivo é formar alunos com sabedoria e eloquência, integrando fé e aprendizado em todas as áreas do conhecimento.
+            <p className="mt-8 text-xl text-slate-600 max-w-4xl mx-auto font-light leading-relaxed">
+              O Paideia não é apenas um material didático, é uma <strong className="text-slate-900 font-medium">proposta educacional coerente</strong>, fundamentada na tradição cristã e no modelo clássico. Nosso objetivo é formar alunos com <span className="text-amber-700 italic font-medium">sabedoria e eloquência</span>, integrando fé e aprendizado em todas as áreas do conhecimento.
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12 text-center">
-            <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow">
-              <h3 className="text-xl font-bold text-slate-900 mb-3 font-serif">Cristão & Clássico</h3>
-              <p className="text-gray-600 font-light">Resgatamos o legado da educação clássica sob uma cosmovisão cristã reformada.</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {/* Card 1 */}
+            <div className="group p-8 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-amber-50 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-amber-100 rounded-xl flex items-center justify-center mb-6 text-amber-600 group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                  <Library className="h-7 w-7" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-3 font-serif">Cristão & Clássico</h3>
+                <p className="text-slate-600 leading-relaxed">
+                  Resgatamos o legado da educação clássica antiga, harmonizando-o com uma robusta cosmovisão cristã reformada para os dias de hoje.
+                </p>
+              </div>
             </div>
-            <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow">
-              <h3 className="text-xl font-bold text-slate-900 mb-3 font-serif">Bilíngue & Integral</h3>
-              <p className="text-gray-600 font-light">Formação completa do indivíduo, preparando-o para atuar no mundo com excelência.</p>
+
+            {/* Card 2 */}
+            <div className="group p-8 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-blue-50 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mb-6 text-blue-600 group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                  <GraduationCap className="h-7 w-7" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-3 font-serif">Bilíngue & Integral</h3>
+                <p className="text-slate-600 leading-relaxed">
+                  Uma formação completa que contempla o desenvolvimento intelectual, moral e espiritual, preparando o aluno para atuar com excelência.
+                </p>
+              </div>
             </div>
-            <div className="p-8 bg-slate-50 rounded-2xl border border-slate-100 hover:shadow-lg transition-shadow">
-              <h3 className="text-xl font-bold text-slate-900 mb-3 font-serif">Autoria Própria</h3>
-              <p className="text-gray-600 font-light">Materiais desenvolvidos por educadores que vivem e compreendem nossa filosofia.</p>
+
+            {/* Card 3 */}
+            <div className="group p-8 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 relative overflow-hidden">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-green-50 rounded-bl-[100px] -mr-4 -mt-4 transition-transform group-hover:scale-110"></div>
+              <div className="relative z-10">
+                <div className="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center mb-6 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-colors">
+                  <BookUser className="h-7 w-7" />
+                </div>
+                <h3 className="text-2xl font-bold text-slate-900 mb-3 font-serif">Autoria Própria</h3>
+                <p className="text-slate-600 leading-relaxed">
+                  Materiais desenvolvidos por educadores que vivem a nossa filosofia, garantindo profundidade teórica e aplicabilidade prática.
+                </p>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* 3. CHAMADA EDITORIAL (CTA Section) */}
-      <section className="py-24 bg-amber-50/50 border-y border-amber-100">
+      <section className="py-24 bg-amber-100 border-y border-amber-200">
         <div className="mx-auto max-w-5xl px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-bold mb-6 uppercase tracking-wider">
             <span className="w-2 h-2 rounded-full bg-green-600 animate-pulse"></span>
