@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateApplicationStatus } from "../actions";
+import { updateApplicationStatus } from "./actions";
 import { Loader2, Check, X, MoreHorizontal } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react"; // We installed headlessui earlier
 import { Fragment } from "react";
