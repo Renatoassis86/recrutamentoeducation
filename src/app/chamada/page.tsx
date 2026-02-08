@@ -47,7 +47,7 @@ export default function ChamadaPage() {
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <CheckCircle className="h-6 w-6 text-amber-500 shrink-0 mt-0.5" />
-                                    <span>Garantir a excelência acadêmica e a fidelidade aos princípios cristãos reformados.</span>
+                                    <span>Garantir a excelência acadêmica e a fidelidade aos princípios cristãos.</span>
                                 </li>
                                 <li className="flex items-start gap-3">
                                     <CheckCircle className="h-6 w-6 text-amber-500 shrink-0 mt-0.5" />
