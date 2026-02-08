@@ -114,7 +114,7 @@ export async function updateApplicationStatus(id: string, newStatus: string) {
 
     if (error) return { error: error.message };
 
-    if (error) return { error: error.message };
+
 
     revalidatePath("/admin");
     return { success: true };
