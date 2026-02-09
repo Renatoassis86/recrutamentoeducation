@@ -14,11 +14,10 @@ const WhatsAppIcon = ({ className }: { className?: string }) => (
 );
 
 const topLinks = [
-    { name: "Igreja", href: "https://cidadeviva.org", external: true },
-    { name: "Faculdade", href: "https://fcv.edu.br", external: true },
-    { name: "Academy", href: "https://academy.cidadeviva.org", external: true },
-    { name: "Education", href: "#", current: true },
-    { name: "Godstock", href: "https://godstock.cidadeviva.org", external: true },
+    { name: "Igreja", href: "https://cidadeviva.org/", external: true },
+    { name: "Faculdade", href: "https://ficv.edu.br/", external: true },
+    { name: "Escola", href: "https://escolacidadeviva.org/", external: true },
+    { name: "Education", href: "https://cidadeviva.education/", current: true },
 ];
 
 const navigation = [
@@ -30,27 +29,16 @@ const navigation = [
     { name: "Contato", href: "#contato" },
 ];
 
-export default function LandingNav({ user: initialUser }: { user?: any }) {
+export default function LandingNav({ user }: { user?: any }) {
     const [isOpen, setIsOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const [user, setUser] = useState(initialUser);
 
     useEffect(() => {
         const handleScroll = () => {
             setScrolled(window.scrollY > 10);
         };
         window.addEventListener("scroll", handleScroll);
-
-        // Auth Listener
-        const supabase = createClient();
-        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            setUser(session?.user ?? null);
-        });
-
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-            subscription.unsubscribe();
-        };
+        return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
     return (
@@ -81,13 +69,16 @@ export default function LandingNav({ user: initialUser }: { user?: any }) {
                         {/* Logo */}
                         <div className="flex-shrink-0 flex items-center gap-3">
                             <Link href="/" className="flex items-center gap-3 group">
-                                <div className="relative h-12 w-auto">
-                                    {/* Redundant text removed, kept only the logo image but adjusted size if needed, 
-                                        checking previous code it was h-10 w-10 md:h-12 md:w-12 container with img inside.
-                                        I will make the logo slightly larger/prominent if it stands alone or keep it as is.
-                                        The user asked to remove the text "Cidade Viva Education" *that duplicates the logo*.
-                                     */}
-                                    <img src="/logo-education.png" alt="Cidade Viva Education" className="object-contain h-12 w-auto brightness-0 invert" />
+                                <div className="relative h-10 w-10 md:h-12 md:w-12">
+                                    <img src="/logo-education.png" alt="Logo" className="object-contain h-full w-full brightness-0 invert" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-white font-serif text-xl md:text-2xl font-bold tracking-wide leading-none group-hover:text-amber-500 transition-colors">
+                                        CIDADE VIVA
+                                    </span>
+                                    <span className="text-gray-200 font-serif text-sm md:text-base tracking-[0.2em] leading-none">
+                                        EDUCATION
+                                    </span>
                                 </div>
                             </Link>
                         </div>
@@ -136,12 +127,12 @@ export default function LandingNav({ user: initialUser }: { user?: any }) {
                                                 <Menu.Item>
                                                     {({ active }) => (
                                                         <Link
-                                                            href="/application"
+                                                            href="/admin"
                                                             className={`${active ? 'bg-gray-100' : ''
                                                                 } flex items-center gap-2 px-4 py-2 text-sm text-gray-700`}
                                                         >
                                                             <User className="w-4 h-4" />
-                                                            Minha Inscrição
+                                                            Meu Perfil
                                                         </Link>
                                                     )}
                                                 </Menu.Item>
@@ -152,7 +143,6 @@ export default function LandingNav({ user: initialUser }: { user?: any }) {
                                                                 const { createClient } = await import("@/utils/supabase/client");
                                                                 const supabase = createClient();
                                                                 await supabase.auth.signOut();
-                                                                // Local state update handled by listener or reload
                                                                 window.location.href = "/login";
                                                             }}
                                                             className={`${active ? 'bg-gray-100' : ''

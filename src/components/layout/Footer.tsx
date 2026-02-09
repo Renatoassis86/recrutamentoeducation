@@ -1,81 +1,106 @@
 import Link from "next/link";
-import { MapPin, Clock, ArrowRight } from "lucide-react";
+import { MapPin, Clock, ArrowRight, Instagram, Globe, Phone } from "lucide-react";
 
 export default function Footer() {
     return (
-        <footer className="bg-[#0f172a] text-white py-16 font-montserrat border-t border-white/10">
-            <div className="mx-auto max-w-7xl px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24">
-                {/* Left Column */}
-                <div>
-                    {/* Logo */}
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="relative h-14 w-14">
-                            <img src="/logo-education.png" alt="Logo" className="object-contain h-full w-full brightness-0 invert" />
+        <footer className="bg-[#0b1222] text-white py-20 font-sans border-t border-white/5">
+            <div className="mx-auto max-w-7xl px-6 lg:px-8">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 mb-16">
+                    {/* Left Column */}
+                    <div className="space-y-8">
+                        {/* Logo */}
+                        <div className="flex items-center gap-4">
+                            <div className="relative h-16 w-16">
+                                <img src="/logo-education.png" alt="Logo" className="object-contain h-full w-full brightness-0 invert" />
+                            </div>
+                            <div className="flex flex-col">
+                                <span className="text-white font-serif text-3xl font-bold tracking-tight leading-none">
+                                    CIDADE VIVA
+                                </span>
+                                <span className="text-amber-500 font-serif text-sm font-bold tracking-[0.3em] leading-none mt-1.5 uppercase">
+                                    EDUCATION
+                                </span>
+                            </div>
                         </div>
-                        <div className="flex flex-col">
-                            <span className="text-white font-serif text-2xl font-bold tracking-wide leading-none">
-                                CIDADE VIVA
-                            </span>
-                            <span className="text-amber-500 font-serif text-sm font-bold tracking-[0.2em] leading-none mt-1">
-                                EDUCATION
-                            </span>
+
+                        <p className="text-lg text-gray-400 max-w-md leading-relaxed font-light">
+                            O Cidade Viva Education é o pilar educacional da Fundação Cidade Viva.
+                            Nossa missão é conduzir pessoas ao deslumbramento a partir de uma educação cristã de excelência.
+                        </p>
+
+                        {/* Social Links */}
+                        <div className="flex gap-4 pt-2">
+                            <a href="https://instagram.com/cidadeviva.education" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-amber-600 transition-all group border border-white/10 hover:border-amber-500 shadow-xl">
+                                <Instagram className="h-5 w-5 text-gray-400 group-hover:text-white" />
+                            </a>
+                            <a href="https://cidadeviva.education/" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-blue-600 transition-all group border border-white/10 hover:border-blue-500 shadow-xl">
+                                <Globe className="h-5 w-5 text-gray-400 group-hover:text-white" />
+                            </a>
+                            <a href="https://wa.me/5583993322457" target="_blank" rel="noopener noreferrer" className="p-3 bg-white/5 rounded-full hover:bg-green-600 transition-all group border border-white/10 hover:border-green-500 shadow-xl">
+                                <Phone className="h-5 w-5 text-gray-400 group-hover:text-white" />
+                            </a>
                         </div>
                     </div>
 
-                    <p className="text-sm text-gray-400 mb-8 max-w-md leading-relaxed">
-                        Cidade Viva Education é o pilar educacional da Fundação Cidade Viva.
-                        Nossa missão é conduzir pessoas ao deslumbramento a partir de uma educação cristã de excelência.
-                    </p>
-
-                    <div className="space-y-4">
-                        <div className="flex items-start gap-3 text-sm text-gray-300">
-                            <MapPin className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
-                            <div>
-                                <span className="font-bold block text-white mb-0.5">Endereço:</span>
-                                R. Lourdes Férrer, 191 - Aeroclube, João Pessoa - PB, 58036-630
+                    {/* Right Column */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-12">
+                        {/* Contact Info */}
+                        <div className="space-y-8">
+                            <h3 className="text-sm font-bold text-amber-500 uppercase tracking-widest mb-6">Localização</h3>
+                            <div className="space-y-6">
+                                <div className="flex items-start gap-4 text-gray-400 group">
+                                    <MapPin className="w-6 h-6 text-amber-500 flex-shrink-0 mt-1' group-hover:scale-110 transition-transform" />
+                                    <div className="text-sm leading-relaxed">
+                                        <span className="font-bold block text-white mb-1">Unidade João Pessoa</span>
+                                        R. Lourdes Férrer, 191 - Aeroclube<br />
+                                        João Pessoa - PB, 58036-630
+                                    </div>
+                                </div>
+                                <div className="flex items-start gap-4 text-gray-400 group">
+                                    <Clock className="w-6 h-6 text-amber-500 flex-shrink-0 mt-1 group-hover:scale-110 transition-transform" />
+                                    <div className="text-sm leading-relaxed">
+                                        <span className="font-bold block text-white mb-1">Expediente</span>
+                                        Segunda a sexta-feira<br />
+                                        09h às 18h (Exceto feriados)
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div className="flex items-start gap-3 text-sm text-gray-300">
-                            <Clock className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
-                            <div>
-                                <span className="font-bold block text-white mb-0.5">Horário de funcionamento:</span>
-                                De segunda a sexta-feira (exceto feriados), das 9h às 18h
+
+                        {/* Navigation */}
+                        <div className="space-y-8">
+                            <h3 className="text-sm font-bold text-amber-500 uppercase tracking-widest mb-6">Navegue</h3>
+                            <div className="flex flex-col gap-4">
+                                {[
+                                    { name: 'Institucional', href: '#paideia' },
+                                    { name: 'Currículo Paideia', href: '#paideia' },
+                                    { name: 'Currículos', href: '#curriculos' },
+                                    { name: 'Livraria', href: 'https://livraria.cidadeviva.org', external: true },
+                                    { name: 'Plataforma', href: 'https://plataforma.cidadeviva.com.br', external: true },
+                                    { name: 'Contato', href: '#contato' },
+                                ].map((link) => (
+                                    <Link
+                                        key={link.name}
+                                        href={link.href}
+                                        target={link.external ? "_blank" : undefined}
+                                        className="text-sm text-gray-400 hover:text-white flex items-center justify-between group transition-colors"
+                                    >
+                                        {link.name}
+                                        <ArrowRight className="h-4 w-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all" />
+                                    </Link>
+                                ))}
                             </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Right Column - Navegue */}
-                <div>
-                    <h3 className="text-lg font-bold text-white mb-8">Navegue</h3>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-12 gap-y-6">
-                        {/* Column 1 */}
-                        <div className="flex flex-col gap-5">
-                            <Link href="#paideia" className="flex items-center justify-between group text-gray-400 hover:text-amber-500 transition-colors font-medium text-sm">
-                                Institucional <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                            </Link>
-                            <Link href="#curriculos" className="flex items-center justify-between group text-gray-400 hover:text-amber-500 transition-colors font-medium text-sm">
-                                Currículo Biblos <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                            </Link>
-                            <Link href="https://livraria.cidadeviva.org" target="_blank" className="flex items-center justify-between group text-gray-400 hover:text-amber-500 transition-colors font-medium text-sm">
-                                Livraria <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                            </Link>
-                            <Link href="#contato" className="flex items-center justify-between group text-gray-400 hover:text-amber-500 transition-colors font-medium text-sm">
-                                Contato <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                            </Link>
-                        </div>
-                        {/* Column 2 */}
-                        <div className="flex flex-col gap-5">
-                            <Link href="#paideia" className="flex items-center justify-between group text-gray-400 hover:text-amber-500 transition-colors font-medium text-sm">
-                                Currículo Paideia <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                            </Link>
-                            <Link href="#curriculos" className="flex items-center justify-between group text-gray-400 hover:text-amber-500 transition-colors font-medium text-sm">
-                                Currículo Oikos <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                            </Link>
-                            <Link href="https://plataforma.cidadeviva.com.br" target="_blank" className="flex items-center justify-between group text-gray-400 hover:text-amber-500 transition-colors font-medium text-sm">
-                                Plataforma <ArrowRight className="w-4 h-4 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300" />
-                            </Link>
-                        </div>
+                {/* Sub-footer */}
+                <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-gray-500">
+                    <p>© {new Date().getFullYear()} Cidade Viva Education. Todos os direitos reservados.</p>
+                    <div className="flex items-center gap-6">
+                        <a href="https://cidadeviva.org/" target="_blank" rel="noopener noreferrer" className="hover:text-amber-500 transition-colors">
+                            Uma instituição Fundação Cidade Viva
+                        </a>
                     </div>
                 </div>
             </div>
