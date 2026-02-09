@@ -51,27 +51,25 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex min-h-screen flex-col-reverse lg:flex-row">
+        <div className="flex min-h-[calc(100vh-64px)] flex-col-reverse lg:flex-row mt-16 bg-white overflow-hidden">
             {/* Left: Form Section */}
-            <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24 bg-white z-10 w-full lg:w-1/2">
+            <div className="flex flex-1 flex-col justify-center items-center px-4 py-8 sm:px-6 lg:flex-none lg:px-20 xl:px-24 z-10 w-full lg:w-1/2">
                 <div className="mx-auto w-full max-w-sm lg:w-96">
                     <div className="text-center lg:text-left">
-                        {/* Mobile/Tablet Image Banner - REMOVED since we show the main panel now */}
-
                         <Link href="/" className="inline-block">
                             <h2 className="text-3xl font-bold tracking-tight text-amber-600 font-serif hover:text-amber-500 transition-colors">
                                 Cidade Viva Education
                             </h2>
                         </Link>
-                        <h2 className="mt-8 text-2xl font-bold leading-9 tracking-tight text-slate-900">
+                        <h2 className="mt-6 text-2xl font-bold leading-9 tracking-tight text-slate-900">
                             {isLogin ? "Bem-vindo de volta" : "Criar sua conta"}
                         </h2>
                         <p className="mt-2 text-sm leading-6 text-slate-600">
-                            {isLogin ? "Acesse para continuar sua inscrição na Chamada Editorial." : "Cadastre-se para participar da seleção de autores."}
+                            {isLogin ? "Acesse para continuar sua inscrição na Chamada Editorial." : "Cadastre-se para participar da seleção de autores da Coleção Paideia."}
                         </p>
                     </div>
 
-                    <div className="mt-10">
+                    <div className="mt-8">
                         {error && (
                             <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700 flex gap-2 items-start animate-fade-in-up">
                                 <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
@@ -90,7 +88,7 @@ export default function LoginPage() {
                             </div>
                         )}
 
-                        <form action={isLogin ? handleLogin : handleSignup} className="space-y-6">
+                        <form action={isLogin ? handleLogin : handleSignup} className="space-y-5">
                             {!isLogin && (
                                 <div>
                                     <label htmlFor="fullName" className="block text-sm font-medium leading-6 text-slate-900">
@@ -147,7 +145,7 @@ export default function LoginPage() {
                         </form>
                     </div>
 
-                    <div className="mt-10">
+                    <div className="mt-8">
                         <div className="relative">
                             <div className="absolute inset-0 flex items-center" aria-hidden="true">
                                 <div className="w-full border-t border-gray-200" />
@@ -174,64 +172,41 @@ export default function LoginPage() {
                 </div>
             </div>
 
-            {/* Right: Image Section (Vertical Layout) */}
-            <div className="flex relative bg-slate-50 overflow-hidden w-full lg:w-1/2 h-96 lg:h-auto border-b lg:border-b-0 lg:border-l border-slate-200">
-                <div className="absolute inset-0 bg-slate-900/10 z-10 pointer-events-none"></div>
+            {/* Right: Fan Book Section */}
+            <div className="flex relative bg-slate-100 w-full lg:w-1/2 h-[300px] lg:h-auto items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-l border-slate-200">
+                <div className="absolute inset-0 bg-slate-900/5 z-0"></div>
 
-                {/* Scrollable Container */}
-                <div className="w-full h-full overflow-y-auto scrollbar-hide">
-                    <div className="flex flex-col items-center gap-12 py-16 px-8 min-h-full">
+                {/* Fan Container */}
+                <div className="relative w-full max-w-lg aspect-square flex items-center justify-center scale-75 lg:scale-100 mt-8 lg:mt-0">
 
-                        <div className="text-center mb-4 z-20">
-                            <h3 className="font-serif text-3xl font-bold text-slate-800 mb-2">Coleção Paideia</h3>
-                            <div className="w-20 h-1.5 bg-amber-500 mx-auto rounded-full"></div>
-                        </div>
+                    {/* Book 1 - Leftmost */}
+                    <div className="absolute transform -rotate-12 -translate-x-32 translate-y-4 hover:translate-y-0 transition-transform duration-500 z-10 w-48 shadow-2xl rounded-lg">
+                        <img src="/paideia-1-ano.png" alt="Book 1" className="w-full rounded-lg border-2 border-white/50" />
+                    </div>
 
-                        {/* Imagem 1 */}
-                        <div className="relative group max-w-sm w-full transition-transform duration-300 hover:scale-[1.02]">
-                            <div className="absolute inset-0 bg-amber-600/20 rounded-lg transform translate-x-4 translate-y-4"></div>
-                            <div className="relative rounded-lg overflow-hidden shadow-2xl border-8 border-white">
-                                <img src="/paideia-1-ano.png" alt="Capa Livro 1" className="w-full h-auto object-cover" />
-                            </div>
-                        </div>
+                    {/* Book 2 */}
+                    <div className="absolute transform -rotate-6 -translate-x-16 translate-y-2 hover:translate-y-0 transition-transform duration-500 z-20 w-48 shadow-2xl rounded-lg">
+                        <img src="/paideia-2.png" alt="Book 2" className="w-full rounded-lg border-2 border-white/50" />
+                    </div>
 
-                        {/* Imagem 2 */}
-                        <div className="relative group max-w-sm w-full transition-transform duration-300 hover:scale-[1.02]">
-                            <div className="absolute inset-0 bg-blue-600/20 rounded-lg transform translate-x-4 translate-y-4"></div>
-                            <div className="relative rounded-lg overflow-hidden shadow-2xl border-8 border-white">
-                                <img src="/paideia-2.png" alt="Capa Livro 2" className="w-full h-auto object-cover" />
-                            </div>
-                        </div>
+                    {/* Book 3 - Center */}
+                    <div className="absolute transform rotate-0 translate-y-0 hover:-translate-y-2 transition-transform duration-500 z-30 w-52 shadow-2xl rounded-lg scale-110">
+                        <img src="/paideia-3.png" alt="Book 3" className="w-full rounded-lg border-2 border-white/50" />
+                    </div>
 
-                        {/* Imagem 3 */}
-                        <div className="relative group max-w-sm w-full transition-transform duration-300 hover:scale-[1.02]">
-                            <div className="absolute inset-0 bg-green-600/20 rounded-lg transform translate-x-4 translate-y-4"></div>
-                            <div className="relative rounded-lg overflow-hidden shadow-2xl border-8 border-white">
-                                <img src="/paideia-3.png" alt="Capa Livro 3" className="w-full h-auto object-cover" />
-                            </div>
-                        </div>
+                    {/* Book 4 */}
+                    <div className="absolute transform rotate-6 translate-x-16 translate-y-2 hover:translate-y-0 transition-transform duration-500 z-20 w-48 shadow-2xl rounded-lg">
+                        <img src="/paideia-4.png" alt="Book 4" className="w-full rounded-lg border-2 border-white/50" />
+                    </div>
 
-                        {/* Imagem 4 */}
-                        <div className="relative group max-w-sm w-full transition-transform duration-300 hover:scale-[1.02]">
-                            <div className="absolute inset-0 bg-red-600/20 rounded-lg transform translate-x-4 translate-y-4"></div>
-                            <div className="relative rounded-lg overflow-hidden shadow-2xl border-8 border-white">
-                                <img src="/paideia-4.png" alt="Capa Livro 4" className="w-full h-auto object-cover" />
-                            </div>
-                        </div>
+                    {/* Book 5 - Rightmost */}
+                    <div className="absolute transform rotate-12 translate-x-32 translate-y-4 hover:translate-y-0 transition-transform duration-500 z-10 w-48 shadow-2xl rounded-lg">
+                        <img src="/paideia-5.png" alt="Book 5" className="w-full rounded-lg border-2 border-white/50" />
+                    </div>
 
-                        {/* Imagem 5 */}
-                        <div className="relative group max-w-sm w-full transition-transform duration-300 hover:scale-[1.02]">
-                            <div className="absolute inset-0 bg-purple-600/20 rounded-lg transform translate-x-4 translate-y-4"></div>
-                            <div className="relative rounded-lg overflow-hidden shadow-2xl border-8 border-white">
-                                <img src="/paideia-5.png" alt="Capa Livro 5" className="w-full h-auto object-cover" />
-                            </div>
-                        </div>
-
-                        {/* Footer Logo in column */}
-                        <div className="mt-8 opacity-80 max-w-[150px]">
-                            <img src="/logo-education.png" alt="Cidade Viva Education" className="w-full h-auto" />
-                        </div>
-
+                    {/* Logo/Badge */}
+                    <div className="absolute bottom-[-60px] lg:bottom-[-20px] bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg border border-white/50 z-40 transform translate-y-12">
+                        <img src="/logo-education.png" alt="Logo" className="h-8 w-auto opacity-90" />
                     </div>
                 </div>
             </div>
