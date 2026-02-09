@@ -41,6 +41,7 @@ export async function signup(formData: FormData) {
     });
 
     if (error) {
+        console.error("Signup Error:", error.message, error.status);
         return { error: error.message };
     }
 

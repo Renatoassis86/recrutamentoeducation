@@ -10,12 +10,16 @@ export async function POST(req: NextRequest) {
         data: { user },
     } = await supabase.auth.getUser();
 
-    if (user) {
-        await supabase.auth.signOut();
-    }
+    // Force signout
+    await supabase.auth.signOut();
+
+    // Clear cookies manually if needed (Supabase helper usually does this, but being explicit helps)
+    // In a Route Handler with Supabase SSR, signOut() should handle the response headers.
 
     revalidatePath("/", "layout");
-    return NextResponse.redirect(new URL("/", req.url), {
+
+    // Redirect to login to confirm logout
+    return NextResponse.redirect(new URL("/login", req.url), {
         status: 302,
     });
 }
