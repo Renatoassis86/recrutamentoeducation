@@ -1,9 +1,21 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export default function HeroVideo() {
     const playerRef = useRef<any>(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => {
+            setIsMobile(window.innerWidth < 768);
+        };
+
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     useEffect(() => {
         // Function to initialize the player
@@ -18,21 +30,24 @@ export default function HeroVideo() {
                         controls: 0,
                         disablekb: 1,
                         fs: 0,
-                        loop: 0, // Manual loop via onStateChange
+                        loop: 1, // Enable native loop
+                        playlist: 'gU00NwWoG8w', // Required for native loop to work
                         modestbranding: 1,
-                        playsinline: 1,
+                        playsinline: 1, // Critical for mobile
                         rel: 0,
                         showinfo: 0,
                         start: 25,
                         end: 50,
+                        origin: typeof window !== 'undefined' ? window.location.origin : undefined,
                     },
                     events: {
                         onReady: (event: any) => {
-                            event.target.mute();
+                            event.target.mute(); // Ensure muted again for mobile
                             event.target.playVideo();
                         },
                         onStateChange: (event: any) => {
                             // YT.PlayerState.ENDED = 0
+                            // Manual loop fallback if native loop fails
                             if (event.data === 0) {
                                 event.target.seekTo(25);
                                 event.target.playVideo();
@@ -74,11 +89,13 @@ export default function HeroVideo() {
     }, []);
 
     return (
-        <div className="w-full h-full overflow-hidden absolute inset-0">
+        <div className="w-full h-full overflow-hidden absolute inset-0 pointer-events-none">
             <div
                 id="youtube-player"
-                className="w-full h-full object-cover scale-[2] sm:scale-150 pointer-events-none opacity-90"
+                className="w-full h-full object-cover scale-[2] sm:scale-150 opacity-90"
             />
+            {/* Mobile Fallback Overlay (Optional, acts as poster if video fails to autoplay) */}
+            <div className={`absolute inset-0 bg-slate-900 z-[-1] ${isMobile ? 'block' : 'hidden'}`} />
         </div>
     );
 }
