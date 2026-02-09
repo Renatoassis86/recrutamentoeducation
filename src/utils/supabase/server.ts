@@ -2,8 +2,8 @@ import { createServerClient } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { createMockClient } from "./mock";
 
-export async function createClient() {
-    const cookieStore = await cookies();
+export function createClient() {
+    const cookieStore = cookies();
 
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
     const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
