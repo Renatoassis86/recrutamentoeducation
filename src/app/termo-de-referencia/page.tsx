@@ -1,14 +1,13 @@
 "use client";
 
-import LandingNav from "@/components/layout/LandingNav";
-import Footer from "@/components/layout/Footer";
+
 import { Download, Calendar, Archive, FileText } from "lucide-react";
 import Link from "next/link";
 
 export default function TermoReferencia() {
     return (
         <div className="bg-slate-50 min-h-screen font-sans text-slate-900 selection:bg-blue-100 selection:text-blue-900 flex flex-col">
-            <LandingNav />
+
 
             <main className="flex-grow pt-48 pb-24">
                 <article className="mx-auto max-w-4xl px-6 lg:px-8">
@@ -78,7 +77,7 @@ export default function TermoReferencia() {
                 </article>
             </main>
 
-            <Footer />
+
         </div>
     );
 }

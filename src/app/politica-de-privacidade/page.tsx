@@ -1,10 +1,9 @@
-import LandingNav from "@/components/layout/LandingNav";
-import Footer from "@/components/layout/Footer";
+
 
 export default function PrivacyPolicy() {
     return (
         <div className="bg-slate-50 min-h-screen font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900 flex flex-col">
-            <LandingNav />
+
 
             <main className="flex-grow pt-48 pb-24">
                 <article className="mx-auto max-w-4xl px-6 lg:px-8">
@@ -43,7 +42,7 @@ export default function PrivacyPolicy() {
                 </article>
             </main>
 
-            <Footer />
+
         </div>
     );
 }

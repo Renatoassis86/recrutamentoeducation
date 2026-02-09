@@ -16,7 +16,7 @@ export default function Home() {
     <div className="bg-white min-h-screen font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900">
 
       {/* 1. HERO SECTION */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden pt-16">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-40 pb-20">
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full z-0">
           <HeroVideo />

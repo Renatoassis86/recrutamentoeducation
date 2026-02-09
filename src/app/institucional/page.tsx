@@ -1,14 +1,13 @@
 "use client";
 
-import LandingNav from "@/components/layout/LandingNav";
-import Footer from "@/components/layout/Footer";
+
 import { CheckCircle, Lightbulb, Quote } from "lucide-react";
 import { useState } from "react";
 
 export default function Institucional() {
     return (
         <div className="bg-slate-50 min-h-screen font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900 flex flex-col">
-            <LandingNav />
+
 
             <main className="flex-grow pt-48 pb-24">
                 <section className="mx-auto max-w-7xl px-6 lg:px-8">
@@ -115,7 +114,7 @@ export default function Institucional() {
                 </section>
             </main>
 
-            <Footer />
+
         </div>
     );
 }
