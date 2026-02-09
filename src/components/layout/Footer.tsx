@@ -6,7 +6,7 @@ export default function Footer() {
             <div className="mx-auto max-w-7xl px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-6">
                 <div>
                     <p className="font-serif text-2xl font-bold text-amber-500">Cidade Viva Education</p>
-                    <p className="text-gray-500 text-sm mt-2">© {new Date().getFullYear()} Fundação Cidade Viva</p>
+                    <p className="text-gray-500 text-sm mt-2">© {new Date().getFullYear()} Associação Cidade Viva</p>
                     <div className="flex flex-col gap-2 mt-6 text-gray-400 text-sm">
                         <p>R. Profa. Luzia Simões Bartolini, 100 - Aeroclube, João Pessoa - PB</p>
                         <p>Email: <a href="mailto:administrativo.education@cidadeviva.org" className="hover:text-amber-500 transition-colors">administrativo.education@cidadeviva.org</a></p>

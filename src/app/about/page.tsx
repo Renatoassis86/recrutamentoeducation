@@ -31,13 +31,13 @@ export default function AboutPage() {
                             <h3 className="text-2xl font-bold text-slate-900 mb-6 font-serif block">Nossa História</h3>
 
                             <p className="mb-6">
-                                Somos o Cidade Viva Education, o pilar educacional da Fundação Cidade Viva, criado com o propósito de impactar o Brasil, promovendo entre os filhos de Deus o que há de mais excelente em educação.
+                                Somos o Cidade Viva Education, o pilar educacional da Associação Cidade Viva, criado com o propósito de impactar o Brasil, promovendo entre os filhos de Deus o que há de mais excelente em educação.
                             </p>
                             <p className="mb-6">
                                 Nossa história tem início em 2002, com o início da Igreja Cidade Viva, em uma pequena capela de madeira localizada na Praia do Bessa, em João Pessoa, Paraíba. Em 2004, o pastor Sérgio Queiroz assumiu a liderança daquela comunidade, iniciando, ao lado de sua esposa Samara e de seus filhos, uma nova fase marcada pelo compromisso de viver e servir integralmente ao propósito de Deus.
                             </p>
                             <p className="mb-6">
-                                Desde o princípio, a missão foi clara: enfrentar os desafios mais profundos da sociedade brasileira. A partir desse compromisso, surgiram os primeiros projetos sociais que, com o tempo, foram ampliados e culminaram na criação do Campus Metropolitano Cidade Viva. Em 2008, visando consolidar e expandir essas ações, especialmente no que diz respeito à captação de recursos, foi instituída a Fundação Cidade Viva, responsável por coordenar toda a ação social desenvolvida pela Cidade Viva, em parceria com a igreja e com outras instituições alinhadas aos mesmos princípios.
+                                Desde o princípio, a missão foi clara: enfrentar os desafios mais profundos da sociedade brasileira. A partir desse compromisso, surgiram os primeiros projetos sociais que, com o tempo, foram ampliados e culminaram na criação do Campus Metropolitano Cidade Viva. Em 2008, visando consolidar e expandir essas ações, especialmente no que diz respeito à captação de recursos, foi instituída a Associação Cidade Viva, responsável por coordenar toda a ação social desenvolvida pela Cidade Viva, em parceria com a igreja e com outras instituições alinhadas aos mesmos princípios.
                             </p>
                             <p className="mb-6">
                                 Em 2010, a missão alcançou o campo da educação, com a fundação da Escola Internacional Cidade Viva, a primeira escola confessional, bilíngue e integral da Paraíba. Em 2018, foi criada a Faculdade Internacional Cidade Viva, que iniciou suas atividades com o curso de Teologia e, posteriormente, lançou a primeira pós-graduação do país em Educação Cristã Clássica.
