@@ -37,7 +37,7 @@ export default function ChamadaPage() {
 
                         <div className="p-8 prose prose-lg max-w-none text-gray-600 leading-relaxed font-light">
                             <p>
-                                A <strong>Associação Cidade Viva</strong> torna público o processo seletivo para autores de material didático do <strong>Sistema de Ensino Cidade Viva Education</strong> (Currículo Paideia). Esta chamada visa identificar e contratar profissionais qualificados para a elaboração de conteúdos educacionais alinhados à cosmovisão cristã e à pedagogia clássica.
+                                A <strong>Associação Cidade Viva</strong> torna público o processo seletivo para autores de material didático do <strong>Cidade Viva Education</strong> (Currículo Paideia). Esta chamada visa identificar e contratar profissionais qualificados para a elaboração de conteúdos educacionais alinhados à cosmovisão cristã e à pedagogia clássica.
                             </p>
                             <h3 className="font-serif text-slate-900 font-bold mt-8 mb-4 text-2xl">Objetivos do Processo</h3>
                             <ul className="space-y-2 list-none pl-0">

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Users, Map as MapIcon, LogOut, BookOpen } from "lucide-react";
+import { LayoutDashboard, Users, Map as MapIcon, LogOut, BookOpen, ExternalLink } from "lucide-react";
 import { logoutAdmin } from "@/app/actions/auth-admin";
 import Image from "next/image";
 
@@ -46,11 +46,19 @@ export default function AdminSidebar() {
                     })}
                 </ul>
 
-                <div className="mt-auto">
+                <div className="mt-auto space-y-2">
+                    <Link
+                        href="/"
+                        className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-slate-400 hover:bg-slate-800 hover:text-white w-full"
+                    >
+                        <ExternalLink className="h-6 w-6 shrink-0" aria-hidden="true" />
+                        Ir para o site
+                    </Link>
+
                     <form action={logoutAdmin}>
                         <button
                             type="submit"
-                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-slate-400 hover:bg-slate-800 hover:text-white w-full"
+                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-slate-400 hover:bg-slate-800 hover:text-white w-full text-left"
                         >
                             <LogOut className="h-6 w-6 shrink-0" aria-hidden="true" />
                             Sair
