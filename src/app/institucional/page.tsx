@@ -122,13 +122,13 @@ function VideoPlayer() {
     return (
         <>
             <div
-                className="relative aspect-video w-full rounded-t-[3rem] rounded-b-[10rem] overflow-hidden shadow-2xl bg-slate-900 group cursor-pointer border-4 border-white ring-1 ring-slate-900/5 transform transition-transform duration-500 hover:scale-[1.02] hover:shadow-amber-500/20"
+                className="relative aspect-[4/5] w-full max-w-sm mx-auto rounded-t-[3rem] rounded-b-[10rem] overflow-hidden shadow-2xl bg-slate-900 group cursor-pointer border-4 border-white ring-1 ring-slate-200 transform transition-transform duration-500 hover:scale-[1.02] hover:shadow-amber-500/20"
                 onClick={() => setIsVideoOpen(true)}
             >
                 {/* Background Loop (Zoomed to hide UI) */}
-                <div className="absolute inset-0 w-full h-full scale-[2.0] pointer-events-none">
+                <div className="absolute inset-0 w-full h-full scale-[2.2] pointer-events-none">
                     <iframe
-                        className="w-full h-full opacity-90"
+                        className="w-full h-full"
                         src="https://www.youtube.com/embed/gU00NwWoG8w?autoplay=1&mute=1&controls=0&loop=1&playlist=gU00NwWoG8w&start=25&end=40&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&fs=0"
                         title="Cidade Viva Education Preview"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

@@ -107,9 +107,9 @@ export default function Home() {
                 onClick={() => setIsVideoOpen(true)}
               >
                 {/* Background Loop (Zoomed to hide UI) */}
-                <div className="absolute inset-0 w-full h-full scale-[2.0] pointer-events-none">
+                <div className="absolute inset-0 w-full h-full scale-[2.2] pointer-events-none">
                   <iframe
-                    className="w-full h-full opacity-90"
+                    className="w-full h-full"
                     src="https://www.youtube.com/embed/SXpz1uvfn-k?autoplay=1&mute=1&controls=0&loop=1&playlist=SXpz1uvfn-k&start=25&end=50&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&fs=0"
                     title="Thumbnail Loop"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
