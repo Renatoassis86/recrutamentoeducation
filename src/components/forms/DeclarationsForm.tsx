@@ -107,10 +107,10 @@ export default function DeclarationsForm({ onSave, onBack }: DeclarationsFormPro
                         <div className="text-gray-500 text-justify text-sm">
                             <p>Declaro que:</p>
                             <ul className="list-disc pl-5 mt-1 space-y-1">
-                                <li>Tenho ciência de que os projetos editoriais do Sistema Cidade Viva Education integram o Currículo Paideia...</li>
-                                <li>Compreendo que esta manifestação de interesse não garante contratação...</li>
-                                <li>Estou ciente de que eventual participação ocorrerá apenas mediante convite formal...</li>
-                                <li>Comprometo-me, caso venha a ser contratado(a), a produzir materiais didáticos alinhados...</li>
+                                <li>Tenho ciência de que os projetos editoriais do Sistema Cidade Viva Education integram o Currículo Paideia, fundamentado na educação cristã clássica e na formação integral da pessoa humana;</li>
+                                <li>Compreendo que esta manifestação de interesse não garante contratação, nem gera direito subjetivo à participação em projetos editoriais;</li>
+                                <li>Estou ciente de que eventual participação ocorrerá apenas mediante convite formal e contratação específica;</li>
+                                <li>Comprometo-me, caso venha a ser contratado(a), a produzir materiais didáticos alinhados às diretrizes pedagógicas, editoriais e institucionais do Sistema Cidade Viva Education.</li>
                             </ul>
                             <p className="mt-2 font-medium text-gray-900">Declaro ciência e concordância.</p>
                         </div>
