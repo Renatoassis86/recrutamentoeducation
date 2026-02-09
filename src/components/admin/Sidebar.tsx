@@ -8,7 +8,7 @@ import Image from "next/image";
 
 const navigation = [
     { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    // { name: "Candidatos", href: "/admin/candidates", icon: Users }, // Future
+    { name: "Candidatos", href: "/admin/candidates", icon: Users },
 ];
 
 export default function AdminSidebar() {
