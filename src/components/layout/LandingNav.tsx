@@ -22,9 +22,10 @@ const topLinks = [
 
 const navigation: { name: string; href: string; external?: boolean; dropdown?: boolean; }[] = [
     { name: "Institucional", href: "/institucional" },
+    { name: "Currículo Paideia", href: "/#paideia" },
     { name: "Chamada Editorial", href: "/chamada-editorial" },
     { name: "Termo de Referência", href: "/termo-de-referencia" },
-    { name: "Contato", href: "#contato" },
+    { name: "Contato", href: "/contato" },
 ];
 
 export default function LandingNav({ user }: { user?: any }) {
