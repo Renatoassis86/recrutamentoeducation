@@ -14,9 +14,7 @@ export default function Institucional() {
 
                     {/* Header Section */}
                     <div className="text-center max-w-3xl mx-auto mb-20 animate-fade-in-up">
-                        <div className="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider text-amber-600 uppercase bg-amber-50 rounded-full border border-amber-200">
-                            Sobre Nós
-                        </div>
+
                         <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl font-serif mb-6 relative inline-block">
                             Quem Somos
                             <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-600 rounded-full opacity-30"></span>

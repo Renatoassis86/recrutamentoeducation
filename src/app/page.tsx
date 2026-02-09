@@ -185,9 +185,8 @@ export default function Home() {
                   muted
                   loop
                   playsInline
-                  poster="/layla_ramos_portrait_1770509608754.png"
                 >
-                  <source src="/videos/Livro Ingles inf 2.mp4#t=3,10" type="video/mp4" />
+                  <source src="/videos/Livro Ingles inf 2.mp4#t=3" type="video/mp4" />
                   Seu navegador não suporta a tag de vídeo.
                 </video>
               </div>

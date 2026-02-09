@@ -17,7 +17,7 @@ export default function Contato() {
         e.preventDefault();
 
         // Construct mailto link
-        const recipient = "administrativo.education@gmail.com";
+        const recipient = "administrativo.education@cidadeviva.org";
         const subject = encodeURIComponent(`[Contato Site] ${formData.subject}`);
         const body = encodeURIComponent(
             `Nome: ${formData.name}\n` +
@@ -71,8 +71,8 @@ export default function Contato() {
                                         </div>
                                         <div>
                                             <p className="font-bold text-slate-900">Email</p>
-                                            <a href="mailto:administrativo.education@gmail.com" className="text-gray-600 hover:text-amber-600 transition-colors break-all">
-                                                administrativo.education@gmail.com
+                                            <a href="mailto:administrativo.education@cidadeviva.org" className="text-gray-600 hover:text-amber-600 transition-colors break-all">
+                                                administrativo.education@cidadeviva.org
                                             </a>
                                         </div>
                                     </div>
