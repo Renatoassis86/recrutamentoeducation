@@ -55,15 +55,18 @@ export default function AdminSidebar() {
                         Ir para o site
                     </Link>
 
-                    <form action={logoutAdmin}>
-                        <button
-                            type="submit"
-                            className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-slate-400 hover:bg-slate-800 hover:text-white w-full text-left"
-                        >
-                            <LogOut className="h-6 w-6 shrink-0" aria-hidden="true" />
-                            Sair
-                        </button>
-                    </form>
+                    <button
+                        onClick={async () => {
+                            const { createClient } = await import("@/utils/supabase/client");
+                            const supabase = createClient();
+                            await supabase.auth.signOut();
+                            window.location.href = "/admin/login";
+                        }}
+                        className="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm font-semibold leading-6 text-slate-400 hover:bg-slate-800 hover:text-white w-full text-left"
+                    >
+                        <LogOut className="h-6 w-6 shrink-0" aria-hidden="true" />
+                        Sair
+                    </button>
                 </div>
             </nav>
         </div>

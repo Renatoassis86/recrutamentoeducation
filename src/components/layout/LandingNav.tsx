@@ -80,16 +80,19 @@ export default function LandingNav({ user }: LandingNavProps) {
                                     </Menu.Item>
                                     <Menu.Item>
                                         {({ active }) => (
-                                            <form action="/auth/signout" method="post" className="w-full">
-                                                <button
-                                                    type="submit"
-                                                    className={`${active ? 'bg-gray-100' : ''
-                                                        } flex items-center gap-2 px-4 py-2 text-sm text-gray-700 w-full text-left`}
-                                                >
-                                                    <LogOut className="w-4 h-4" />
-                                                    Sair
-                                                </button>
-                                            </form>
+                                            <button
+                                                onClick={async () => {
+                                                    const { createClient } = await import("@/utils/supabase/client");
+                                                    const supabase = createClient();
+                                                    await supabase.auth.signOut();
+                                                    window.location.href = "/login";
+                                                }}
+                                                className={`${active ? 'bg-gray-100' : ''
+                                                    } flex items-center gap-2 px-4 py-2 text-sm text-gray-700 w-full text-left`}
+                                            >
+                                                <LogOut className="w-4 h-4" />
+                                                Sair
+                                            </button>
                                         )}
                                     </Menu.Item>
                                 </Menu.Items>

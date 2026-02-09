@@ -37,9 +37,13 @@ export default function LoginPage() {
         setError(null);
         const res = await signup(formData);
         if (res?.error) {
-            if (res.error.includes("User already registered")) {
-                setError("Este e-mail já está cadastrado. Por favor, faça login.");
-                // Optionally switch to login mode automatically after a delay or let user click
+            if (res.error.includes("User already registered") || res.error.includes("already registered")) {
+                setError("Este e-mail já está cadastrado. Redirecionando para login...");
+                // Auto switch to login after short delay
+                setTimeout(() => {
+                    setIsLogin(true);
+                    setError("Conta encontrada. Por favor, digite sua senha.");
+                }, 1500);
             } else {
                 setError(res.error);
             }
