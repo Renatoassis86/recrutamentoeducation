@@ -175,7 +175,7 @@ export default function Home() {
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
           <div className="flex flex-col lg:flex-row gap-16 items-center">
             {/* Visual Side */}
-            <div className="w-full lg:w-4/12 relative order-2 lg:order-1 flex justify-center">
+            <div className="w-full lg:w-4/12 relative order-2 lg:order-1 flex flex-col items-center justify-center">
               <div className="relative w-full max-w-[320px] aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl bg-black border-4 border-slate-800 group">
                 <video
                   className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
@@ -191,7 +191,7 @@ export default function Home() {
                   Seu navegador não suporta a tag de vídeo.
                 </video>
               </div>
-              <div className="mt-4 md:mt-0 md:absolute md:-bottom-6 md:-right-6 bg-amber-600 text-white p-4 md:p-6 rounded-xl shadow-xl w-full max-w-[320px] md:max-w-xs z-10 text-center md:text-left">
+              <div className="mt-6 bg-amber-600 text-white p-4 rounded-xl shadow-xl w-full max-w-[320px] z-10 text-center">
                 <p className="font-bold text-lg mb-1">Layla Ramos</p>
                 <p className="text-xs text-amber-100 uppercase tracking-wider">Consultora Pedagógica</p>
               </div>
