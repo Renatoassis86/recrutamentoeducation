@@ -198,7 +198,7 @@ export default function ApplicationPage() {
                     Inscrição de Autores
                 </h1>
                 <p className="mt-2 text-sm text-gray-500">
-                    Sistema Cidade Viva Education - Chamada Oficial 2024
+                    Sistema Cidade Viva Education - Chamada Oficial 2026
                 </p>
             </div>
 

@@ -32,7 +32,7 @@ export default function SuccessView() {
                         Parabéns! Sua candidatura foi enviada com sucesso para nossa equipe.
                     </p>
                     <p className="text-base text-slate-500">
-                        Enviamos um email de confirmação com os detalhes do seu cadastro.
+
                         Agora é só aguardar as próximas etapas do processo seletivo.
                     </p>
                 </div>
