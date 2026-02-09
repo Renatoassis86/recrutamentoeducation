@@ -9,21 +9,11 @@ export default function Footer() {
                     {/* Left Column */}
                     <div className="space-y-8">
                         {/* Logo */}
-                        <div className="flex items-center gap-4">
-                            <div className="relative h-16 w-16">
-                                <img src="/logo-education.png" alt="Logo" className="object-contain h-full w-full brightness-0 invert" />
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-white font-serif text-3xl font-bold tracking-tight leading-none">
-                                    CIDADE VIVA
-                                </span>
-                                <span className="text-amber-500 font-serif text-sm font-bold tracking-[0.3em] leading-none mt-1.5 uppercase">
-                                    EDUCATION
-                                </span>
-                            </div>
+                        <div className="relative w-48">
+                            <img src="/logo-education.png" alt="Cidade Viva Education" className="w-full h-auto brightness-0 invert" />
                         </div>
 
-                        <p className="text-lg text-gray-400 max-w-md leading-relaxed font-light">
+                        <p className="text-sm text-gray-400 max-w-md leading-relaxed font-light">
                             O Cidade Viva Education é o pilar educacional da Fundação Cidade Viva.
                             Nossa missão é conduzir pessoas ao deslumbramento a partir de uma educação cristã de excelência.
                         </p>
@@ -72,17 +62,14 @@ export default function Footer() {
                             <h3 className="text-sm font-bold text-amber-500 uppercase tracking-widest mb-6">Navegue</h3>
                             <div className="flex flex-col gap-4">
                                 {[
-                                    { name: 'Institucional', href: '#paideia' },
-                                    { name: 'Currículo Paideia', href: '#paideia' },
-                                    { name: 'Currículos', href: '#curriculos' },
-                                    { name: 'Livraria', href: 'https://livraria.cidadeviva.org', external: true },
-                                    { name: 'Plataforma', href: 'https://plataforma.cidadeviva.com.br', external: true },
+                                    { name: 'Institucional', href: '/institucional' },
+                                    { name: 'Chamada Editorial', href: '/chamada-editorial' },
+                                    { name: 'Termo de Referência', href: '/termo-de-referencia' },
                                     { name: 'Contato', href: '#contato' },
                                 ].map((link) => (
                                     <Link
                                         key={link.name}
                                         href={link.href}
-                                        target={link.external ? "_blank" : undefined}
                                         className="text-sm text-gray-400 hover:text-white flex items-center justify-between group transition-colors"
                                     >
                                         {link.name}
@@ -95,13 +82,8 @@ export default function Footer() {
                 </div>
 
                 {/* Sub-footer */}
-                <div className="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-xs text-gray-500">
-                    <p>© {new Date().getFullYear()} Cidade Viva Education. Todos os direitos reservados.</p>
-                    <div className="flex items-center gap-6">
-                        <a href="https://cidadeviva.org/" target="_blank" rel="noopener noreferrer" className="hover:text-amber-500 transition-colors">
-                            Uma instituição Fundação Cidade Viva
-                        </a>
-                    </div>
+                <div className="pt-12 border-t border-white/5 flex justify-center items-center text-xs text-gray-500">
+                    <p className="text-center">© 2026 Cidade Viva Education. Todos os direitos reservados.</p>
                 </div>
             </div>
         </footer>
