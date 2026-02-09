@@ -61,7 +61,7 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div className="prose prose-lg prose-slate text-gray-700 text-justify leading-loose">
+            <div className="prose prose-lg prose-slate text-gray-700 text-justify leading-loose font-montserrat">
               <p>
                 O <strong>Paideia</strong> é uma proposta educacional coerente, desenvolvida para escolas comprometidas com a formação plena do aluno. Fundamentado na tradição cristã e no modelo clássico da educação, ele se estrutura sobre quatro eixos inegociáveis: é <strong>cristão, clássico, bilíngue e integral</strong>.
               </p>
@@ -74,18 +74,17 @@ export default function Home() {
             </div>
 
             <div className="space-y-4">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-slate-100 aspect-video group">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-slate-100 aspect-video group pointer-events-none">
                 <iframe
-                  className="w-full h-full group-hover:scale-105 transition-transform duration-700"
-                  src="https://www.youtube.com/embed/SXpz1uvfn-k"
+                  className="w-full h-full scale-[1.02]"
+                  src="https://www.youtube.com/embed/SXpz1uvfn-k?autoplay=1&mute=1&controls=0&loop=1&playlist=SXpz1uvfn-k&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&fs=0"
                   title="Fundamentos do Currículo Paideia"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                 ></iframe>
+                {/* Overlay to prevent interactions */}
+                <div className="absolute inset-0 bg-transparent z-10"></div>
               </div>
-              <p className="text-center text-sm font-medium text-slate-500 uppercase tracking-widest mt-4">
-                Conheça os fundamentos do Currículo Paideia
-              </p>
             </div>
           </div>
         </div>
