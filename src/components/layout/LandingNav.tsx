@@ -1,165 +1,279 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useState } from "react";
-import { X, User as UserIcon, LogOut, Menu as MenuIcon } from "lucide-react";
 import { Menu, Transition } from "@headlessui/react";
-import Image from "next/image";
-import { User } from "@supabase/supabase-js";
+import { Menu as MenuIcon, X, User, LogOut, ChevronDown } from "lucide-react";
+import { createClient } from "@/utils/supabase/client";
 
-interface LandingNavProps {
-    user?: User | null;
-}
+// WhatsApp Icon Component
+const WhatsAppIcon = ({ className }: { className?: string }) => (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.008-.57-.008-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+    </svg>
+);
 
-export default function LandingNav({ user }: LandingNavProps) {
+const topLinks = [
+    { name: "Igreja", href: "https://cidadeviva.org", external: true },
+    { name: "Faculdade", href: "https://fcv.edu.br", external: true },
+    { name: "Academy", href: "https://academy.cidadeviva.org", external: true },
+    { name: "Education", href: "#", current: true },
+    { name: "Godstock", href: "https://godstock.cidadeviva.org", external: true },
+];
+
+const navigation = [
+    { name: "Institucional", href: "#paideia", dropdown: true },
+    { name: "Currículos", href: "#curriculos", dropdown: true },
+    { name: "Conteúdos", href: "#conteudos" },
+    { name: "Livraria", href: "https://livraria.cidadeviva.org", external: true },
+    { name: "Plataforma", href: "https://plataforma.cidadeviva.com.br", external: true },
+    { name: "Contato", href: "#contato" },
+];
+
+export default function LandingNav({ user: initialUser }: { user?: any }) {
     const [isOpen, setIsOpen] = useState(false);
+    const [scrolled, setScrolled] = useState(false);
+    const [user, setUser] = useState(initialUser);
 
-    const navigation = [
-        { name: "Institucional", href: "/about" },
-        { name: "Currículo Paideia", href: "/#paideia" },
-        { name: "Chamada Editorial", href: "/chamada" },
-        { name: "Termo de Referência", href: "/termo" },
-        { name: "Contato", href: "/#contato" },
-    ];
+    useEffect(() => {
+        const handleScroll = () => {
+            setScrolled(window.scrollY > 10);
+        };
+        window.addEventListener("scroll", handleScroll);
 
-    // Helper to get first and last name
-    const getUserName = () => {
-        if (!user) return "";
-        const fullName = user.user_metadata?.full_name || user.user_metadata?.name || "";
-        if (fullName) {
-            const names = fullName.split(" ");
-            if (names.length > 1) {
-                return `${names[0]} ${names[names.length - 1]}`;
-            }
-            return names[0];
-        }
-        return user.email?.split("@")[0] || "";
-    };
+        // Auth Listener
+        const supabase = createClient();
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+            setUser(session?.user ?? null);
+        });
+
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+            subscription.unsubscribe();
+        };
+    }, []);
 
     return (
-        <nav className="bg-slate-900 fixed w-full z-50 top-0 start-0 border-b border-gray-800">
-            <div className="w-full flex flex-wrap items-center justify-between mx-auto px-4 md:px-8 py-4">
-                <Link href="/" className="flex items-center space-x-3 rtl:space-x-reverse">
-                    <div className="relative h-10 w-32 md:h-12 md:w-48 transition-all">
-                        <Image
-                            src="/logo-education.png"
-                            alt="Cidade Viva Education"
-                            fill
-                            className="object-contain object-left"
-                            priority
-                        />
-                    </div>
-                </Link>
-                <div className="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse gap-4 items-center">
-                    {user ? (
-                        <Menu as="div" className="relative ml-3">
-                            <div>
-                                <Menu.Button className="flex items-center gap-2 rounded-full bg-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2 focus:ring-offset-slate-900 p-2 pr-4 transition-colors hover:bg-slate-700">
-                                    <span className="sr-only">Open user menu</span>
-                                    <div className="h-8 w-8 rounded-full bg-amber-500 flex items-center justify-center text-slate-900 font-bold">
-                                        {getUserName().charAt(0).toUpperCase()}
-                                    </div>
-                                    <span className="text-gray-200 font-medium hidden sm:block">
-                                        {getUserName()}
-                                    </span>
-                                </Menu.Button>
-                            </div>
-                            <div className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                                <Menu.Items>
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <Link
-                                                href="/dashboard"
-                                                className={`${active ? 'bg-gray-100' : ''
-                                                    } flex items-center gap-2 px-4 py-2 text-sm text-gray-700 w-full`}
-                                            >
-                                                <UserIcon className="w-4 h-4" />
-                                                Minha Inscrição
-                                            </Link>
-                                        )}
-                                    </Menu.Item>
-                                    <Menu.Item>
-                                        {({ active }) => (
-                                            <button
-                                                onClick={async () => {
-                                                    const { createClient } = await import("@/utils/supabase/client");
-                                                    const supabase = createClient();
-                                                    await supabase.auth.signOut();
-                                                    window.location.href = "/login";
-                                                }}
-                                                className={`${active ? 'bg-gray-100' : ''
-                                                    } flex items-center gap-2 px-4 py-2 text-sm text-gray-700 w-full text-left`}
-                                            >
-                                                <LogOut className="w-4 h-4" />
-                                                Sair
-                                            </button>
-                                        )}
-                                    </Menu.Item>
-                                </Menu.Items>
-                            </div>
-                        </Menu>
-                    ) : (
-                        <>
-                            <Link href="/login" className="hidden sm:block">
-                                <button type="button" className="text-white hover:text-amber-500 font-medium rounded-lg text-sm px-4 py-2 text-center transition-colors">
-                                    Entrar
-                                </button>
+        <header className="fixed w-full z-50 flex flex-col font-sans">
+            {/* Top Bar */}
+            <div className="bg-[#0f172a] text-white py-2 px-4 sm:px-6 lg:px-8 flex justify-between items-center text-xs md:text-sm border-b border-white/5 relative z-50">
+                <span className="font-medium tracking-wide hidden sm:block">Educação que permanece</span>
+                <nav className="flex gap-4 md:gap-6 mx-auto sm:mx-0">
+                    {topLinks.map((link) => (
+                        <a
+                            key={link.name}
+                            href={link.href}
+                            target={link.external ? "_blank" : undefined}
+                            rel={link.external ? "noopener noreferrer" : undefined}
+                            className={`${link.current ? "text-amber-500 font-bold border-b-2 border-amber-500" : "text-gray-300 hover:text-white"
+                                } transition-colors pb-0.5 whitespace-nowrap`}
+                        >
+                            {link.name}
+                        </a>
+                    ))}
+                </nav>
+            </div>
+
+            {/* Main Nav */}
+            <nav className={`bg-[#0f172a]/95 backdrop-blur-sm border-b border-white/5 transition-all duration-300 ${scrolled ? "py-2" : "py-4"}`}>
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="flex h-16 justify-between items-center">
+                        {/* Logo */}
+                        <div className="flex-shrink-0 flex items-center gap-3">
+                            <Link href="/" className="flex items-center gap-3 group">
+                                <div className="relative h-12 w-auto">
+                                    {/* Redundant text removed, kept only the logo image but adjusted size if needed, 
+                                        checking previous code it was h-10 w-10 md:h-12 md:w-12 container with img inside.
+                                        I will make the logo slightly larger/prominent if it stands alone or keep it as is.
+                                        The user asked to remove the text "Cidade Viva Education" *that duplicates the logo*.
+                                     */}
+                                    <img src="/logo-education.png" alt="Cidade Viva Education" className="object-contain h-12 w-auto brightness-0 invert" />
+                                </div>
                             </Link>
-                            <Link href="/application" className="hidden sm:block">
-                                <button type="button" className="text-slate-900 bg-amber-500 hover:bg-amber-600 focus:ring-4 focus:outline-none focus:ring-amber-300 font-bold rounded-lg text-sm px-5 py-2.5 text-center transition-transform hover:scale-105">
-                                    Inscreva-se
-                                </button>
-                            </Link>
-                            {/* Mobile only buttons */}
-                            <Link href="/application" className="sm:hidden">
-                                <button type="button" className="text-slate-900 bg-amber-500 hover:bg-amber-600 focus:ring-4 focus:outline-none focus:ring-amber-300 font-bold rounded-lg text-xs px-3 py-2 text-center">
-                                    Inscreva-se
-                                </button>
-                            </Link>
-                        </>
-                    )}
-                    <button
-                        onClick={() => setIsOpen(!isOpen)}
-                        type="button"
-                        className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-400 rounded-lg md:hidden hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-600"
-                        aria-controls="navbar-sticky"
-                        aria-expanded={isOpen}
-                    >
-                        <span className="sr-only">Open main menu</span>
-                        {isOpen ? <X className="w-6 h-6" /> : <MenuIcon className="w-6 h-6" />}
-                    </button>
-                </div>
-                <div
-                    className={`${isOpen ? "block" : "hidden"
-                        } items-center justify-between w-full md:flex md:w-auto md:order-1 md:mx-auto transition-all duration-300 ease-in-out`}
-                    id="navbar-sticky"
-                >
-                    <ul className="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-800 rounded-lg bg-slate-800 md:space-x-6 lg:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-transparent">
-                        {navigation.map((item) => (
-                            <li key={item.name}>
+                        </div>
+
+                        {/* Desktop Menu */}
+                        <div className="hidden lg:flex items-center gap-8">
+                            {navigation.map((item) => (
                                 <Link
+                                    key={item.name}
                                     href={item.href}
-                                    className="block py-2 px-3 text-gray-300 rounded hover:bg-slate-700 md:hover:bg-transparent md:hover:text-amber-500 md:p-0 transition-colors text-lg font-serif font-medium tracking-wide"
-                                    onClick={() => setIsOpen(false)}
+                                    target={item.external ? "_blank" : undefined}
+                                    className="text-gray-200 hover:text-white text-sm font-montserrat font-medium tracking-wide transition-colors flex items-center gap-1 group"
                                 >
                                     {item.name}
+                                    {item.dropdown && (
+                                        <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-white transition-colors" />
+                                    )}
                                 </Link>
-                            </li>
-                        ))}
-                        {!user && (
-                            <li className="mt-4 pt-4 border-t border-gray-700 sm:hidden">
+                            ))}
+                        </div>
+
+                        {/* Right Section: Auth & WhatsApp */}
+                        <div className="hidden lg:flex items-center gap-6">
+                            {/* Auth Status */}
+                            {user ? (
+                                <div className="relative">
+                                    <Menu as="div" className="relative ml-3">
+                                        <Menu.Button className="flex items-center gap-2 rounded-full bg-slate-800 p-1 pr-3 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-slate-800">
+                                            <div className="h-8 w-8 rounded-full bg-amber-600 flex items-center justify-center text-white font-bold">
+                                                {user.email?.charAt(0).toUpperCase()}
+                                            </div>
+                                            <span className="text-white font-medium max-w-[100px] truncate">
+                                                {user.user_metadata?.full_name?.split(' ')[0] || "Usuário"}
+                                            </span>
+                                            <ChevronDown className="w-4 h-4 text-gray-400" />
+                                        </Menu.Button>
+                                        <Transition
+                                            enter="transition ease-out duration-100"
+                                            enterFrom="transform opacity-0 scale-95"
+                                            enterTo="transform opacity-100 scale-100"
+                                            leave="transition ease-in duration-75"
+                                            leaveFrom="transform opacity-100 scale-100"
+                                            leaveTo="transform opacity-0 scale-95"
+                                        >
+                                            <Menu.Items className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                                                <Menu.Item>
+                                                    {({ active }) => (
+                                                        <Link
+                                                            href="/application"
+                                                            className={`${active ? 'bg-gray-100' : ''
+                                                                } flex items-center gap-2 px-4 py-2 text-sm text-gray-700`}
+                                                        >
+                                                            <User className="w-4 h-4" />
+                                                            Minha Inscrição
+                                                        </Link>
+                                                    )}
+                                                </Menu.Item>
+                                                <Menu.Item>
+                                                    {({ active }) => (
+                                                        <button
+                                                            onClick={async () => {
+                                                                const { createClient } = await import("@/utils/supabase/client");
+                                                                const supabase = createClient();
+                                                                await supabase.auth.signOut();
+                                                                // Local state update handled by listener or reload
+                                                                window.location.href = "/login";
+                                                            }}
+                                                            className={`${active ? 'bg-gray-100' : ''
+                                                                } flex items-center gap-2 px-4 py-2 text-sm text-gray-700 w-full text-left`}
+                                                        >
+                                                            <LogOut className="w-4 h-4" />
+                                                            Sair
+                                                        </button>
+                                                    )}
+                                                </Menu.Item>
+                                            </Menu.Items>
+                                        </Transition>
+                                    </Menu>
+                                </div>
+                            ) : (
                                 <Link
                                     href="/login"
-                                    className="block py-2 px-3 text-gray-300 rounded hover:bg-slate-700 transition-colors text-sm uppercase tracking-wide font-semibold"
-                                    onClick={() => setIsOpen(false)}
+                                    className="text-white text-sm font-medium hover:text-amber-500 transition-colors"
                                 >
                                     Entrar
                                 </Link>
-                            </li>
-                        )}
-                    </ul>
+                            )}
+
+                            {/* WhatsApp Button */}
+                            <a
+                                href="https://wa.me/5583993322457"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-[#25D366] hover:bg-[#128C7E] text-white p-2 rounded-full transition-colors shadow-lg hover:scale-110 transform duration-200"
+                                aria-label="Contato via WhatsApp"
+                            >
+                                <WhatsAppIcon className="w-6 h-6" />
+                            </a>
+                        </div>
+
+                        {/* Mobile menu button */}
+                        <div className="flex lg:hidden">
+                            <button
+                                onClick={() => setIsOpen(!isOpen)}
+                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-slate-800 hover:text-white focus:outline-none"
+                            >
+                                <span className="sr-only">Open main menu</span>
+                                {isOpen ? (
+                                    <X className="block h-6 w-6" aria-hidden="true" />
+                                ) : (
+                                    <MenuIcon className="block h-6 w-6" aria-hidden="true" />
+                                )}
+                            </button>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </nav>
+
+                {/* Mobile Menu */}
+                <div className={`lg:hidden ${isOpen ? "block" : "hidden"} bg-[#0f172a] border-t border-white/10`}>
+                    <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+                        {navigation.map((item) => (
+                            <Link
+                                key={item.name}
+                                href={item.href}
+                                target={item.external ? "_blank" : undefined}
+                                className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-slate-800 hover:text-white"
+                                onClick={() => setIsOpen(false)}
+                            >
+                                {item.name}
+                            </Link>
+                        ))}
+                    </div>
+                    {/* Mobile Auth & WhatsApp */}
+                    <div className="border-t border-slate-700 pb-4 pt-4">
+                        <div className="px-2 mb-4">
+                            <a
+                                href="https://wa.me/5583993322457"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center gap-2 rounded-md bg-[#25D366] px-3 py-2 text-base font-medium text-white hover:bg-[#128C7E]"
+                            >
+                                <WhatsAppIcon className="w-5 h-5" />
+                                Falar no WhatsApp
+                            </a>
+                        </div>
+                        {user ? (
+                            <div className="px-5">
+                                <div className="flex items-center">
+                                    <div className="flex-shrink-0">
+                                        <div className="h-10 w-10 rounded-full bg-amber-600 flex items-center justify-center text-white font-bold">
+                                            {user.email?.charAt(0).toUpperCase()}
+                                        </div>
+                                    </div>
+                                    <div className="ml-3">
+                                        <div className="text-base font-medium leading-none text-white">{user.user_metadata?.full_name || "Usuário"}</div>
+                                        <div className="text-sm font-medium leading-none text-gray-400 mt-1">{user.email}</div>
+                                    </div>
+                                </div>
+                                <div className="mt-3 space-y-1 px-2">
+                                    <button
+                                        onClick={async () => {
+                                            const { createClient } = await import("@/utils/supabase/client");
+                                            const supabase = createClient();
+                                            await supabase.auth.signOut();
+                                            window.location.href = "/login";
+                                        }}
+                                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-slate-800 hover:text-white w-full text-left"
+                                    >
+                                        Sair
+                                    </button>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="px-5">
+                                <Link
+                                    href="/login"
+                                    className="block w-full rounded-md bg-amber-600 px-3 py-2 text-center text-base font-semibold text-white shadow-sm hover:bg-amber-500"
+                                    onClick={() => setIsOpen(false)}
+                                >
+                                    Login / Entrar
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </nav >
+        </header >
     );
 }

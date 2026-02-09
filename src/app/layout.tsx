@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Cormorant_Garamond } from "next/font/google";
+import { Inter, Cormorant_Garamond, Montserrat } from "next/font/google";
 import "./globals.css";
 import LandingNav from "@/components/layout/LandingNav";
 import Footer from "@/components/layout/Footer";
@@ -14,6 +14,7 @@ const cormorant = Cormorant_Garamond({
   weight: ["300", "400", "500", "600", "700"],
   display: "swap"
 });
+const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat" });
 
 export const metadata: Metadata = {
   title: "Recrutamento - Cidade Viva Education",
@@ -56,7 +57,7 @@ export default async function RootLayout({
 
   return (
     <html lang="pt-BR">
-      <body className={`${inter.variable} ${cormorant.variable} font-sans bg-white`}>
+      <body className={`${inter.variable} ${cormorant.variable} ${montserrat.variable} font-sans bg-white`}>
         <LandingNav user={user} />
         <main className="min-h-screen">
           {children}

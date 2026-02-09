@@ -37,7 +37,7 @@ export default function HeroVideo() {
                         rel: 0,
                         showinfo: 0,
                         start: 25,
-                        end: 50,
+                        end: 40,
                         origin: typeof window !== 'undefined' ? window.location.origin : undefined,
                     },
                     events: {

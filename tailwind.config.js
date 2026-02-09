@@ -13,6 +13,7 @@ module.exports = {
             fontFamily: {
                 sans: ["var(--font-inter)", "sans-serif"],
                 serif: ["var(--font-cormorant)", "serif"],
+                montserrat: ["var(--font-montserrat)", "sans-serif"],
             },
         },
     },

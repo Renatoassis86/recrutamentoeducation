@@ -56,10 +56,9 @@ export default function LoginPage() {
             <div className="flex flex-1 flex-col justify-center items-center px-4 py-8 sm:px-6 lg:flex-none lg:px-20 xl:px-24 z-10 w-full lg:w-1/2">
                 <div className="mx-auto w-full max-w-sm lg:w-96">
                     <div className="text-center lg:text-left">
-                        <Link href="/" className="inline-block">
-                            <h2 className="text-3xl font-bold tracking-tight text-amber-600 font-serif hover:text-amber-500 transition-colors">
-                                Cidade Viva Education
-                            </h2>
+                        <Link href="/" className="inline-block mb-4">
+                            {/* Logo redundant text removed */}
+                            <img src="/logo-education.png" alt="Cidade Viva Education" className="h-16 w-auto" />
                         </Link>
                         <h2 className="mt-6 text-2xl font-bold leading-9 tracking-tight text-slate-900">
                             {isLogin ? "Bem-vindo de volta" : "Criar sua conta"}
@@ -177,30 +176,30 @@ export default function LoginPage() {
                 <div className="absolute inset-0 bg-slate-900/5 z-0"></div>
 
                 {/* Fan Container */}
-                <div className="relative w-full max-w-lg aspect-square flex items-center justify-center scale-75 lg:scale-100 mt-8 lg:mt-0">
+                <div className="relative w-full max-w-lg aspect-square flex items-center justify-center scale-75 lg:scale-100 mt-8 lg:mt-0 group perspective-1000">
 
                     {/* Book 1 - Leftmost */}
-                    <div className="absolute transform -rotate-12 -translate-x-32 translate-y-4 hover:translate-y-0 transition-transform duration-500 z-10 w-48 shadow-2xl rounded-lg">
+                    <div className="absolute transform -rotate-12 -translate-x-32 translate-y-4 transition-all duration-300 z-10 w-48 shadow-2xl rounded-lg cursor-pointer hover:scale-110 hover:-translate-y-4 hover:shadow-2xl hover:shadow-amber-500/20 hover:brightness-105 hover:z-50 hover:rotate-0">
                         <img src="/paideia-1-ano.png" alt="Book 1" className="w-full rounded-lg border-2 border-white/50" />
                     </div>
 
                     {/* Book 2 */}
-                    <div className="absolute transform -rotate-6 -translate-x-16 translate-y-2 hover:translate-y-0 transition-transform duration-500 z-20 w-48 shadow-2xl rounded-lg">
+                    <div className="absolute transform -rotate-6 -translate-x-16 translate-y-2 transition-all duration-300 z-20 w-48 shadow-2xl rounded-lg cursor-pointer hover:scale-110 hover:-translate-y-4 hover:shadow-2xl hover:shadow-amber-500/20 hover:brightness-105 hover:z-50 hover:rotate-0">
                         <img src="/paideia-2.png" alt="Book 2" className="w-full rounded-lg border-2 border-white/50" />
                     </div>
 
                     {/* Book 3 - Center */}
-                    <div className="absolute transform rotate-0 translate-y-0 hover:-translate-y-2 transition-transform duration-500 z-30 w-52 shadow-2xl rounded-lg scale-110">
+                    <div className="absolute transform rotate-0 translate-y-0 transition-all duration-300 z-30 w-52 shadow-2xl rounded-lg scale-105 cursor-pointer hover:scale-110 hover:-translate-y-6 hover:shadow-2xl hover:shadow-amber-500/20 hover:brightness-105 hover:z-50">
                         <img src="/paideia-3.png" alt="Book 3" className="w-full rounded-lg border-2 border-white/50" />
                     </div>
 
                     {/* Book 4 */}
-                    <div className="absolute transform rotate-6 translate-x-16 translate-y-2 hover:translate-y-0 transition-transform duration-500 z-20 w-48 shadow-2xl rounded-lg">
+                    <div className="absolute transform rotate-6 translate-x-16 translate-y-2 transition-all duration-300 z-20 w-48 shadow-2xl rounded-lg cursor-pointer hover:scale-110 hover:-translate-y-4 hover:shadow-2xl hover:shadow-amber-500/20 hover:brightness-105 hover:z-50 hover:rotate-0">
                         <img src="/paideia-4.png" alt="Book 4" className="w-full rounded-lg border-2 border-white/50" />
                     </div>
 
                     {/* Book 5 - Rightmost */}
-                    <div className="absolute transform rotate-12 translate-x-32 translate-y-4 hover:translate-y-0 transition-transform duration-500 z-10 w-48 shadow-2xl rounded-lg">
+                    <div className="absolute transform rotate-12 translate-x-32 translate-y-4 transition-all duration-300 z-10 w-48 shadow-2xl rounded-lg cursor-pointer hover:scale-110 hover:-translate-y-4 hover:shadow-2xl hover:shadow-amber-500/20 hover:brightness-105 hover:z-50 hover:rotate-0">
                         <img src="/paideia-5.png" alt="Book 5" className="w-full rounded-lg border-2 border-white/50" />
                     </div>
 
