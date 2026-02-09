@@ -139,7 +139,7 @@ export default function LandingNav({ user }: LandingNavProps) {
                             <li key={item.name}>
                                 <Link
                                     href={item.href}
-                                    className="block py-2 px-3 text-gray-300 rounded hover:bg-slate-700 md:hover:bg-transparent md:hover:text-amber-500 md:p-0 transition-colors text-sm uppercase tracking-wide font-semibold"
+                                    className="block py-2 px-3 text-gray-300 rounded hover:bg-slate-700 md:hover:bg-transparent md:hover:text-amber-500 md:p-0 transition-colors text-lg font-serif font-medium tracking-wide"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     {item.name}

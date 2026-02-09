@@ -51,20 +51,12 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex min-h-screen">
+        <div className="flex min-h-screen flex-col-reverse lg:flex-row">
             {/* Left: Form Section */}
             <div className="flex flex-1 flex-col justify-center px-4 py-12 sm:px-6 lg:flex-none lg:px-20 xl:px-24 bg-white z-10 w-full lg:w-1/2">
                 <div className="mx-auto w-full max-w-sm lg:w-96">
                     <div className="text-center lg:text-left">
-                        {/* Mobile/Tablet Image Banner */}
-                        <div className="lg:hidden mb-8 w-full max-w-[280px] mx-auto relative group">
-                            <div className="absolute inset-0 bg-amber-500/20 rounded-xl blur-xl transform group-hover:scale-105 transition-transform"></div>
-                            <img
-                                src="/paideia-1-ano.png"
-                                alt="Material Didático Paideia"
-                                className="relative rounded-xl shadow-lg transform rotate-3 hover:rotate-0 transition-transform duration-500 border-4 border-white"
-                            />
-                        </div>
+                        {/* Mobile/Tablet Image Banner - REMOVED since we show the main panel now */}
 
                         <Link href="/" className="inline-block">
                             <h2 className="text-3xl font-bold tracking-tight text-amber-600 font-serif hover:text-amber-500 transition-colors">
@@ -183,7 +175,7 @@ export default function LoginPage() {
             </div>
 
             {/* Right: Image Section (Vertical Layout) */}
-            <div className="hidden lg:flex flex-1 relative bg-slate-50 overflow-hidden">
+            <div className="flex relative bg-slate-50 overflow-hidden w-full lg:w-1/2 h-96 lg:h-auto border-b lg:border-b-0 lg:border-l border-slate-200">
                 <div className="absolute inset-0 bg-slate-900/10 z-10 pointer-events-none"></div>
 
                 {/* Scrollable Container */}
