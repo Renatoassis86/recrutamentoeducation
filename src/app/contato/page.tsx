@@ -12,22 +12,42 @@ export default function Contato() {
         subject: "",
         message: ""
     });
+    const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        setStatus("submitting");
 
-        // Construct mailto link
-        const recipient = "administrativo.education@cidadeviva.org";
-        const subject = encodeURIComponent(`[Contato Site] ${formData.subject}`);
-        const body = encodeURIComponent(
-            `Nome: ${formData.name}\n` +
-            `Email: ${formData.email}\n` +
-            `Telefone: ${formData.phone}\n\n` +
-            `Mensagem:\n${formData.message}`
-        );
+        try {
+            const res = await fetch("https://formsubmit.co/ajax/administrativo.education@cidadeviva.org", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                    ...formData,
+                    _subject: `[Contato Site] ${formData.subject}`,
+                    _captcha: "false"
+                })
+            });
 
-        // Open email client
-        window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
+            if (res.ok) {
+                setStatus("success");
+                setFormData({
+                    name: "",
+                    email: "",
+                    phone: "",
+                    subject: "",
+                    message: ""
+                });
+            } else {
+                setStatus("error");
+            }
+        } catch (error) {
+            console.error(error);
+            setStatus("error");
+        }
     };
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -132,89 +152,123 @@ export default function Contato() {
                                 Preencha o formulário abaixo e entraremos em contato o mais breve possível.
                             </p>
 
-                            <form onSubmit={handleSubmit} className="space-y-6">
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            {status === "success" ? (
+                                <div className="bg-green-50 text-green-700 p-6 rounded-xl border border-green-200 text-center animate-fade-in">
+                                    <h4 className="text-xl font-bold mb-2">Mensagem Enviada!</h4>
+                                    <p>Obrigado pelo contato. Responderemos em breve.</p>
+                                    <button
+                                        onClick={() => setStatus("idle")}
+                                        className="mt-4 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition"
+                                    >
+                                        Enviar outra mensagem
+                                    </button>
+                                </div>
+                            ) : status === "error" ? (
+                                <div className="bg-red-50 text-red-700 p-6 rounded-xl border border-red-200 text-center animate-fade-in">
+                                    <h4 className="text-xl font-bold mb-2">Erro ao Enviar</h4>
+                                    <p>Ocorreu um erro ao enviar sua mensagem. Por favor, tente novamente ou use o email direto.</p>
+                                    <button
+                                        onClick={() => setStatus("idle")}
+                                        className="mt-4 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"
+                                    >
+                                        Tentar Novamente
+                                    </button>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleSubmit} className="space-y-6">
+                                    <input type="hidden" name="_captcha" value="false" />
+
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                        <div className="space-y-2">
+                                            <label htmlFor="name" className="text-sm font-medium text-slate-900">Nome Completo</label>
+                                            <input
+                                                type="text"
+                                                id="name"
+                                                name="name"
+                                                required
+                                                value={formData.name}
+                                                onChange={handleChange}
+                                                disabled={status === "submitting"}
+                                                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all placeholder:text-gray-300 disabled:opacity-50"
+                                                placeholder="Seu nome"
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <label htmlFor="phone" className="text-sm font-medium text-slate-900">Telefone</label>
+                                            <input
+                                                type="tel"
+                                                id="phone"
+                                                name="phone"
+                                                value={formData.phone}
+                                                onChange={handleChange}
+                                                disabled={status === "submitting"}
+                                                className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all placeholder:text-gray-300 disabled:opacity-50"
+                                                placeholder="(00) 00000-0000"
+                                            />
+                                        </div>
+                                    </div>
+
                                     <div className="space-y-2">
-                                        <label htmlFor="name" className="text-sm font-medium text-slate-900">Nome Completo</label>
+                                        <label htmlFor="email" className="text-sm font-medium text-slate-900">Email</label>
+                                        <input
+                                            type="email"
+                                            id="email"
+                                            name="email"
+                                            required
+                                            value={formData.email}
+                                            onChange={handleChange}
+                                            disabled={status === "submitting"}
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all placeholder:text-gray-300 disabled:opacity-50"
+                                            placeholder="seu@email.com"
+                                        />
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <label htmlFor="subject" className="text-sm font-medium text-slate-900">Assunto</label>
                                         <input
                                             type="text"
-                                            id="name"
-                                            name="name"
+                                            id="subject"
+                                            name="subject"
                                             required
-                                            value={formData.name}
+                                            value={formData.subject}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all placeholder:text-gray-300"
-                                            placeholder="Seu nome"
+                                            disabled={status === "submitting"}
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all placeholder:text-gray-300 disabled:opacity-50"
+                                            placeholder="Qual o motivo do contato?"
                                         />
                                     </div>
+
                                     <div className="space-y-2">
-                                        <label htmlFor="phone" className="text-sm font-medium text-slate-900">Telefone</label>
-                                        <input
-                                            type="tel"
-                                            id="phone"
-                                            name="phone"
-                                            value={formData.phone}
+                                        <label htmlFor="message" className="text-sm font-medium text-slate-900">Mensagem</label>
+                                        <textarea
+                                            id="message"
+                                            name="message"
+                                            required
+                                            rows={5}
+                                            value={formData.message}
                                             onChange={handleChange}
-                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all placeholder:text-gray-300"
-                                            placeholder="(00) 00000-0000"
-                                        />
+                                            disabled={status === "submitting"}
+                                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all placeholder:text-gray-300 resize-none disabled:opacity-50"
+                                            placeholder="Descreva sua dúvida ou solicitação..."
+                                        ></textarea>
                                     </div>
-                                </div>
 
-                                <div className="space-y-2">
-                                    <label htmlFor="email" className="text-sm font-medium text-slate-900">Email</label>
-                                    <input
-                                        type="email"
-                                        id="email"
-                                        name="email"
-                                        required
-                                        value={formData.email}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all placeholder:text-gray-300"
-                                        placeholder="seu@email.com"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label htmlFor="subject" className="text-sm font-medium text-slate-900">Assunto</label>
-                                    <input
-                                        type="text"
-                                        id="subject"
-                                        name="subject"
-                                        required
-                                        value={formData.subject}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all placeholder:text-gray-300"
-                                        placeholder="Qual o motivo do contato?"
-                                    />
-                                </div>
-
-                                <div className="space-y-2">
-                                    <label htmlFor="message" className="text-sm font-medium text-slate-900">Mensagem</label>
-                                    <textarea
-                                        id="message"
-                                        name="message"
-                                        required
-                                        rows={5}
-                                        value={formData.message}
-                                        onChange={handleChange}
-                                        className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-amber-500 focus:ring-2 focus:ring-amber-200 outline-none transition-all placeholder:text-gray-300 resize-none"
-                                        placeholder="Descreva sua dúvida ou solicitação..."
-                                    ></textarea>
-                                </div>
-
-                                <button
-                                    type="submit"
-                                    className="w-full py-4 text-white font-bold text-lg bg-slate-900 hover:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2 group"
-                                >
-                                    Enviar Mensagem
-                                    <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                </button>
-
-                                <p className="text-xs text-center text-gray-400 mt-4">
-                                    Ao enviar, seu cliente de email padrão será aberto com as informações preenchidas.
-                                </p>
-                            </form>
+                                    <button
+                                        type="submit"
+                                        disabled={status === "submitting"}
+                                        className="w-full py-4 text-white font-bold text-lg bg-slate-900 hover:bg-slate-800 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all flex items-center justify-center gap-2 group disabled:opacity-70 disabled:hover:translate-y-0"
+                                    >
+                                        {status === "submitting" ? (
+                                            <>Enviando...</>
+                                        ) : (
+                                            <>
+                                                Enviar Mensagem
+                                                <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                            </>
+                                        )}
+                                    </button>
+                                </form>
+                            )}
                         </div>
                     </div>
                 </div>

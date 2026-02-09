@@ -170,63 +170,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. OIKOS SPOTLIGHT SECTION */}
-      <section id="oikos" className="py-24 bg-slate-900 text-white overflow-hidden relative font-sans">
-        <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="flex flex-col lg:flex-row gap-16 items-center">
-            {/* Visual Side */}
-            <div className="w-full lg:w-4/12 relative order-2 lg:order-1 flex flex-col items-center justify-center">
-              <div className="relative w-full max-w-[320px] aspect-[9/16] rounded-3xl overflow-hidden shadow-2xl bg-black border-4 border-slate-800 group">
-                <video
-                  className="w-full h-full object-cover opacity-90 group-hover:opacity-100 transition-opacity"
-                  controls
-                  preload="metadata"
-                  autoPlay={false}
-                  muted
-                  loop
-                  playsInline
-                  poster="/poster_layla.png"
-                >
-                  <source src="/videos/Livro Ingles inf 2.mp4#t=3" type="video/mp4" />
-                  Seu navegador não suporta a tag de vídeo.
-                </video>
-              </div>
-              <div className="mt-6 bg-amber-600 text-white p-4 rounded-xl shadow-xl w-full max-w-[320px] z-10 text-center">
-                <p className="font-bold text-lg mb-1">Layla Ramos</p>
-                <p className="text-xs text-amber-100 uppercase tracking-wider">Consultora Pedagógica</p>
-              </div>
-            </div>
 
-            {/* Content Side */}
-            <div className="w-full lg:w-8/12 order-1 lg:order-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/20 text-amber-400 text-xs font-bold uppercase tracking-widest mb-6 border border-amber-500/30">
-                <BookOpen className="h-4 w-4" />
-                Destaque Editorial
-              </div>
-              <h2 className="text-3xl font-bold tracking-tight text-white sm:text-4xl mb-6 font-serif">
-                OIKOS – Inglês | Nível 2
-              </h2>
-              <p className="text-lg text-gray-300 mb-8 leading-relaxed font-light">
-                Desenvolvido especialmente para famílias educadoras que desejam introduzir a língua inglesa desde a Primeira Infância. Um material estruturado, concreto e adequado à idade de 2 anos, respeitando o ritmo da criança.
-              </p>
-
-              <ul className="space-y-4 text-gray-300">
-                {[
-                  "Introdução à alfabetização em inglês (método fônico).",
-                  "Trabalho com sons das letras e vogais.",
-                  "Vocabulário concreto: cores, formas, animais.",
-                  "Desenvolvimento das 4 habilidades (listening, speaking, reading, writing)."
-                ].map((item, idx) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <CheckCircle2 className="h-5 w-5 text-amber-500 mt-1 flex-shrink-0" />
-                    <span className="text-sm leading-relaxed">{item}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </div>
-      </section>
 
 
 
