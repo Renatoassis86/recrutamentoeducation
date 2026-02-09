@@ -51,16 +51,13 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="flex min-h-[calc(100vh-64px)] flex-col-reverse lg:flex-row mt-16 bg-white overflow-hidden">
+        <div className="flex min-h-screen flex-col-reverse lg:flex-row pt-32 bg-slate-50 overflow-hidden">
             {/* Left: Form Section */}
             <div className="flex flex-1 flex-col justify-center items-center px-4 py-8 sm:px-6 lg:flex-none lg:px-20 xl:px-24 z-10 w-full lg:w-1/2">
                 <div className="mx-auto w-full max-w-sm lg:w-96">
                     <div className="text-center lg:text-left">
-                        <Link href="/" className="inline-block mb-4">
-                            {/* Logo redundant text removed */}
-                            <img src="/logo-education.png" alt="Cidade Viva Education" className="h-16 w-auto" />
-                        </Link>
-                        <h2 className="mt-6 text-2xl font-bold leading-9 tracking-tight text-slate-900">
+                        {/* Logo removed as requested to avoid duplication with Header */}
+                        <h2 className="mt-6 text-2xl font-bold leading-9 tracking-tight text-slate-900 font-serif">
                             {isLogin ? "Bem-vindo de volta" : "Criar sua conta"}
                         </h2>
                         <p className="mt-2 text-sm leading-6 text-slate-600">
@@ -73,8 +70,13 @@ export default function LoginPage() {
                             <div className="mb-6 rounded-md bg-red-50 p-4 text-sm text-red-700 flex gap-2 items-start animate-fade-in-up">
                                 <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
                                 <div>
-                                    <p className="font-medium">Ocorreu um erro</p>
+                                    <p className="font-bold">Atenção</p>
                                     <p>{error}</p>
+                                    {error.includes("Environment Variables") && (
+                                        <p className="mt-2 text-xs text-red-800 bg-red-100 p-2 rounded">
+                                            <strong>Para o Administrador:</strong> Configure as variáveis de ambiente <code>NEXT_PUBLIC_SUPABASE_URL</code> e <code>NEXT_PUBLIC_SUPABASE_ANON_KEY</code> no painel da Vercel (Project Settings &gt; Environment Variables).
+                                        </p>
+                                    )}
                                     {error.includes("já está cadastrado") && !isLogin && (
                                         <button
                                             onClick={() => { setIsLogin(true); setError(null); }}
@@ -150,7 +152,7 @@ export default function LoginPage() {
                                 <div className="w-full border-t border-gray-200" />
                             </div>
                             <div className="relative flex justify-center text-sm font-medium leading-6">
-                                <span className="bg-white px-6 text-slate-900">
+                                <span className="bg-slate-50 px-6 text-slate-900">
                                     {isLogin ? "Novo por aqui?" : "Já tem conta?"}
                                 </span>
                             </div>
@@ -172,35 +174,35 @@ export default function LoginPage() {
             </div>
 
             {/* Right: Fan Book Section */}
-            <div className="flex relative bg-slate-100 w-full lg:w-1/2 h-[300px] lg:h-auto items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-l border-slate-200">
+            <div className="flex relative bg-slate-100 w-full lg:w-1/2 min-h-[400px] lg:h-auto items-center justify-center overflow-hidden border-b lg:border-b-0 lg:border-l border-slate-200">
                 <div className="absolute inset-0 bg-slate-900/5 z-0"></div>
 
                 {/* Fan Container */}
                 <div className="relative w-full max-w-lg aspect-square flex items-center justify-center scale-75 lg:scale-100 mt-8 lg:mt-0 group perspective-1000">
 
-                    {/* Book 1 - Leftmost */}
+                    {/* Book 1 - Leftmost (Paideia 2) */}
                     <div className="absolute transform -rotate-12 -translate-x-32 translate-y-4 hover:translate-y-[-20px] hover:scale-110 hover:z-50 hover:rotate-0 transition-all duration-300 z-10 w-48 shadow-2xl rounded-lg cursor-pointer">
-                        <img src="/paideia-1-ano.png" alt="Book 1" className="w-full rounded-lg border-2 border-white/50" />
-                    </div>
-
-                    {/* Book 2 */}
-                    <div className="absolute transform -rotate-6 -translate-x-16 translate-y-2 hover:translate-y-[-20px] hover:scale-110 hover:z-50 hover:rotate-0 transition-all duration-300 z-20 w-48 shadow-2xl rounded-lg cursor-pointer">
                         <img src="/paideia-2.png" alt="Book 2" className="w-full rounded-lg border-2 border-white/50" />
                     </div>
 
-                    {/* Book 3 - Center */}
-                    <div className="absolute transform rotate-0 translate-y-0 hover:translate-y-[-20px] hover:scale-110 hover:z-50 transition-all duration-300 z-30 w-52 shadow-2xl rounded-lg scale-105 cursor-pointer">
+                    {/* Book 2 (Paideia 3) */}
+                    <div className="absolute transform -rotate-6 -translate-x-16 translate-y-2 hover:translate-y-[-20px] hover:scale-110 hover:z-50 hover:rotate-0 transition-all duration-300 z-20 w-48 shadow-2xl rounded-lg cursor-pointer">
                         <img src="/paideia-3.png" alt="Book 3" className="w-full rounded-lg border-2 border-white/50" />
                     </div>
 
-                    {/* Book 4 */}
-                    <div className="absolute transform rotate-6 translate-x-16 translate-y-2 hover:translate-y-[-20px] hover:scale-110 hover:z-50 hover:rotate-0 transition-all duration-300 z-20 w-48 shadow-2xl rounded-lg cursor-pointer">
+                    {/* Book 3 - Center (Paideia 4) */}
+                    <div className="absolute transform rotate-0 translate-y-0 hover:translate-y-[-20px] hover:scale-110 hover:z-50 transition-all duration-300 z-30 w-52 shadow-2xl rounded-lg scale-105 cursor-pointer">
                         <img src="/paideia-4.png" alt="Book 4" className="w-full rounded-lg border-2 border-white/50" />
                     </div>
 
-                    {/* Book 5 - Rightmost */}
-                    <div className="absolute transform rotate-12 translate-x-32 translate-y-4 hover:translate-y-[-20px] hover:scale-110 hover:z-50 hover:rotate-0 transition-all duration-300 z-10 w-48 shadow-2xl rounded-lg cursor-pointer">
+                    {/* Book 4 (Paideia 5) */}
+                    <div className="absolute transform rotate-6 translate-x-16 translate-y-2 hover:translate-y-[-20px] hover:scale-110 hover:z-50 hover:rotate-0 transition-all duration-300 z-20 w-48 shadow-2xl rounded-lg cursor-pointer">
                         <img src="/paideia-5.png" alt="Book 5" className="w-full rounded-lg border-2 border-white/50" />
+                    </div>
+
+                    {/* Book 5 - Rightmost (Paideia 1) */}
+                    <div className="absolute transform rotate-12 translate-x-32 translate-y-4 hover:translate-y-[-20px] hover:scale-110 hover:z-50 hover:rotate-0 transition-all duration-300 z-10 w-48 shadow-2xl rounded-lg cursor-pointer">
+                        <img src="/paideia-1-ano.png" alt="Book 1" className="w-full rounded-lg border-2 border-white/50" />
                     </div>
 
                     {/* Logo/Badge */}
