@@ -25,49 +25,26 @@ export default function Home() {
 
         <div className="relative z-20 mx-auto max-w-6xl px-6 lg:px-8 text-center animate-fade-in-up flex flex-col items-center">
 
-          <div className="w-full max-w-4xl mx-auto mb-10 animate-fade-in-down">
-            <div className="bg-amber-600/90 backdrop-blur-md border border-amber-400/50 rounded-xl p-4 md:p-6 shadow-2xl transform hover:scale-105 transition-transform duration-300 relative overflow-hidden group">
-              <div className="absolute top-0 right-0 -mt-4 -mr-4 w-24 h-24 bg-white/10 rounded-full blur-2xl group-hover:bg-white/20 transition-colors"></div>
-
-              <div className="flex flex-col md:flex-row items-center justify-between gap-4 relative z-10">
-                <div className="flex items-center gap-4 text-left">
-                  <div className="bg-white p-3 rounded-full shadow-lg animate-pulse">
-                    <PenTool className="h-6 w-6 text-amber-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-white font-bold text-lg md:text-xl leading-tight font-serif">Chamada Editorial Aberta</h3>
-                    <p className="text-amber-100/90 text-sm md:text-base font-light">Estamos selecionando autores para nosso material didático.</p>
-                  </div>
-                </div>
-
-                <Link href="/application" className="w-full md:w-auto px-6 py-3 bg-white text-amber-700 font-bold rounded-lg shadow-lg hover:bg-amber-50 active:scale-95 transition-all text-center whitespace-nowrap flex items-center justify-center gap-2">
-                  Participar <ArrowRight className="h-4 w-4" />
-                </Link>
-              </div>
-            </div>
-          </div>
-
           <div className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-amber-500 bg-slate-950/80 border border-amber-500/30 uppercase tracking-widest mb-8 backdrop-blur-sm shadow-xl">
-            Sistema Cidade Viva Education
+            Chamada Editorial Aberta
           </div>
 
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl font-serif text-shadow-lg mb-6">
-            Transforme a educação <br />
-            na sua escola com o <br />
+          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl font-serif text-shadow-lg mb-6 max-w-4xl">
+            Faça parte da construção do <br />
             <span className="text-amber-500">Currículo Paideia</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-100 max-w-2xl mx-auto font-medium text-shadow">
-            Cristão, clássico, bilíngue e integral para a formação de alunos com sabedoria e eloquência.
+            Estamos selecionando autores licenciados e pedagogos para desenvolver materiais didáticos que integrarão uma educação cristã, clássica e de excelência.
           </p>
 
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6">
+            <Link href="/application" className="rounded-full bg-amber-600 px-8 py-4 text-base font-bold text-white shadow-xl hover:bg-amber-500 transition-all hover:-translate-y-1 active:translate-y-0 min-w-[200px] text-center border border-amber-500">
+              Quero ser um Autor
+            </Link>
             <a href="#paideia" className="rounded-full bg-white px-8 py-4 text-base font-bold text-slate-900 shadow-xl hover:bg-gray-100 transition-all hover:-translate-y-1 active:translate-y-0 flex items-center group min-w-[200px] justify-center">
-              Conheça o Paideia
+              Conheça o Projeto
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform text-amber-600" />
             </a>
-            <Link href="/application" className="rounded-full bg-amber-600 px-8 py-4 text-base font-bold text-white shadow-xl hover:bg-amber-500 transition-all hover:-translate-y-1 active:translate-y-0 min-w-[200px] text-center border border-amber-500">
-              Seja um Autor
-            </Link>
           </div>
         </div>
       </section>
@@ -75,27 +52,29 @@ export default function Home() {
       {/* 2. QUEM SOMOS */}
       <section id="quem-somos" className="py-24 bg-white scroll-mt-20">
         <div className="mx-auto max-w-7xl px-6 lg:px-8">
-          <div className="text-center mb-12">
+          <div className="text-center mb-16">
             <h2 className="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl font-serif">
               Quem Somos
             </h2>
             <div className="w-24 h-1 bg-amber-500 mx-auto mt-4 rounded-full"></div>
           </div>
 
-          <div className="flow-root">
-            {/* Institutional Video - Floated Right */}
-            <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-slate-100 aspect-video group mb-8 lg:mb-4 lg:ml-10 lg:w-[500px] float-none lg:float-right">
-              <iframe
-                className="w-full h-full group-hover:scale-105 transition-transform duration-700"
-                src="https://www.youtube.com/embed/gU00NwWoG8w?start=25&end=40"
-                title="Cidade Viva Education Institucional"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
+          <div className="flex flex-col lg:flex-row gap-16 items-center">
+            {/* Institutional Video - Left Side */}
+            <div className="w-full lg:w-1/2">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-slate-100 aspect-video group">
+                <iframe
+                  className="w-full h-full group-hover:scale-105 transition-transform duration-700"
+                  src="https://www.youtube.com/embed/gU00NwWoG8w?start=25&end=40"
+                  title="Cidade Viva Education Institucional"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
             </div>
 
-            {/* Text Content */}
-            <div className="text-lg text-gray-700 leading-relaxed font-light text-justify">
+            {/* Text Content - Right Side */}
+            <div className="w-full lg:w-1/2 text-lg text-gray-700 leading-relaxed font-light text-justify">
               <h3 className="text-2xl font-bold text-slate-900 mb-6 font-serif block">Nossa História</h3>
 
               <p className="mb-6">

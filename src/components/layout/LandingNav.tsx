@@ -20,12 +20,10 @@ const topLinks = [
     { name: "Education", href: "https://cidadeviva.education/", current: true },
 ];
 
-const navigation = [
-    { name: "Institucional", href: "#paideia", dropdown: true },
-    { name: "Currículos", href: "#curriculos", dropdown: true },
-    { name: "Conteúdos", href: "#conteudos" },
-    { name: "Livraria", href: "https://livraria.cidadeviva.org", external: true },
-    { name: "Plataforma", href: "https://plataforma.cidadeviva.com.br", external: true },
+const navigation: { name: string; href: string; external?: boolean; dropdown?: boolean; }[] = [
+    { name: "Institucional", href: "#quem-somos" },
+    { name: "Chamada Editorial", href: "#chamada" },
+    { name: "Termo de Referência", href: "#termo" },
     { name: "Contato", href: "#contato" },
 ];
 
