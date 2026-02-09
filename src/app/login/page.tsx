@@ -178,36 +178,64 @@ export default function LoginPage() {
                 </div>
             </div>
 
-            {/* Right: Image Section */}
-            <div className="relative hidden w-0 flex-1 lg:block h-screen sticky top-0 overflow-hidden bg-slate-50">
-                <div className="absolute inset-0 bg-slate-900/10 z-10 transition-colors"></div>
-                {/* Book Grid Overlay */}
-                <div className="absolute inset-0 overflow-y-auto scrollbar-hide flex items-center justify-center bg-slate-100">
-                    <div className="flex flex-col gap-8 p-12 max-w-lg w-full">
-                        <div className="relative group perspective-1000">
-                            <div className="absolute inset-0 bg-slate-900/5 rounded-xl transform translate-x-2 translate-y-2 duration-300 group-hover:translate-x-3 group-hover:translate-y-3"></div>
-                            <img src="/paideia-1-ano.png" alt="Capa Livro 1" className="relative w-full rounded-xl shadow-2xl transition-all duration-300 transform group-hover:-translate-y-1 group-hover:scale-[1.02] border-4 border-white" />
+            {/* Right: Image Section (Vertical Layout) */}
+            <div className="hidden lg:flex flex-1 relative bg-slate-50 overflow-hidden">
+                <div className="absolute inset-0 bg-slate-900/10 z-10 pointer-events-none"></div>
+
+                {/* Scrollable Container */}
+                <div className="w-full h-full overflow-y-auto scrollbar-hide">
+                    <div className="flex flex-col items-center gap-12 py-16 px-8 min-h-full">
+
+                        <div className="text-center mb-4 z-20">
+                            <h3 className="font-serif text-3xl font-bold text-slate-800 mb-2">Coleção Paideia</h3>
+                            <div className="w-20 h-1.5 bg-amber-500 mx-auto rounded-full"></div>
                         </div>
 
-                        <div className="relative group perspective-1000">
-                            <div className="absolute inset-0 bg-slate-900/5 rounded-xl transform translate-x-2 translate-y-2 duration-300 group-hover:translate-x-3 group-hover:translate-y-3"></div>
-                            <img src="/paideia-2.png" alt="Capa Livro 2" className="relative w-full rounded-xl shadow-2xl transition-all duration-300 transform group-hover:-translate-y-1 group-hover:scale-[1.02] border-4 border-white" />
+                        {/* Imagem 1 */}
+                        <div className="relative group max-w-sm w-full transition-transform duration-300 hover:scale-[1.02]">
+                            <div className="absolute inset-0 bg-amber-600/20 rounded-lg transform translate-x-4 translate-y-4"></div>
+                            <div className="relative rounded-lg overflow-hidden shadow-2xl border-8 border-white">
+                                <img src="/paideia-1-ano.png" alt="Capa Livro 1" className="w-full h-auto object-cover" />
+                            </div>
                         </div>
 
-                        <div className="relative group perspective-1000">
-                            <div className="absolute inset-0 bg-slate-900/5 rounded-xl transform translate-x-2 translate-y-2 duration-300 group-hover:translate-x-3 group-hover:translate-y-3"></div>
-                            <img src="/paideia-3.png" alt="Capa Livro 3" className="relative w-full rounded-xl shadow-2xl transition-all duration-300 transform group-hover:-translate-y-1 group-hover:scale-[1.02] border-4 border-white" />
+                        {/* Imagem 2 */}
+                        <div className="relative group max-w-sm w-full transition-transform duration-300 hover:scale-[1.02]">
+                            <div className="absolute inset-0 bg-blue-600/20 rounded-lg transform translate-x-4 translate-y-4"></div>
+                            <div className="relative rounded-lg overflow-hidden shadow-2xl border-8 border-white">
+                                <img src="/paideia-2.png" alt="Capa Livro 2" className="w-full h-auto object-cover" />
+                            </div>
                         </div>
 
-                        <div className="relative group perspective-1000">
-                            <div className="absolute inset-0 bg-slate-900/5 rounded-xl transform translate-x-2 translate-y-2 duration-300 group-hover:translate-x-3 group-hover:translate-y-3"></div>
-                            <img src="/paideia-4.png" alt="Capa Livro 4" className="relative w-full rounded-xl shadow-2xl transition-all duration-300 transform group-hover:-translate-y-1 group-hover:scale-[1.02] border-4 border-white" />
+                        {/* Imagem 3 */}
+                        <div className="relative group max-w-sm w-full transition-transform duration-300 hover:scale-[1.02]">
+                            <div className="absolute inset-0 bg-green-600/20 rounded-lg transform translate-x-4 translate-y-4"></div>
+                            <div className="relative rounded-lg overflow-hidden shadow-2xl border-8 border-white">
+                                <img src="/paideia-3.png" alt="Capa Livro 3" className="w-full h-auto object-cover" />
+                            </div>
                         </div>
 
-                        <div className="relative group perspective-1000">
-                            <div className="absolute inset-0 bg-slate-900/5 rounded-xl transform translate-x-2 translate-y-2 duration-300 group-hover:translate-x-3 group-hover:translate-y-3"></div>
-                            <img src="/paideia-5.png" alt="Capa Livro 5" className="relative w-full rounded-xl shadow-2xl transition-all duration-300 transform group-hover:-translate-y-1 group-hover:scale-[1.02] border-4 border-white" />
+                        {/* Imagem 4 */}
+                        <div className="relative group max-w-sm w-full transition-transform duration-300 hover:scale-[1.02]">
+                            <div className="absolute inset-0 bg-red-600/20 rounded-lg transform translate-x-4 translate-y-4"></div>
+                            <div className="relative rounded-lg overflow-hidden shadow-2xl border-8 border-white">
+                                <img src="/paideia-4.png" alt="Capa Livro 4" className="w-full h-auto object-cover" />
+                            </div>
                         </div>
+
+                        {/* Imagem 5 */}
+                        <div className="relative group max-w-sm w-full transition-transform duration-300 hover:scale-[1.02]">
+                            <div className="absolute inset-0 bg-purple-600/20 rounded-lg transform translate-x-4 translate-y-4"></div>
+                            <div className="relative rounded-lg overflow-hidden shadow-2xl border-8 border-white">
+                                <img src="/paideia-5.png" alt="Capa Livro 5" className="w-full h-auto object-cover" />
+                            </div>
+                        </div>
+
+                        {/* Footer Logo in column */}
+                        <div className="mt-8 opacity-80 max-w-[150px]">
+                            <img src="/logo-education.png" alt="Cidade Viva Education" className="w-full h-auto" />
+                        </div>
+
                     </div>
                 </div>
             </div>
