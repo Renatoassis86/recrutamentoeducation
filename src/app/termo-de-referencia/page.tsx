@@ -15,9 +15,7 @@ export default function TermoReferencia() {
 
                     {/* Header */}
                     <header className="mb-12 border-b border-slate-200 pb-12">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 text-xs font-bold uppercase tracking-widest mb-6 border border-blue-500/20">
-                            Documento Técnico
-                        </div>
+
                         <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl font-serif mb-6 leading-tight">
                             Termo de Referência: Especificações Técnicas para Produção Didática
                         </h1>

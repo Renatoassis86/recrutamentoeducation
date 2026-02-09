@@ -15,9 +15,6 @@ export default function ChamadaEditorial() {
 
                     {/* Header */}
                     <header className="mb-12 border-b border-slate-200 pb-12">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold uppercase tracking-widest mb-6 border border-amber-500/20">
-                            Chamada Oficial
-                        </div>
                         <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl font-serif mb-6 leading-tight">
                             Chamada Editorial para Prospecção de Autores do Sistema Cidade Viva Education
                         </h1>

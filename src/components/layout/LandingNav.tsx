@@ -42,7 +42,7 @@ export default function LandingNav({ user }: { user?: any }) {
     return (
         <header className="fixed w-full z-50 flex flex-col font-sans">
             {/* Top Bar */}
-            <div className="bg-[#0f172a] text-white py-2 px-4 sm:px-6 lg:px-8 flex justify-between items-center text-xs md:text-sm border-b border-white/5 relative z-50">
+            <div className="bg-[#0f172a] text-white py-2 px-6 lg:px-12 flex justify-between items-center text-xs md:text-sm border-b border-white/5 relative z-50">
                 <span className="font-medium tracking-wide hidden sm:block">Educação que permanece</span>
                 <nav className="flex gap-4 md:gap-6 mx-auto sm:mx-0">
                     {topLinks.map((link) => (
@@ -62,7 +62,7 @@ export default function LandingNav({ user }: { user?: any }) {
 
             {/* Main Nav */}
             <nav className={`bg-[#0f172a]/95 backdrop-blur-sm border-b border-white/5 transition-all duration-300 ${scrolled ? "py-2" : "py-4"}`}>
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                <div className="w-full px-6 lg:px-12">
                     <div className="flex h-16 justify-between items-center">
                         {/* Logo */}
                         <div className="flex-shrink-0 flex items-center gap-3">

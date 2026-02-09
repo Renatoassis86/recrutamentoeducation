@@ -10,23 +10,26 @@ export default function Institucional() {
         <div className="bg-slate-50 min-h-screen font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900 flex flex-col">
             <LandingNav />
 
-            <main className="flex-grow pt-32 pb-24">
+            <main className="flex-grow pt-48 pb-24">
                 <section className="mx-auto max-w-7xl px-6 lg:px-8">
 
                     {/* Header Section */}
                     <div className="text-center max-w-3xl mx-auto mb-20 animate-fade-in-up">
-                        <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl font-serif mb-6">
+                        <div className="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider text-amber-600 uppercase bg-amber-50 rounded-full border border-amber-200">
+                            Sobre Nós
+                        </div>
+                        <h1 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-6xl font-serif mb-6 relative inline-block">
                             Quem Somos
+                            <span className="absolute -bottom-2 left-0 w-full h-1 bg-gradient-to-r from-amber-400 to-amber-600 rounded-full opacity-30"></span>
                         </h1>
-                        <div className="w-32 h-1.5 bg-amber-500 rounded-full mx-auto mb-8"></div>
-                        <p className="text-xl text-gray-600 leading-relaxed font-light">
+                        <p className="text-xl text-gray-600 leading-relaxed font-light mt-6">
                             Conheça a história, a missão e a visão que fundamentam o Cidade Viva Education.
                         </p>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
                         {/* Video Section - Sticky on Desktop */}
-                        <div className="w-full relative lg:sticky lg:top-32 animate-fade-in-left">
+                        <div className="w-full relative lg:sticky lg:top-40 animate-fade-in-left">
                             <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white ring-1 ring-slate-900/5 group cursor-pointer transition-transform duration-500 hover:shadow-amber-500/20">
                                 <VideoPlayer />
                             </div>
@@ -71,41 +74,39 @@ export default function Institucional() {
                         </div>
                     </div>
 
-                    {/* Mission & Vision Cards */}
+                    {/* Mission & Vision Cards - Uniform Design */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 mt-32">
                         {/* Mission Card */}
                         <div className="bg-white p-10 rounded-[2rem] shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group relative overflow-hidden flex flex-col justify-between h-full">
-                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-amber-400 to-amber-600"></div>
+                            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-amber-400 to-amber-600"></div>
                             <div className="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity transform rotate-12 bg-amber-500 rounded-full w-64 h-64 blur-3xl"></div>
 
                             <div className="relative z-10">
                                 <div className="flex items-center gap-4 mb-8">
-                                    <div className="p-4 bg-amber-50 text-amber-600 rounded-2xl shadow-sm">
+                                    <div className="p-4 bg-amber-50 text-amber-600 rounded-2xl shadow-sm border border-amber-100">
                                         <CheckCircle className="h-8 w-8" />
                                     </div>
                                     <h3 className="text-3xl font-bold text-slate-900 font-serif">Nossa Missão</h3>
                                 </div>
-                                <p className="text-slate-700 leading-relaxed text-2xl font-medium font-serif">
+                                <p className="text-slate-700 leading-relaxed text-xl font-medium font-serif border-t border-slate-100 pt-6">
                                     Conduzir pessoas ao deslumbramento a partir de uma educação cristã de excelência.
                                 </p>
                             </div>
                         </div>
 
                         {/* Vision Card */}
-                        <div className="bg-slate-900 p-10 rounded-[2rem] shadow-xl border border-slate-800 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group relative overflow-hidden flex flex-col justify-between h-full text-white">
-                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-blue-600"></div>
-                            <div className="absolute -right-10 -top-10 opacity-10 group-hover:opacity-20 transition-opacity transform -rotate-12">
-                                <Quote className="w-40 h-40 text-white" />
-                            </div>
+                        <div className="bg-white p-10 rounded-[2rem] shadow-xl border border-slate-100 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group relative overflow-hidden flex flex-col justify-between h-full">
+                            <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 to-indigo-600"></div>
+                            <div className="absolute -right-10 -bottom-10 opacity-5 group-hover:opacity-10 transition-opacity transform -rotate-12 bg-blue-500 rounded-full w-64 h-64 blur-3xl"></div>
 
                             <div className="relative z-10">
                                 <div className="flex items-center gap-4 mb-8">
-                                    <div className="p-4 bg-white/10 text-white rounded-2xl shadow-sm backdrop-blur-sm">
+                                    <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl shadow-sm border border-blue-100">
                                         <Lightbulb className="h-8 w-8" />
                                     </div>
-                                    <h3 className="text-3xl font-bold text-white font-serif">Nossa Visão</h3>
+                                    <h3 className="text-3xl font-bold text-slate-900 font-serif">Nossa Visão</h3>
                                 </div>
-                                <p className="text-gray-200 leading-relaxed text-xl font-light italic">
+                                <p className="text-slate-700 leading-relaxed text-xl font-medium font-serif italic border-t border-slate-100 pt-6">
                                     &quot;Ser uma ponte que resgata presentes do passado, educando mentes e corações para a contemplação, a virtude, o serviço e a glória de Deus.&quot;
                                 </p>
                             </div>
