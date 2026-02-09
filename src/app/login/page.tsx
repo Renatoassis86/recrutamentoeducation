@@ -47,8 +47,19 @@ export default function LoginPage() {
             } else {
                 setError(res.error);
             }
+        } else if (res?.message) {
+            setError(res.message);
+            setIsLogin(true);
         }
     }
+
+    const handleClearCookies = async () => {
+        const { clearAllCookies } = await import("./actions");
+        await clearAllCookies();
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.reload();
+    };
 
     return (
         <div className="flex min-h-screen flex-col-reverse lg:flex-row pt-32 bg-slate-50 overflow-hidden">
@@ -158,15 +169,22 @@ export default function LoginPage() {
                             </div>
                         </div>
 
-                        <div className="mt-6">
+                        <div className="mt-6 space-y-3">
                             <button
                                 onClick={() => {
                                     setIsLogin(!isLogin);
                                     setError(null);
                                 }}
-                                className="flex w-full items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600"
+                                className="flex w-full items-center justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-slate-900 shadow-sm ring-1 ring-inset ring-slate-300 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-600 font-sans"
                             >
                                 {isLogin ? "Criar uma conta gratuita" : "Fazer login em sua conta"}
+                            </button>
+
+                            <button
+                                onClick={handleClearCookies}
+                                className="flex w-full items-center justify-center text-xs text-slate-400 hover:text-slate-600 transition-colors uppercase tracking-widest font-bold"
+                            >
+                                Limpar Sessão / Erro de Login
                             </button>
                         </div>
                     </div>

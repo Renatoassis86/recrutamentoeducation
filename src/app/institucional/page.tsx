@@ -1,8 +1,9 @@
 "use client";
 
 
-import { CheckCircle, Lightbulb, Quote } from "lucide-react";
+import { CheckCircle, Lightbulb, Quote, Play, X } from "lucide-react";
 import { useState } from "react";
+import { Dialog } from "@headlessui/react";
 
 export default function Institucional() {
     return (
@@ -27,9 +28,7 @@ export default function Institucional() {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start">
                         {/* Video Section - Sticky on Desktop */}
                         <div className="w-full relative lg:sticky lg:top-40 animate-fade-in-left">
-                            <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white ring-1 ring-slate-900/5 group cursor-pointer transition-transform duration-500 hover:shadow-amber-500/20">
-                                <VideoPlayer />
-                            </div>
+                            <VideoPlayer />
                             <div className="absolute -z-10 -bottom-10 -left-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl"></div>
                             <div className="absolute -z-10 -top-10 -right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
                         </div>
@@ -118,52 +117,62 @@ export default function Institucional() {
 }
 
 function VideoPlayer() {
-    const [isPlaying, setIsPlaying] = useState(false);
-
-    // Video ID: gU00NwWoG8w
-    // Thumbnail preview (muted loop) -> Clicking plays with sound and controls
-
-    if (isPlaying) {
-        return (
-            <iframe
-                className="w-full h-full rounded-[2.5rem]"
-                src="https://www.youtube.com/embed/gU00NwWoG8w?autoplay=1&start=25&end=40&rel=0"
-                title="Cidade Viva Education Institucional"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-            ></iframe>
-        );
-    }
+    const [isVideoOpen, setIsVideoOpen] = useState(false);
 
     return (
-        <div className="relative w-full h-full" onClick={() => setIsPlaying(true)}>
-            <iframe
-                className="w-full h-full pointer-events-none scale-[1.35]" // Zoom in to fill rounded shape nicely without black bars if aspect ratio differs
-                src="https://www.youtube.com/embed/gU00NwWoG8w?autoplay=1&mute=1&loop=1&playlist=gU00NwWoG8w&controls=0&start=25&end=40&rel=0"
-                title="Cidade Viva Education Preview"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                tabIndex={-1}
-            ></iframe>
+        <>
+            <div
+                className="relative aspect-video w-full rounded-t-[3rem] rounded-b-[10rem] overflow-hidden shadow-2xl bg-slate-900 group cursor-pointer border-4 border-white ring-1 ring-slate-900/5 transform transition-transform duration-500 hover:scale-[1.02] hover:shadow-amber-500/20"
+                onClick={() => setIsVideoOpen(true)}
+            >
+                {/* Background Loop (Zoomed to hide UI) */}
+                <div className="absolute inset-0 w-full h-full scale-[2.0] pointer-events-none">
+                    <iframe
+                        className="w-full h-full opacity-90"
+                        src="https://www.youtube.com/embed/gU00NwWoG8w?autoplay=1&mute=1&controls=0&loop=1&playlist=gU00NwWoG8w&start=25&end=40&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&fs=0"
+                        title="Cidade Viva Education Preview"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        tabIndex={-1}
+                    />
+                </div>
 
-            {/* Overlay to catch clicks and show play button */}
-            <div className="absolute inset-0 bg-black/10 hover:bg-black/30 transition-all duration-300 flex items-center justify-center z-10 group-hover:cursor-pointer">
-                <div className="w-24 h-24 bg-amber-600/90 rounded-full flex items-center justify-center shadow-2xl backdrop-blur-sm group-hover:scale-110 transition-transform duration-300 animate-pulse group-hover:animate-none ring-4 ring-white/20">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-10 h-10 text-white ml-1">
-                        <path fillRule="evenodd" d="M4.5 5.653c0-1.426 1.529-2.33 2.779-1.643l11.54 6.348c1.295.712 1.295 2.573 0 3.285L7.28 19.991c-1.25.687-2.779-.217-2.779-1.643V5.653z" clipRule="evenodd" />
-                    </svg>
+                {/* Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent pointer-events-none" />
+
+                {/* Floating Action Button */}
+                <div className="absolute top-8 left-6 z-20">
+                    <button className="bg-blue-600 hover:bg-blue-700 text-white pl-3 pr-5 py-2.5 rounded-full flex items-center gap-2 font-bold text-sm shadow-xl transition-all group-hover:bg-blue-500 hover:scale-105 active:scale-95">
+                        <div className="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm">
+                            <Play className="w-4 h-4 fill-white text-white" />
+                        </div>
+                        Assista e saiba mais
+                    </button>
                 </div>
             </div>
 
-            {/* Text Overlay */}
-            <div className="absolute bottom-8 left-8 right-8">
-                <div className="inline-flex items-center gap-3 px-5 py-3 bg-white/10 backdrop-blur-md rounded-full text-white text-base font-medium border border-white/20 shadow-lg hover:bg-white/20 transition-colors">
-                    <span className="relative flex h-3 w-3">
-                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                        <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500"></span>
-                    </span>
-                    Assista o vídeo institucional
+            {/* Video Modal */}
+            <Dialog open={isVideoOpen} onClose={() => setIsVideoOpen(false)} className="relative z-50">
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" aria-hidden="true" />
+                <div className="fixed inset-0 flex items-center justify-center p-4">
+                    <Dialog.Panel className="w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl relative">
+                        <button
+                            onClick={() => setIsVideoOpen(false)}
+                            className="absolute top-4 right-4 text-white hover:text-amber-500 z-10 bg-black/50 p-2 rounded-full"
+                        >
+                            <X className="w-6 h-6" />
+                        </button>
+                        <div className="aspect-video w-full">
+                            <iframe
+                                className="w-full h-full"
+                                src="https://www.youtube.com/embed/gU00NwWoG8w?autoplay=1&rel=0&showinfo=0"
+                                title="Cidade Viva Education Institucional"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                allowFullScreen
+                            ></iframe>
+                        </div>
+                    </Dialog.Panel>
                 </div>
-            </div>
-        </div>
+            </Dialog>
+        </>
     );
 }
