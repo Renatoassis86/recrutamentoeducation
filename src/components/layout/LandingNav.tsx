@@ -21,7 +21,7 @@ const topLinks = [
 ];
 
 const navigation: { name: string; href: string; external?: boolean; dropdown?: boolean; }[] = [
-    { name: "Institucional", href: "#quem-somos" },
+    { name: "Institucional", href: "/institucional" },
     { name: "Chamada Editorial", href: "#chamada" },
     { name: "Termo de Referência", href: "#termo" },
     { name: "Contato", href: "#contato" },
@@ -67,16 +67,8 @@ export default function LandingNav({ user }: { user?: any }) {
                         {/* Logo */}
                         <div className="flex-shrink-0 flex items-center gap-3">
                             <Link href="/" className="flex items-center gap-3 group">
-                                <div className="relative h-10 w-10 md:h-12 md:w-12">
-                                    <img src="/logo-education.png" alt="Logo" className="object-contain h-full w-full brightness-0 invert" />
-                                </div>
-                                <div className="flex flex-col">
-                                    <span className="text-white font-serif text-xl md:text-2xl font-bold tracking-wide leading-none group-hover:text-amber-500 transition-colors">
-                                        CIDADE VIVA
-                                    </span>
-                                    <span className="text-gray-200 font-serif text-sm md:text-base tracking-[0.2em] leading-none">
-                                        EDUCATION
-                                    </span>
+                                <div className="relative h-12 w-auto md:h-16 transition-transform duration-300 group-hover:scale-105">
+                                    <img src="/logo-education.png" alt="Cidade Viva Education" className="object-contain h-full w-full brightness-0 invert" />
                                 </div>
                             </Link>
                         </div>
