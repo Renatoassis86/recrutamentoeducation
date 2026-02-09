@@ -17,6 +17,26 @@ const cormorant = Cormorant_Garamond({
 export const metadata: Metadata = {
   title: "Recrutamento - Cidade Viva Education",
   description: "Plataforma de recrutamento para autores do Sistema Cidade Viva Education.",
+  openGraph: {
+    title: "Recrutamento - Cidade Viva Education",
+    description: "Plataforma de recrutamento para autores do Sistema Cidade Viva Education.",
+    images: [
+      {
+        url: "/logo-education.png",
+        width: 800,
+        height: 600,
+        alt: "Cidade Viva Education Logo",
+      },
+    ],
+    locale: "pt_BR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Recrutamento - Cidade Viva Education",
+    description: "Plataforma de recrutamento para autores do Sistema Cidade Viva Education.",
+    images: ["/logo-education.png"],
+  },
 };
 
 export default async function RootLayout({
