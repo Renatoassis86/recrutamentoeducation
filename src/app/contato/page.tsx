@@ -61,7 +61,7 @@ export default function Contato() {
                         {/* Contact Info */}
                         <div className="space-y-12">
                             <div className="bg-white p-8 rounded-2xl shadow-lg border border-slate-100">
-                                <h3 className="text-xl font-bold text-slate-900 mb-6 font-serif border-b border-slate-100 pb-4">
+                                <h3 className="text-xl font-bold text-slate-900 mb-6 border-b border-slate-100 pb-4">
                                     Canais de Atendimento
                                 </h3>
                                 <div className="space-y-6">
@@ -106,7 +106,7 @@ export default function Contato() {
 
                             <div className="bg-gradient-to-br from-slate-900 to-slate-800 p-8 rounded-2xl shadow-xl text-white relative overflow-hidden">
                                 <div className="relative z-10">
-                                    <h3 className="text-xl font-bold mb-4 font-serif">Horário de Atendimento</h3>
+                                    <h3 className="text-xl font-bold mb-4">Horário de Atendimento</h3>
                                     <p className="text-slate-300 mb-6 leading-relaxed">
                                         Nossa equipe administrativa está disponível para atender você nos seguintes horários:
                                     </p>
@@ -127,7 +127,7 @@ export default function Contato() {
 
                         {/* Contact Form */}
                         <div className="bg-white p-8 sm:p-10 rounded-[2rem] shadow-xl border border-slate-100">
-                            <h3 className="text-2xl font-bold text-slate-900 mb-2 font-serif">Envie uma mensagem</h3>
+                            <h3 className="text-2xl font-bold text-slate-900 mb-2">Envie uma mensagem</h3>
                             <p className="text-gray-500 mb-8 text-sm">
                                 Preencha o formulário abaixo e entraremos em contato o mais breve possível.
                             </p>

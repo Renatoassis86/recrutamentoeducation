@@ -38,7 +38,7 @@ export default function Institucional() {
                         <div className="text-lg text-gray-700 leading-8 font-light text-justify space-y-8 animate-fade-in-right">
 
                             <div>
-                                <h3 className="text-3xl font-bold text-slate-900 mb-6 font-serif flex items-center gap-3">
+                                <h3 className="text-3xl font-bold text-slate-900 mb-6 flex items-center gap-3">
                                     <span className="w-8 h-1 bg-amber-500 rounded-full"></span>
                                     Nossa História
                                 </h3>
@@ -83,9 +83,9 @@ export default function Institucional() {
                                     <div className="p-4 bg-amber-50 text-amber-600 rounded-2xl shadow-sm border border-amber-100">
                                         <CheckCircle className="h-8 w-8" />
                                     </div>
-                                    <h3 className="text-3xl font-bold text-slate-900 font-serif">Nossa Missão</h3>
+                                    <h3 className="text-3xl font-bold text-slate-900">Nossa Missão</h3>
                                 </div>
-                                <p className="text-slate-700 leading-relaxed text-xl font-medium font-serif border-t border-slate-100 pt-6">
+                                <p className="text-slate-700 leading-relaxed text-xl font-medium border-t border-slate-100 pt-6">
                                     Conduzir pessoas ao deslumbramento a partir de uma educação cristã de excelência.
                                 </p>
                             </div>
@@ -101,9 +101,9 @@ export default function Institucional() {
                                     <div className="p-4 bg-blue-50 text-blue-600 rounded-2xl shadow-sm border border-blue-100">
                                         <Lightbulb className="h-8 w-8" />
                                     </div>
-                                    <h3 className="text-3xl font-bold text-slate-900 font-serif">Nossa Visão</h3>
+                                    <h3 className="text-3xl font-bold text-slate-900">Nossa Visão</h3>
                                 </div>
-                                <p className="text-slate-700 leading-relaxed text-xl font-medium font-serif italic border-t border-slate-100 pt-6">
+                                <p className="text-slate-700 leading-relaxed text-xl font-medium italic border-t border-slate-100 pt-6">
                                     &quot;Ser uma ponte que resgata presentes do passado, educando mentes e corações para a contemplação, a virtude, o serviço e a glória de Deus.&quot;
                                 </p>
                             </div>

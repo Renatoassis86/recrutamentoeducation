@@ -115,7 +115,7 @@ export default function Home() {
               <div className="h-16 w-16 bg-blue-50 text-blue-700 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
                 <BookUser className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-4 font-serif">Conteúdos Didáticos</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Conteúdos Didáticos</h3>
               <p className="text-gray-600 leading-relaxed text-sm">
                 Livros do aluno e do professor com <strong>clareza pedagógica</strong> e <strong>unidade curricular</strong>. Sequências didáticas estruturadas para garantir segurança e intencionalidade formativa no planejamento docente.
               </p>
@@ -125,7 +125,7 @@ export default function Home() {
               <div className="h-16 w-16 bg-amber-50 text-amber-700 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
                 <GraduationCap className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-4 font-serif">Formação Continuada</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Formação Continuada</h3>
               <p className="text-gray-600 leading-relaxed text-sm">
                 Uma formação orgânica ao currículo, essencial para o alinhamento pedagógico institucional. Trilhas profundas para professores e coordenadores, integradas à rotina escolar.
               </p>
@@ -135,7 +135,7 @@ export default function Home() {
               <div className="h-16 w-16 bg-slate-100 text-slate-800 rounded-2xl flex items-center justify-center mb-6 shadow-inner">
                 <Laptop className="h-8 w-8" />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-4 font-serif">Plataforma Digital</h3>
+              <h3 className="text-xl font-bold text-slate-900 mb-4">Plataforma Digital</h3>
               <p className="text-gray-600 leading-relaxed text-sm">
                 A tecnologia a serviço do currículo. Ambiente para organização do ensino, acompanhamento acadêmico e preservação da memória pedagógica da escola.
               </p>
@@ -164,7 +164,7 @@ export default function Home() {
               <Image src="/paideia-1-ano.png" alt="Paideia 1 Ano" fill className="object-cover" />
             </div>
           </div>
-          <p className="text-center text-amber-800/60 font-serif italic mt-12 text-sm">
+          <p className="text-center text-amber-800/60 italic mt-12 text-sm">
             *Capas ilustrativas da coleção Paideia (Fundamental Anos Iniciais)
           </p>
         </div>
@@ -185,6 +185,7 @@ export default function Home() {
                   muted
                   loop
                   playsInline
+                  poster="/poster_layla.png"
                 >
                   <source src="/videos/Livro Ingles inf 2.mp4#t=3" type="video/mp4" />
                   Seu navegador não suporta a tag de vídeo.
