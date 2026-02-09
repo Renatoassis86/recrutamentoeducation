@@ -11,38 +11,39 @@ export default function Home() {
     <div className="bg-white min-h-screen font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900">
 
       {/* 1. HERO SECTION - Author Focused */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden pt-16">
+      <section className="relative min-h-[100svh] flex items-center justify-center overflow-hidden pt-24 pb-12 lg:pt-16 lg:pb-0">
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full z-0">
           <iframe
-            className="w-full h-full object-cover scale-150 pointer-events-none opacity-90"
+            className="w-full h-full object-cover scale-[2] sm:scale-150 pointer-events-none opacity-90"
             src="https://www.youtube.com/embed/gU00NwWoG8w?autoplay=1&mute=1&controls=0&loop=1&playlist=gU00NwWoG8w&start=25&end=50"
             title="Cidade Viva Education Background"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           ></iframe>
-          <div className="absolute inset-0 bg-slate-900/80 z-10" />
+          {/* Mobile Gradient Overlay for better text readability */}
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-900/80 to-slate-900/90 z-10" />
         </div>
 
         <div className="relative z-20 mx-auto max-w-6xl px-6 lg:px-8 text-center animate-fade-in-up flex flex-col items-center">
 
-          <div className="inline-flex items-center rounded-full px-4 py-1.5 text-xs font-bold text-amber-400 bg-slate-950/80 border border-amber-500/30 uppercase tracking-widest mb-8 backdrop-blur-sm shadow-xl">
+          <div className="inline-flex items-center rounded-full px-3 py-1 text-xs font-bold text-amber-400 bg-slate-950/80 border border-amber-500/30 uppercase tracking-widest mb-6 backdrop-blur-sm shadow-xl">
             Chamada Editorial Aberta
           </div>
 
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-7xl font-serif text-shadow-lg mb-6 leading-tight">
-            Faça parte da construção do <br />
-            <span className="text-amber-500">Currículo Paideia</span>
+          <h1 className="text-3xl sm:text-5xl lg:text-7xl font-bold tracking-tight text-white font-serif text-shadow-lg mb-6 leading-tight">
+            Faça parte da construção do <br className="hidden sm:block" />
+            <span className="text-amber-500 block sm:inline mt-2 sm:mt-0">Currículo Paideia</span>
           </h1>
-          <p className="mt-6 text-xl leading-8 text-gray-200 max-w-3xl mx-auto font-light text-shadow">
+          <p className="mt-4 sm:mt-6 text-base sm:text-xl leading-7 sm:leading-8 text-gray-200 max-w-2xl mx-auto font-light text-shadow">
             Estamos selecionando autores licenciados e pedagogos para desenvolver materiais didáticos que integrarão uma educação cristã, clássica e de excelência.
           </p>
 
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Link href="/application" className="cursor-pointer rounded-full bg-amber-600 px-8 py-4 text-base font-bold text-white shadow-xl hover:bg-amber-500 transition-all hover:-translate-y-1 active:translate-y-0 min-w-[240px] text-center border border-amber-500 flex items-center justify-center gap-2">
+          <div className="mt-8 sm:mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 w-full sm:w-auto">
+            <Link href="/application" className="w-full sm:w-auto cursor-pointer rounded-full bg-amber-600 px-8 py-4 text-base font-bold text-white shadow-xl hover:bg-amber-500 transition-all hover:-translate-y-1 active:translate-y-0 min-w-[200px] text-center border border-amber-500 flex items-center justify-center gap-2">
               <PenTool className="h-5 w-5" />
               QUERO SER UM AUTOR
             </Link>
-            <a href="#paideia" className="rounded-full bg-white/10 backdrop-blur-md px-8 py-4 text-base font-bold text-white shadow-xl hover:bg-white/20 transition-all hover:-translate-y-1 active:translate-y-0 flex items-center group min-w-[200px] justify-center border border-white/20">
+            <a href="#paideia" className="w-full sm:w-auto rounded-full bg-white/10 backdrop-blur-md px-8 py-4 text-base font-bold text-white shadow-xl hover:bg-white/20 transition-all hover:-translate-y-1 active:translate-y-0 flex items-center group min-w-[200px] justify-center border border-white/20">
               Conheça o Projeto
               <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform text-amber-500" />
             </a>
