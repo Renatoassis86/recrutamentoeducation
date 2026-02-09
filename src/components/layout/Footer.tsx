@@ -14,10 +14,18 @@ export default function Footer() {
                     </div>
                 </div>
                 <div className="flex gap-6 text-sm text-gray-400">
+                    <Link href="/" className="hover:text-white transition-colors">Início</Link>
                     <Link href="/about" className="hover:text-white transition-colors">Quem Somos</Link>
                     <a href="#" className="hover:text-white transition-colors">Termos de Uso</a>
                     <a href="#" className="hover:text-white transition-colors">Privacidade</a>
                 </div>
+            </div>
+            <div className="mt-12 pt-8 border-t border-slate-900 text-center">
+                <p className="text-xs text-slate-500">
+                    &copy; 2026 Cidade Viva Education. Todos os direitos reservados.
+                    <br />
+                    Desenvolvido por Associação Cidade Viva.
+                </p>
             </div>
         </footer>
     );
