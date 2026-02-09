@@ -17,6 +17,7 @@ const topLinks = [
     { name: "Igreja", href: "https://cidadeviva.org/", external: true },
     { name: "Faculdade", href: "https://ficv.edu.br/", external: true },
     { name: "Escola", href: "https://escolacidadeviva.org/", external: true },
+    { name: "Congresso Internacional ECC 2026", href: "https://cursos.ficv.edu.br/ciecc/?utm_source=ig&utm_medium=social&utm_content=link_in_bio&fbclid=PAZnRzaAP3NnFleHRuA2FlbQIxMQBzcnRjBmFwcF9pZAwyNTYyODEwNDA1NTgAAad0z6OvaPBSp_9JmQIesQVJftmw7jVej5NFT2HVqFyULm6Z3MPckJrEU4uTpA_aem_LEbUUAjR60DmeGJt5f2mUA", external: true },
     { name: "Education", href: "https://cidadeviva.education/", current: true },
 ];
 

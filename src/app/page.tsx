@@ -1,19 +1,47 @@
 "use client";
 
+import { useState } from "react";
 import LandingNav from "@/components/layout/LandingNav";
 import Link from "next/link";
 import {
   ArrowRight, BookOpen, PenTool, Video, Phone, Download, FileText,
   CheckCircle2, Instagram, Globe, GraduationCap, Laptop, BookUser,
-  Clock, MapPin, Palette, Music, Microscope, Code2, Anchor, Lightbulb, Library
+  Clock, MapPin, Palette, Music, Microscope, Code2, Anchor, Lightbulb, Library, Play, X
 } from "lucide-react";
 import Image from "next/image";
 import CurriculumAccordion from "@/components/home/CurriculumAccordion";
 import HeroVideo from "@/components/home/HeroVideo";
+import { Dialog } from "@headlessui/react";
 
 export default function Home() {
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
+
   return (
     <div className="bg-white min-h-screen font-sans text-slate-900 selection:bg-amber-100 selection:text-amber-900">
+
+      {/* Video Modal */}
+      <Dialog open={isVideoOpen} onClose={() => setIsVideoOpen(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="w-full max-w-4xl bg-black rounded-2xl overflow-hidden shadow-2xl relative">
+            <button
+              onClick={() => setIsVideoOpen(false)}
+              className="absolute top-4 right-4 text-white hover:text-amber-500 z-10 bg-black/50 p-2 rounded-full"
+            >
+              <X className="w-6 h-6" />
+            </button>
+            <div className="aspect-video w-full">
+              <iframe
+                className="w-full h-full"
+                src="https://www.youtube.com/embed/SXpz1uvfn-k?autoplay=1&rel=0&showinfo=0"
+                title="Fundamentos do Currículo Paideia"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            </div>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
 
       {/* 1. HERO SECTION */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-40 pb-20">
@@ -73,17 +101,33 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="space-y-4">
-              <div className="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-slate-100 aspect-video group pointer-events-none">
-                <iframe
-                  className="w-full h-full scale-[1.02]"
-                  src="https://www.youtube.com/embed/SXpz1uvfn-k?autoplay=1&mute=1&controls=0&loop=1&playlist=SXpz1uvfn-k&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&fs=0"
-                  title="Fundamentos do Currículo Paideia"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-                {/* Overlay to prevent interactions */}
-                <div className="absolute inset-0 bg-transparent z-10"></div>
+            <div className="flex justify-center lg:justify-end">
+              <div
+                className="relative w-full max-w-sm aspect-[4/5] rounded-t-[3rem] rounded-b-[10rem] overflow-hidden shadow-2xl bg-slate-900 group cursor-pointer border-4 border-white ring-1 ring-slate-200 transform transition-transform hover:scale-[1.02] duration-300"
+                onClick={() => setIsVideoOpen(true)}
+              >
+                {/* Background Loop (Zoomed to hide UI) */}
+                <div className="absolute inset-0 w-full h-full scale-[1.6] pointer-events-none">
+                  <iframe
+                    className="w-full h-full opacity-90"
+                    src="https://www.youtube.com/embed/SXpz1uvfn-k?autoplay=1&mute=1&controls=0&loop=1&playlist=SXpz1uvfn-k&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&fs=0"
+                    title="Thumbnail Loop"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  />
+                </div>
+
+                {/* Overlay Gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent pointer-events-none" />
+
+                {/* Floating Action Button */}
+                <div className="absolute top-8 left-6 z-20">
+                  <button className="bg-blue-600 hover:bg-blue-700 text-white pl-3 pr-5 py-2.5 rounded-full flex items-center gap-2 font-bold text-sm shadow-xl transition-all group-hover:bg-blue-500 hover:scale-105 active:scale-95">
+                    <div className="bg-white/20 p-1.5 rounded-lg backdrop-blur-sm">
+                      <Play className="w-4 h-4 fill-white text-white" />
+                    </div>
+                    Assista e saiba mais
+                  </button>
+                </div>
               </div>
             </div>
           </div>
