@@ -48,7 +48,6 @@ export default function Home() {
       </section>
 
       {/* 2. O QUE É O PAIDEIA (Brief Intro) */}
-      {/* 2. O QUE É O PAIDEIA (Brief Intro) */}
       <section id="paideia" className="py-24 bg-slate-50 relative overflow-hidden">
         {/* Background Elements */}
         <div className="absolute top-0 right-0 -mr-20 -mt-20 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl"></div>
@@ -219,6 +218,6 @@ export default function Home() {
         </div>
       </section>
 
-    </div >
+    </div>
   );
 }
