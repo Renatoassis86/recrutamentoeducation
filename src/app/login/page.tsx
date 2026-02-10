@@ -24,9 +24,11 @@ function SubmitButton({ children }: { children: React.ReactNode }) {
 export default function LoginPage() {
     const [isLogin, setIsLogin] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
     const handleLogin = async (formData: FormData) => {
         setError(null);
+        setSuccessMessage(null);
         const res = await login(formData);
         if (res?.error) {
             setError(res.error);
@@ -35,7 +37,8 @@ export default function LoginPage() {
 
     const handleSignup = async (formData: FormData) => {
         setError(null);
-        const res = await signup(formData);
+        setSuccessMessage(null);
+        const res: any = await signup(formData);
         if (res?.error) {
             if (res.error.includes("User already registered") || res.error.includes("already registered")) {
                 setError("Este e-mail já está cadastrado. Redirecionando para login...");
@@ -47,8 +50,12 @@ export default function LoginPage() {
             } else {
                 setError(res.error);
             }
+        } else if (res?.success) {
+            setSuccessMessage(res.message);
+            setIsLogin(true);
         } else if (res?.message) {
-            setError(res.message);
+            // Fallback for old message structure, treat as success if checking email
+            setSuccessMessage(res.message);
             setIsLogin(true);
         }
     }
@@ -96,6 +103,16 @@ export default function LoginPage() {
                                             Ir para Login
                                         </button>
                                     )}
+                                </div>
+                            </div>
+                        )}
+
+                        {successMessage && (
+                            <div className="mb-6 rounded-md bg-green-50 p-4 text-sm text-green-700 flex gap-2 items-start animate-fade-in-up border border-green-200">
+                                <Loader2 className="h-5 w-5 flex-shrink-0 mt-0.5 animate-pulse" /> {/* Using Loader/Check for success */}
+                                <div>
+                                    <p className="font-bold">Sucesso!</p>
+                                    <p>{successMessage}</p>
                                 </div>
                             </div>
                         )}
