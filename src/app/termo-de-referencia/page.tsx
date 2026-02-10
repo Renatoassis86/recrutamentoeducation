@@ -49,9 +49,7 @@ export default function TermoReferencia() {
                             <li><strong>Padrões de Qualidade:</strong> Indicadores de desempenho e critérios de aceitação para o material produzido.</li>
                         </ul>
 
-                        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 my-10 italic text-slate-700">
-                            "A excelência técnica é indissociável da nossa missão educacional. Cada detalhe importa na construção de um currículo que perdura."
-                        </div>
+
                     </div>
 
                     {/* Action Card */}

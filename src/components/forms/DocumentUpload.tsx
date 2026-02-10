@@ -15,7 +15,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
 
     // File states
     const [lattesFile, setLattesFile] = useState<File | null>(null);
-    const [atestadoFile, setAtestadoFile] = useState<File | null>(null);
+    // Removed atestadoFile per user request
     const [escritaFile, setEscritaFile] = useState<File | null>(null);
 
     const [uploading, setUploading] = useState(false);
@@ -49,8 +49,8 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
             setError("Por favor, preencha o link do seu Currículo Lattes.");
             return;
         }
-        if (!lattesFile || !atestadoFile || !escritaFile) {
-            setError("Por favor, anexe todos os 3 documentos solicitados.");
+        if (!lattesFile || !escritaFile) {
+            setError("Por favor, anexe o Currículo Lattes e o Texto Autoral.");
             return;
         }
 
@@ -97,10 +97,9 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                 };
             };
 
-            // Upload all 3 files in parallel
-            const [lattesUploaded, atestadoUploaded, escritaUploaded] = await Promise.all([
-                uploadToStorage(lattesFile, "lattes_comprovantes", "Currículo Lattes"),
-                uploadToStorage(atestadoFile, "atestado_tecnico", "Atestado Técnico"),
+            // Upload files in parallel
+            const [lattesUploaded, escritaUploaded] = await Promise.all([
+                uploadToStorage(lattesFile, "lattes_cv", "Currículo Lattes"),
                 uploadToStorage(escritaFile, "escrita_autoral", "Escrita Autoral")
             ]);
 
@@ -120,10 +119,10 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                 {
                     application_id: application.id,
                     user_id: user.id,
-                    storage_path: atestadoUploaded.path,
-                    original_name: atestadoUploaded.name,
-                    mime_type: atestadoUploaded.type,
-                    size_bytes: atestadoUploaded.size,
+                    storage_path: lattesUploaded.path,
+                    original_name: lattesUploaded.name,
+                    mime_type: lattesUploaded.type,
+                    size_bytes: lattesUploaded.size,
                 },
                 {
                     application_id: application.id,
@@ -230,7 +229,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
             <div className="bg-amber-50 p-4 rounded-md">
                 <h3 className="text-lg font-medium leading-6 text-amber-900 mb-2">Etapa Final da Documentação</h3>
                 <p className="text-sm text-amber-700">
-                    Preencha o link do seu Lattes e anexe os 3 arquivos PDF solicitados. Na próxima etapa, você poderá revisar tudo antes de enviar.
+                    Preencha o link do seu Lattes e anexe o arquivo PDF do seu Currículo e o Texto Autoral.
                 </p>
             </div>
 
@@ -260,23 +259,15 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
 
                 {/* 2. File Uploads */}
                 <FileInput
-                    label="1. Currículo + Comprovações"
-                    subLabel="Junte seu currículo Lattes (PDF gerado) e todos os documentos comprobatórios em um único arquivo."
+                    label="1. Currículo Lattes (PDF)"
+                    subLabel="Anexe a versão em PDF do seu currículo Lattes."
                     file={lattesFile}
                     onChange={(e) => handleFileChange(e, setLattesFile)}
                 />
 
-                <FileInput
-                    label="2. Atestado de Capacidade Técnica"
-                    subLabel="Documento emitido por pessoa jurídica que comprove experiência profissional anterior em atividades compatíveis com o objeto da seleção (produção editorial, docência, etc)."
-                    downloadLink={{ url: "/modelo_atestado_anexo_vi.txt", text: "Baixar Modelo" }}
-                    file={atestadoFile}
-                    onChange={(e) => handleFileChange(e, setAtestadoFile)}
-                />
-
                 <div className="border border-gray-200 rounded-lg p-5 bg-white">
                     <div className="mb-4">
-                        <h4 className="font-semibold text-gray-900">3. Escrita Autoral</h4>
+                        <h4 className="font-semibold text-gray-900">2. Escrita Autoral</h4>
                         <p className="text-sm text-gray-600 italic mt-1 bg-gray-50 p-3 rounded border border-gray-100">
                             &quot;O que você entende por educação cristã, clássica e integral na área do conhecimento escolhida? Em sua perspectiva, o que um material didático dessa área precisa contemplar para ser excelente?&quot; (20 a 40 linhas, manuscrito)
                         </p>

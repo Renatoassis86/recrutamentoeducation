@@ -46,9 +46,7 @@ export default function ChamadaEditorial() {
                             <li><strong>Direitos e Deveres:</strong> Esclarecimentos sobre a natureza da colaboração e expectativas institucionais.</li>
                         </ul>
 
-                        <div className="bg-amber-50 border-l-4 border-amber-500 p-6 my-10 italic text-slate-700">
-                            "Acreditamos que o material didático não é apenas um recurso pedagógico, mas um instrumento de transformação cultural e formação de caráter."
-                        </div>
+
                     </div>
 
                     {/* Action Card */}
