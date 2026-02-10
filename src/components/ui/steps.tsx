@@ -11,9 +11,9 @@ function classNames(...classes: string[]) {
 export default function Steps({ steps }: StepsProps) {
     return (
         <nav aria-label="Progress">
-            <ol role="list" className="overflow-hidden bg-white rounded-md lg:border lg:border-gray-200 lg:flex lg:rounded-none">
+            <ol role="list" className="flex overflow-x-auto rounded-md lg:border lg:border-gray-200 lg:rounded-none no-scrollbar snap-x">
                 {steps.map((step, stepIdx) => (
-                    <li key={step.name} className={classNames(stepIdx !== steps.length - 1 ? 'lg:border-r lg:border-gray-200' : '', 'relative overflow-hidden lg:flex-1')}>
+                    <li key={step.name} className={classNames(stepIdx !== steps.length - 1 ? 'lg:border-r lg:border-gray-200' : '', 'relative flex-none lg:flex-1 min-w-[200px] snap-start')}>
                         <div className={classNames(stepIdx !== 0 ? 'lg:border-l lg:border-gray-200' : '', 'group flex items-center w-full')}>
                             <span className="flex items-center px-6 py-4 text-sm font-medium">
                                 <span className="flex-shrink-0">

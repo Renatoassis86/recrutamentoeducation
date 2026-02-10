@@ -187,73 +187,83 @@ export default function LandingNav({ user }: { user?: any }) {
                 </div>
 
                 {/* Mobile Menu */}
-                <div className={`lg:hidden ${isOpen ? "block" : "hidden"} bg-[#0f172a] border-t border-white/10`}>
-                    <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
-                        {navigation.map((item) => (
-                            <Link
-                                key={item.name}
-                                href={item.href}
-                                target={item.external ? "_blank" : undefined}
-                                className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-slate-800 hover:text-white"
-                                onClick={() => setIsOpen(false)}
-                            >
-                                {item.name}
-                            </Link>
-                        ))}
-                    </div>
-                    {/* Mobile Auth & WhatsApp */}
-                    <div className="border-t border-slate-700 pb-4 pt-4">
-                        <div className="px-2 mb-4">
-                            <a
-                                href="https://wa.me/5583993322457"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-2 rounded-md bg-[#25D366] px-3 py-2 text-base font-medium text-white hover:bg-[#128C7E]"
-                            >
-                                <WhatsAppIcon className="w-5 h-5" />
-                                Falar no WhatsApp
-                            </a>
-                        </div>
-                        {user ? (
-                            <div className="px-5">
-                                <div className="flex items-center">
-                                    <div className="flex-shrink-0">
-                                        <div className="h-10 w-10 rounded-full bg-amber-600 flex items-center justify-center text-white font-bold">
-                                            {user.email?.charAt(0).toUpperCase()}
-                                        </div>
-                                    </div>
-                                    <div className="ml-3">
-                                        <div className="text-base font-medium leading-none text-white">{user.user_metadata?.full_name || "Usuário"}</div>
-                                        <div className="text-sm font-medium leading-none text-gray-400 mt-1">{user.email}</div>
-                                    </div>
-                                </div>
-                                <div className="mt-3 space-y-1 px-2">
-                                    <button
-                                        onClick={async () => {
-                                            const { createClient } = await import("@/utils/supabase/client");
-                                            const supabase = createClient();
-                                            await supabase.auth.signOut();
-                                            window.location.href = "/login";
-                                        }}
-                                        className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-slate-800 hover:text-white w-full text-left"
-                                    >
-                                        Sair
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="px-5">
+                <Transition
+                    show={isOpen}
+                    enter="transition duration-200 ease-out"
+                    enterFrom="transform opacity-0 -translate-y-2"
+                    enterTo="transform opacity-100 translate-y-0"
+                    leave="transition duration-150 ease-in"
+                    leaveFrom="transform opacity-100 translate-y-0"
+                    leaveTo="transform opacity-0 -translate-y-2"
+                >
+                    <div className="lg:hidden bg-[#0f172a] border-t border-white/10 shadow-xl">
+                        <div className="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+                            {navigation.map((item) => (
                                 <Link
-                                    href="/login"
-                                    className="block w-full rounded-md bg-amber-600 px-3 py-2 text-center text-base font-semibold text-white shadow-sm hover:bg-amber-500"
+                                    key={item.name}
+                                    href={item.href}
+                                    target={item.external ? "_blank" : undefined}
+                                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-slate-800 hover:text-white transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
-                                    Login / Entrar
+                                    {item.name}
                                 </Link>
+                            ))}
+                        </div>
+                        {/* Mobile Auth & WhatsApp */}
+                        <div className="border-t border-slate-700 pb-4 pt-4">
+                            <div className="px-2 mb-4">
+                                <a
+                                    href="https://wa.me/5583993322457"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center justify-center gap-2 rounded-md bg-[#25D366] px-3 py-2 text-base font-medium text-white hover:bg-[#128C7E] transition-colors"
+                                >
+                                    <WhatsAppIcon className="w-5 h-5" />
+                                    Falar no WhatsApp
+                                </a>
                             </div>
-                        )}
+                            {user ? (
+                                <div className="px-5">
+                                    <div className="flex items-center">
+                                        <div className="flex-shrink-0">
+                                            <div className="h-10 w-10 rounded-full bg-amber-600 flex items-center justify-center text-white font-bold">
+                                                {user.email?.charAt(0).toUpperCase()}
+                                            </div>
+                                        </div>
+                                        <div className="ml-3">
+                                            <div className="text-base font-medium leading-none text-white">{user.user_metadata?.full_name || "Usuário"}</div>
+                                            <div className="text-sm font-medium leading-none text-gray-400 mt-1">{user.email}</div>
+                                        </div>
+                                    </div>
+                                    <div className="mt-3 space-y-1 px-2">
+                                        <button
+                                            onClick={async () => {
+                                                const { createClient } = await import("@/utils/supabase/client");
+                                                const supabase = createClient();
+                                                await supabase.auth.signOut();
+                                                window.location.href = "/login";
+                                            }}
+                                            className="block rounded-md px-3 py-2 text-base font-medium text-gray-400 hover:bg-slate-800 hover:text-white w-full text-left transition-colors"
+                                        >
+                                            Sair
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="px-5">
+                                    <Link
+                                        href="/login"
+                                        className="block w-full rounded-md bg-amber-600 px-3 py-2 text-center text-base font-semibold text-white shadow-sm hover:bg-amber-500 transition-colors"
+                                        onClick={() => setIsOpen(false)}
+                                    >
+                                        Login / Entrar
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
                     </div>
-                </div>
+                </Transition>
             </nav >
         </header >
     );

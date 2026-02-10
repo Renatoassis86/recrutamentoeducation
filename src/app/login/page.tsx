@@ -62,7 +62,7 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="flex min-h-screen flex-col-reverse lg:flex-row pt-32 bg-slate-50 overflow-hidden">
+        <div className="flex min-h-screen flex-col lg:flex-row pt-20 lg:pt-32 bg-slate-50 overflow-hidden">
             {/* Left: Form Section */}
             <div className="flex flex-1 flex-col justify-center items-center px-4 py-8 sm:px-6 lg:flex-none lg:px-20 xl:px-24 z-10 w-full lg:w-1/2">
                 <div className="mx-auto w-full max-w-sm lg:w-96">
