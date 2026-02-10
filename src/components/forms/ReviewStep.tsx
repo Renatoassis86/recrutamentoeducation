@@ -101,7 +101,7 @@ export default function ReviewStep({ onBack, onSubmit }: ReviewStepProps) {
 
             <Section title="Documentação">
                 <Item label="Link Lattes (Opcional)" value={data.lattes_url || "Não informado"} />
-                <Item label="Arquivos Anexados" value={`${data.documentsCount || 0} arquivos recebidos`} />
+                <Item label="Arquivos Anexados" value={data.documentsCount === 1 ? "1 arquivo recebido" : `${data.documentsCount || 0} arquivos recebidos`} />
             </Section>
 
             <div className="flex items-center justify-end gap-4 mt-8 pt-6 border-t border-gray-200">

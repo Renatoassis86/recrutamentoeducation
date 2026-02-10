@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, UploadCloud, X, FileText, Link as LinkIcon, CheckCircle, AlertCircle } from "lucide-react";
-import { sendConfirmation } from "@/app/application/actions";
+import { Loader2, UploadCloud, FileText, Link as LinkIcon, CheckCircle, AlertCircle } from "lucide-react";
 
 interface DocumentUploadProps {
     onComplete: () => void;
@@ -13,10 +12,8 @@ interface DocumentUploadProps {
 export default function DocumentUpload({ onComplete, onBack }: DocumentUploadProps) {
     const [lattesUrl, setLattesUrl] = useState("");
 
-    // File states
-    const [lattesFile, setLattesFile] = useState<File | null>(null);
-    // Removed atestadoFile per user request
-    const [escritaFile, setEscritaFile] = useState<File | null>(null);
+    // File state
+    const [combinedFile, setCombinedFile] = useState<File | null>(null);
 
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -44,10 +41,8 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
     };
 
     const handleUpload = async () => {
-        // Validação básica
-
-        if (!lattesFile || !escritaFile) {
-            setError("Por favor, anexe o Currículo e o Texto Autoral.");
+        if (!combinedFile) {
+            setError("Por favor, anexe o arquivo PDF único contendo o Currículo e o Texto Autoral.");
             return;
         }
 
@@ -94,11 +89,8 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                 };
             };
 
-            // Upload files in parallel
-            const [lattesUploaded, escritaUploaded] = await Promise.all([
-                uploadToStorage(lattesFile, "lattes_cv", "Currículo"),
-                uploadToStorage(escritaFile, "escrita_autoral", "Escrita Autoral")
-            ]);
+            // Upload single file
+            const fileData = await uploadToStorage(combinedFile, "curriculo_completo", "Documentação");
 
             // 4. Save Metadata to Documents Table
             // First, clear old ones to avoid duplicates/confusion
@@ -108,18 +100,10 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                 {
                     application_id: application.id,
                     user_id: user.id,
-                    storage_path: lattesUploaded.path,
-                    original_name: lattesUploaded.name,
-                    mime_type: lattesUploaded.type,
-                    size_bytes: lattesUploaded.size,
-                },
-                {
-                    application_id: application.id,
-                    user_id: user.id,
-                    storage_path: escritaUploaded.path,
-                    original_name: escritaUploaded.name,
-                    mime_type: escritaUploaded.type,
-                    size_bytes: escritaUploaded.size,
+                    storage_path: fileData.path,
+                    original_name: fileData.name,
+                    mime_type: fileData.type,
+                    size_bytes: fileData.size,
                 }
             ];
 
@@ -128,12 +112,6 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                 .insert(documentsToInsert);
 
             if (dbError) throw dbError;
-
-            // 5. Update Status to Received - MOVED TO REVIEW STEP
-            // await supabase.from("applications").update({ status: 'received' }).eq("id", application.id);
-
-            // 6. Send Confirmation Email - MOVED TO REVIEW STEP
-            // await sendConfirmation();
 
             onComplete();
 
@@ -150,25 +128,18 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
         label,
         subLabel,
         file,
-        onChange,
-        downloadLink
+        onChange
     }: {
         label: string,
         subLabel?: string,
         file: File | null,
-        onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
-        downloadLink?: { url: string, text: string }
+        onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
     }) => (
         <div className="border border-gray-200 rounded-lg p-5 bg-white hover:border-amber-300 transition-colors">
             <div className="flex justify-between items-start mb-3">
                 <div>
                     <h4 className="font-semibold text-gray-900">{label}</h4>
                     {subLabel && <p className="text-xs text-gray-500 mt-1">{subLabel}</p>}
-                    {downloadLink && (
-                        <a href={downloadLink.url} download className="text-xs text-amber-600 hover:underline mt-1 inline-flex items-center">
-                            <LinkIcon className="w-3 h-3 mr-1" /> {downloadLink.text}
-                        </a>
-                    )}
                 </div>
                 {file && <CheckCircle className="w-5 h-5 text-green-500" />}
             </div>
@@ -182,9 +153,6 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                     <button
                         type="button"
                         onClick={() => {
-                            // reset logic would need state passing or wrapping, simple way:
-                            // Re-rendering handles it if we pass a 'clear' prop, but easiest is just let user click input to replace
-                            // For this UI, we'll just show the remove button logic in parent or just allow replace
                             const inputId = `file-${label.replace(/\s/g, '')}`;
                             const el = document.getElementById(inputId) as HTMLInputElement;
                             if (el) el.click();
@@ -218,7 +186,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
             <div className="bg-amber-50 p-4 rounded-md">
                 <h3 className="text-lg font-medium leading-6 text-amber-900 mb-2">Etapa Final da Documentação</h3>
                 <p className="text-sm text-amber-700">
-                    Preencha o link do seu Lattes (opcional) e anexe o arquivo PDF do seu Currículo e o Texto Autoral.
+                    Preencha o link do seu Lattes (opcional) e anexe o arquivo PDF único contendo seu Currículo e o Texto Autoral, conforme as instruções abaixo.
                 </p>
             </div>
 
@@ -244,31 +212,35 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                 <p className="text-xs text-gray-500">Copie e cole a URL do seu currículo Lattes (se houver).</p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
+            <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
+                <div className="mb-6">
+                    <h4 className="text-lg font-bold text-gray-900 border-b pb-2 mb-4">Informações sobre o Texto Autoral</h4>
+                    <div className="space-y-4 text-sm text-gray-700 leading-relaxed">
+                        <p className="italic font-medium text-slate-800 bg-slate-50 p-4 rounded-lg border-l-4 border-amber-500">
+                            &quot;O que você entende por educação cristã, clássica e integral, na área do conhecimento escolhida? Em sua perspectiva, o que o material didático dessa área precisa contemplar para ser excelente?&quot;
+                        </p>
 
-                {/* 2. File Uploads */}
-                <FileInput
-                    label="1. Currículo (PDF)"
-                    subLabel="Anexe a versão em PDF do seu currículo."
-                    file={lattesFile}
-                    onChange={(e) => handleFileChange(e, setLattesFile)}
-                />
+                        <p>O objetivo desta atividade é avaliar sua habilidade e domínio da escrita. O texto deverá atender aos seguintes critérios:</p>
 
-                <div className="border border-gray-200 rounded-lg p-5 bg-white">
-                    <div className="mb-4">
-                        <h4 className="font-semibold text-gray-900">2. Escrita Autoral</h4>
-                        <p className="text-sm text-gray-600 italic mt-1 bg-gray-50 p-3 rounded border border-gray-100">
-                            &quot;O que você entende por educação cristã, clássica e integral na área do conhecimento escolhida? Em sua perspectiva, o que um material didático dessa área precisa contemplar para ser excelente?&quot; (20 a 40 linhas, manuscrito)
+                        <ul className="list-none space-y-2 pl-2">
+                            <li><strong>I.</strong> Ter extensão mínima de 20 (vinte) linhas e máxima de 40 (quarenta) linhas;</li>
+                            <li><strong>II.</strong> Apresentar estrutura dissertativa, contemplando introdução, desenvolvimento e conclusão;</li>
+                            <li><strong>III.</strong> Demonstrar clareza, coesão, coerência textual e domínio da norma culta da língua portuguesa, bem como alinhamento ao tema proposto;</li>
+                            <li><strong>IV.</strong> Ser produzido de forma integralmente autoral, sendo vedado o uso de ferramentas de inteligência artificial, em qualquer etapa da elaboração do texto. O material submetido será analisado por meio de ferramentas de detecção de IA, e a constatação de uso desses recursos implicará na desclassificação do candidato.</li>
+                        </ul>
+
+                        <p className="font-semibold text-amber-700 mt-4">
+                            Importante: O currículo e o texto autoral devem ser entregues em um único documento PDF com o nome: <code className="bg-amber-100 px-2 py-1 rounded">curriculo_(nome do autor).pdf</code>
                         </p>
                     </div>
-                    <FileInput
-                        label="Arquivo da Escrita Autoral"
-                        subLabel="O texto deve ser obrigatoriamente manuscrito e digitalizado (formato PDF)."
-                        file={escritaFile}
-                        onChange={(e) => handleFileChange(e, setEscritaFile)}
-                    />
                 </div>
 
+                <FileInput
+                    label="Anexo Único (Currículo + Texto Autoral)"
+                    subLabel="Formato PDF (Máx. 10MB). Nomeie o arquivo como curriculo_(seu nome).pdf"
+                    file={combinedFile}
+                    onChange={(e) => handleFileChange(e, setCombinedFile)}
+                />
             </div>
 
             {error && (
