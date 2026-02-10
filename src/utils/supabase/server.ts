@@ -3,8 +3,8 @@ import { cookies } from "next/headers";
 import { createMockClient } from "./mock";
 
 // Hardcoded fallback for production deployment (Public keys only)
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://mhkyutqqciueevjnlsfy.supabase.co";
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_EN1IvzdsBVR3lFj8EV0tZg_m1e9Qh0G";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export function createClient() {
     const cookieStore = cookies();
@@ -14,8 +14,8 @@ export function createClient() {
     }
 
     return createServerClient(
-        SUPABASE_URL,
-        SUPABASE_ANON_KEY,
+        SUPABASE_URL as string,
+        SUPABASE_ANON_KEY as string,
         {
             cookies: {
                 getAll() {
