@@ -8,14 +8,20 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
 export function createClient() {
     const cookieStore = cookies();
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
-    if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    if (!supabaseUrl || !supabaseAnonKey) {
+        console.error("❌ FAILED: Supabase Keys missing on Server!", {
+            url_present: !!supabaseUrl,
+            key_present: !!supabaseAnonKey
+        });
         return createMockClient();
     }
 
     return createServerClient(
-        SUPABASE_URL as string,
-        SUPABASE_ANON_KEY as string,
+        supabaseUrl,
+        supabaseAnonKey,
         {
             cookies: {
                 getAll() {
