@@ -34,14 +34,16 @@ export async function signup(formData: FormData) {
         const password = formData.get("password") as string;
         const fullName = formData.get("fullName") as string;
 
-        // Safety check for Admin API
-        const { data: userData, error: listError } = await admin.auth.admin.listUsers();
+        // Safety check for Admin API if available
+        if (admin) {
+            const { data: userData, error: listError } = await admin.auth.admin.listUsers();
 
-        if (!listError && userData?.users) {
-            const existingUser = userData.users.find(u => u.email === email);
-            if (existingUser) {
-                console.log("Resetting existing user to resolve registration loop:", email);
-                await admin.auth.admin.deleteUser(existingUser.id);
+            if (!listError && userData?.users) {
+                const existingUser = userData.users.find(u => u.email === email);
+                if (existingUser) {
+                    console.log("Resetting existing user to resolve registration loop:", email);
+                    await admin.auth.admin.deleteUser(existingUser.id);
+                }
             }
         }
 
@@ -61,8 +63,8 @@ export async function signup(formData: FormData) {
             return { error: error.message };
         }
 
-        // AUTO-CONFIRM user immediately
-        if (data.user) {
+        // AUTO-CONFIRM user immediately if admin API is available
+        if (data.user && admin) {
             await admin.auth.admin.updateUserById(
                 data.user.id,
                 { email_confirm: true }
@@ -77,6 +79,8 @@ export async function signup(formData: FormData) {
             if (loginError) {
                 return { message: "Conta criada! Por favor, faça login com sua senha." };
             }
+        } else if (data.user && !admin) {
+            return { message: "Conta criada! Verifique seu e-mail para confirmar (ou aguarde o admin ativar)." };
         }
     } catch (e: any) {
         console.error("Critical Signup Failure:", e);
