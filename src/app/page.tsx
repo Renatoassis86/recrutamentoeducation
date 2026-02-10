@@ -44,7 +44,7 @@ export default function Home() {
       </Dialog>
 
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-16 md:pt-40 md:pb-20">
+      <section className="relative min-h-screen flex flex-col justify-start pt-48 pb-16 md:justify-center md:pt-40 md:pb-20 overflow-hidden">
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full z-0">
           <HeroVideo />
