@@ -128,11 +128,11 @@ export default function PersonalForm({ onSave }: PersonalFormProps) {
                 <div className="mt-4 space-y-4">
                     <div className="flex items-center gap-4">
                         <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" value="licenciado" {...register("profile_type")} className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600" />
+                            <input type="radio" value="licenciado" {...register("profile_type")} className="h-4 w-4 border-gray-300 text-amber-600 focus:ring-amber-600" />
                             <span className="text-sm font-medium text-gray-900">Licenciado (Área da Graduação)</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="radio" value="pedagogo" {...register("profile_type")} className="h-4 w-4 border-gray-300 text-blue-600 focus:ring-blue-600" />
+                            <input type="radio" value="pedagogo" {...register("profile_type")} className="h-4 w-4 border-gray-300 text-amber-600 focus:ring-amber-600" />
                             <span className="text-sm font-medium text-gray-900">Pedagogo (Área de Interesse)</span>
                         </label>
                     </div>
@@ -144,7 +144,7 @@ export default function PersonalForm({ onSave }: PersonalFormProps) {
                     {profileType === 'licenciado' && (
                         <div>
                             <label className="block text-sm font-medium leading-6 text-gray-900">Área da Licenciatura (Selecione uma)</label>
-                            <select {...register("licensure_area")} className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-blue-600 sm:text-sm sm:leading-6">
+                            <select {...register("licensure_area")} className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-amber-600 sm:text-sm sm:leading-6">
                                 <option value="">Selecione...</option>
                                 {areasEnum.map(area => (
                                     <option key={area} value={area}>{area}</option>
@@ -164,7 +164,7 @@ export default function PersonalForm({ onSave }: PersonalFormProps) {
                                             type="checkbox"
                                             value={area}
                                             {...register("pedagogy_areas")}
-                                            className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-600"
+                                            className="h-4 w-4 rounded border-gray-300 text-amber-600 focus:ring-amber-600"
                                         />
                                         <span className="text-sm text-gray-700">{area}</span>
                                     </label>
@@ -180,7 +180,7 @@ export default function PersonalForm({ onSave }: PersonalFormProps) {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50"
+                    className="rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 disabled:opacity-50"
                 >
                     {isSubmitting ? "Salvando..." : "Salvar e Continuar"}
                 </button>

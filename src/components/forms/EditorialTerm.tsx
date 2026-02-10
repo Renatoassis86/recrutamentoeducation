@@ -70,7 +70,7 @@ export default function EditorialTerm({ onNext }: EditorialTermProps) {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3">
-                                <Link href="/termo" target="_blank" className="text-blue-600 hover:text-blue-700 text-sm font-medium flex items-center gap-1">
+                                <Link href="/termo-de-referencia" target="_blank" className="text-amber-600 hover:text-amber-700 text-sm font-medium flex items-center gap-1">
                                     Ler Documento <ExternalLink className="h-3 w-3" />
                                 </Link>
                                 <label className="flex items-center gap-2 cursor-pointer select-none">

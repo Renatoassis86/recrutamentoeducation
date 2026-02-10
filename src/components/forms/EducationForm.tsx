@@ -250,7 +250,7 @@ export default function EducationForm({ initialData, onSave, onBack }: Education
                         <div className="flex items-center justify-between bg-white p-3 rounded-md border border-gray-100">
                             <div className="flex items-center overflow-hidden">
                                 <FileText className="h-5 w-5 text-amber-600 flex-shrink-0 mr-2" />
-                                <span className="text-sm text-gray-700 truncate">{diplomaFile.name}</span>
+                                <span className="text-sm text-gray-700 truncate max-w-[200px] sm:max-w-xs">{diplomaFile.name}</span>
                             </div>
                             <button
                                 type="button"

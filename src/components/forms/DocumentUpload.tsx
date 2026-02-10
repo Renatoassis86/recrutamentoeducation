@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { Loader2, UploadCloud, X, FileText, Link as LinkIcon, CheckCircle } from "lucide-react";
+import { Loader2, UploadCloud, X, FileText, Link as LinkIcon, CheckCircle, AlertCircle } from "lucide-react";
 import { sendConfirmation } from "@/app/application/actions";
 
 interface DocumentUploadProps {
@@ -171,13 +171,13 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
         onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
         downloadLink?: { url: string, text: string }
     }) => (
-        <div className="border border-gray-200 rounded-lg p-5 bg-white hover:border-blue-300 transition-colors">
+        <div className="border border-gray-200 rounded-lg p-5 bg-white hover:border-amber-300 transition-colors">
             <div className="flex justify-between items-start mb-3">
                 <div>
                     <h4 className="font-semibold text-gray-900">{label}</h4>
                     {subLabel && <p className="text-xs text-gray-500 mt-1">{subLabel}</p>}
                     {downloadLink && (
-                        <a href={downloadLink.url} download className="text-xs text-blue-600 hover:underline mt-1 inline-flex items-center">
+                        <a href={downloadLink.url} download className="text-xs text-amber-600 hover:underline mt-1 inline-flex items-center">
                             <LinkIcon className="w-3 h-3 mr-1" /> {downloadLink.text}
                         </a>
                     )}
@@ -186,9 +186,9 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
             </div>
 
             {file ? (
-                <div className="flex items-center justify-between bg-blue-50 p-3 rounded-md">
+                <div className="flex items-center justify-between bg-amber-50 p-3 rounded-md">
                     <div className="flex items-center overflow-hidden">
-                        <FileText className="h-5 w-5 text-blue-500 flex-shrink-0 mr-2" />
+                        <FileText className="h-5 w-5 text-amber-500 flex-shrink-0 mr-2" />
                         <span className="text-sm text-gray-700 truncate">{file.name}</span>
                     </div>
                     <button
@@ -201,7 +201,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                             const el = document.getElementById(inputId) as HTMLInputElement;
                             if (el) el.click();
                         }}
-                        className="text-xs text-blue-700 font-medium hover:text-blue-900 ml-2"
+                        className="text-xs text-amber-700 font-medium hover:text-amber-900 ml-2"
                     >
                         Alterar
                     </button>
@@ -227,9 +227,9 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
 
     return (
         <div className="space-y-8">
-            <div className="bg-blue-50 p-4 rounded-md">
-                <h3 className="text-lg font-medium leading-6 text-blue-900 mb-2">Etapa Final da Documentação</h3>
-                <p className="text-sm text-blue-700">
+            <div className="bg-amber-50 p-4 rounded-md">
+                <h3 className="text-lg font-medium leading-6 text-amber-900 mb-2">Etapa Final da Documentação</h3>
+                <p className="text-sm text-amber-700">
                     Preencha o link do seu Lattes e anexe os 3 arquivos PDF solicitados. Na próxima etapa, você poderá revisar tudo antes de enviar.
                 </p>
             </div>
@@ -247,7 +247,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                         type="url"
                         name="lattes_url"
                         id="lattes_url"
-                        className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-blue-600 sm:text-sm sm:leading-6"
+                        className="block w-full rounded-md border-0 py-1.5 pl-10 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-amber-600 sm:text-sm sm:leading-6"
                         placeholder="http://lattes.cnpq.br/..."
                         value={lattesUrl}
                         onChange={(e) => setLattesUrl(e.target.value)}
@@ -311,7 +311,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                     type="button"
                     onClick={handleUpload}
                     disabled={uploading}
-                    className="rounded-md bg-blue-600 px-8 py-3 text-sm font-bold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50 flex items-center transition-all"
+                    className="rounded-md bg-amber-600 px-8 py-3 text-sm font-bold text-white shadow-sm hover:bg-amber-500 disabled:opacity-50 flex items-center transition-all"
                 >
                     {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                     {uploading ? "Salvando..." : "Salvar e Continuar"}
@@ -319,14 +319,4 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
             </div>
         </div>
     );
-}
-
-function AlertCircle({ className, ...props }: any) {
-    return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className} {...props}>
-            <circle cx="12" cy="12" r="10" />
-            <line x1="12" x2="12" y1="8" y2="12" />
-            <line x1="12" x2="12.01" y1="16" y2="16" />
-        </svg>
-    )
 }

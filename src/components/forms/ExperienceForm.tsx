@@ -103,7 +103,7 @@ export default function ExperienceForm({ initialData, onSave, onBack }: Experien
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50"
+                    className="rounded-md bg-amber-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-amber-500 disabled:opacity-50"
                 >
                     {isSubmitting ? "Salvando..." : "Salvar e Continuar"}
                 </button>

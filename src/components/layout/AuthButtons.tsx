@@ -14,11 +14,11 @@ export default function AuthButtons({ user }: { user: User | null }) {
                 <div className="flex items-center gap-4">
                     <span className="text-sm text-gray-700 hidden sm:block">{user.email}</span>
                     <form action="/auth/signout" method="post">
-                        <button type="submit" className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">Sair</button>
+                        <button type="submit" className="text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors">Sair</button>
                     </form>
                     <Link
                         href="/dashboard"
-                        className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 transition-colors"
+                        className="inline-flex items-center justify-center rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-amber-700 transition-colors"
                     >
                         Minha Inscrição
                     </Link>
@@ -27,13 +27,13 @@ export default function AuthButtons({ user }: { user: User | null }) {
                 <div className="flex items-center space-x-4">
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors"
+                        className="text-sm font-medium text-gray-700 hover:text-amber-600 transition-colors"
                     >
                         Entrar
                     </button>
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="inline-flex items-center justify-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-blue-700 transition-colors"
+                        className="inline-flex items-center justify-center rounded-md bg-amber-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-amber-700 transition-colors"
                     >
                         Cadastre-se
                     </button>
