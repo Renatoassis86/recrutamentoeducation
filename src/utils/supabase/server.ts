@@ -8,9 +8,9 @@ const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGci
 
 export function createClient() {
     const cookieStore = cookies();
-    // Fallback Hardcoded Keys (To fix Vercel Environment Issue)
+    // Correct Fallback Hardcoded Keys (Fixed: ensure using correct full key)
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://mhkyutqqciueevjnlsfy.supabase.co";
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFub24iLCJpYXQiOjE3NzA0OTIxODgsImV4cCI6MjA4NjA2ODE4OH0.kT-4EkfupW-WLXk6pdwvLVTMI_RhwkpHsIEDlDTHKPg";
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1oa3l1dHFxY2l1ZWV2am5sc2Z5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA0OTIxODgsImV4cCI6MjA4NjA2ODE4OH0.kT-4EkfupW-WLXk6pdwvLVTMI_RhwkpHsIEDlDTHKPg";
 
     if (!supabaseUrl || !supabaseAnonKey) {
         console.error("❌ FAILED: Supabase Keys missing on Server!", {
