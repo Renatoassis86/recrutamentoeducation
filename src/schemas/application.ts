@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const areasEnum = ["Língua Portuguesa", "Matemática", "História", "Geografia", "Ciências", "Arte"] as const;
+export const areasEnum = ["Língua Portuguesa", "Matemática", "História", "Geografia", "Ciências", "Arte", "Música"] as const;
 
 // Visual identity colors for reference (not used in schema but good for docs)
 // Primary: #F4B400 (Amber 500)

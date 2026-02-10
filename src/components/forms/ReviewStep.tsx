@@ -79,8 +79,8 @@ export default function ReviewStep({ onBack, onSubmit }: ReviewStepProps) {
                     <Item label="CPF" value={data.cpf} />
                     <Item label="Telefone" value={data.phone} />
                     <Item label="Localização" value={`${data.city} - ${data.state}`} />
-                    <Item label="Perfil" value={data.profile_type === 'licenciado' ? 'Licenciado' : 'Pedagogo'} />
-                    {data.profile_type === 'licenciado' && <Item label="Área de Licenciatura" value={data.licensure_area} />}
+                    <Item label="Perfil" value={data.profile_type === 'licenciado' ? 'Licenciatura ou Bacharelado' : 'Pedagogo'} />
+                    {data.profile_type === 'licenciado' && <Item label="Área de Licenciatura / Bacharelado" value={data.licensure_area} />}
                     {data.profile_type === 'pedagogo' && <Item label="Áreas de Interesse" value={data.pedagogy_areas?.join(", ")} />}
                 </div>
             </Section>
@@ -100,7 +100,7 @@ export default function ReviewStep({ onBack, onSubmit }: ReviewStepProps) {
             </Section>
 
             <Section title="Documentação">
-                <Item label="Link Lattes" value={data.lattes_url} />
+                <Item label="Link Lattes (Opcional)" value={data.lattes_url || "Não informado"} />
                 <Item label="Arquivos Anexados" value={`${data.documentsCount || 0} arquivos recebidos`} />
             </Section>
 

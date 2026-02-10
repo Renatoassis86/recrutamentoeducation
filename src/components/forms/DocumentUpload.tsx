@@ -45,12 +45,9 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
 
     const handleUpload = async () => {
         // Validação básica
-        if (!lattesUrl.trim()) {
-            setError("Por favor, preencha o link do seu Currículo Lattes.");
-            return;
-        }
+
         if (!lattesFile || !escritaFile) {
-            setError("Por favor, anexe o Currículo Lattes e o Texto Autoral.");
+            setError("Por favor, anexe o Currículo e o Texto Autoral.");
             return;
         }
 
@@ -99,7 +96,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
 
             // Upload files in parallel
             const [lattesUploaded, escritaUploaded] = await Promise.all([
-                uploadToStorage(lattesFile, "lattes_cv", "Currículo Lattes"),
+                uploadToStorage(lattesFile, "lattes_cv", "Currículo"),
                 uploadToStorage(escritaFile, "escrita_autoral", "Escrita Autoral")
             ]);
 
@@ -108,14 +105,6 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
             await supabase.from("documents").delete().eq("application_id", application.id);
 
             const documentsToInsert = [
-                {
-                    application_id: application.id,
-                    user_id: user.id,
-                    storage_path: lattesUploaded.path,
-                    original_name: lattesUploaded.name,
-                    mime_type: lattesUploaded.type,
-                    size_bytes: lattesUploaded.size,
-                },
                 {
                     application_id: application.id,
                     user_id: user.id,
@@ -229,14 +218,14 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
             <div className="bg-amber-50 p-4 rounded-md">
                 <h3 className="text-lg font-medium leading-6 text-amber-900 mb-2">Etapa Final da Documentação</h3>
                 <p className="text-sm text-amber-700">
-                    Preencha o link do seu Lattes e anexe o arquivo PDF do seu Currículo e o Texto Autoral.
+                    Preencha o link do seu Lattes (opcional) e anexe o arquivo PDF do seu Currículo e o Texto Autoral.
                 </p>
             </div>
 
             {/* 1. Lattes URL */}
             <div className="space-y-2">
                 <label htmlFor="lattes_url" className="block text-sm font-medium leading-6 text-gray-900">
-                    Link do Currículo Lattes
+                    Link do Currículo Lattes (Opcional)
                 </label>
                 <div className="relative mt-2 rounded-md shadow-sm">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
@@ -252,15 +241,15 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                         onChange={(e) => setLattesUrl(e.target.value)}
                     />
                 </div>
-                <p className="text-xs text-gray-500">Copie e cole a URL do seu currículo Lattes.</p>
+                <p className="text-xs text-gray-500">Copie e cole a URL do seu currículo Lattes (se houver).</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-1 gap-6">
 
                 {/* 2. File Uploads */}
                 <FileInput
-                    label="1. Currículo Lattes (PDF)"
-                    subLabel="Anexe a versão em PDF do seu currículo Lattes."
+                    label="1. Currículo (PDF)"
+                    subLabel="Anexe a versão em PDF do seu currículo."
                     file={lattesFile}
                     onChange={(e) => handleFileChange(e, setLattesFile)}
                 />

@@ -240,10 +240,7 @@ export default function LoginPage() {
                         <img src="/paideia-1-ano.png" alt="Book 1" className="w-full rounded-lg border-2 border-white/50" />
                     </div>
 
-                    {/* Logo/Badge */}
-                    <div className="absolute bottom-[-60px] lg:bottom-[-20px] bg-white/90 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg border border-white/50 z-40 transform translate-y-12">
-                        <img src="/logo-education.png" alt="Logo" className="h-8 w-auto opacity-90" />
-                    </div>
+
                 </div>
             </div>
         </div>

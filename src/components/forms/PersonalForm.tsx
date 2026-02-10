@@ -129,7 +129,7 @@ export default function PersonalForm({ onSave }: PersonalFormProps) {
                     <div className="flex items-center gap-4">
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input type="radio" value="licenciado" {...register("profile_type")} className="h-4 w-4 border-gray-300 text-amber-600 focus:ring-amber-600" />
-                            <span className="text-sm font-medium text-gray-900">Licenciado (Área da Graduação)</span>
+                            <span className="text-sm font-medium text-gray-900">Licenciatura ou Bacharelado (Área da Graduação)</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
                             <input type="radio" value="pedagogo" {...register("profile_type")} className="h-4 w-4 border-gray-300 text-amber-600 focus:ring-amber-600" />
