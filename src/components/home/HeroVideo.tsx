@@ -38,7 +38,8 @@ export default function HeroVideo() {
                         showinfo: 0,
                         start: 25,
                         end: 50,
-                        origin: typeof window !== 'undefined' ? window.location.origin : undefined,
+                        enablejsapi: 1,
+                        origin: typeof window !== 'undefined' ? window.location.origin : 'https://recrutamentoeducation.vercel.app',
                     },
                     events: {
                         onReady: (event: any) => {
