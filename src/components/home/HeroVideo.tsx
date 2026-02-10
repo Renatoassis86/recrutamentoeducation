@@ -30,8 +30,7 @@ export default function HeroVideo() {
                         controls: 0,
                         disablekb: 1,
                         fs: 0,
-                        loop: 1, // Enable native loop
-                        playlist: 'gU00NwWoG8w', // Required for native loop to work
+
                         modestbranding: 1,
                         playsinline: 1, // Critical for mobile
                         rel: 0,
@@ -55,10 +54,13 @@ export default function HeroVideo() {
                         },
                         onStateChange: (event: any) => {
                             // YT.PlayerState.ENDED = 0
-                            // Manual loop fallback if native loop fails
+                            // Strict loop: Reload video with start/end constraints
                             if (event.data === 0) {
-                                event.target.seekTo(25);
-                                event.target.playVideo();
+                                event.target.loadVideoById({
+                                    videoId: 'gU00NwWoG8w',
+                                    startSeconds: 25,
+                                    endSeconds: 50
+                                });
                             }
                         }
                     }
