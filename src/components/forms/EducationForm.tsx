@@ -162,7 +162,7 @@ export default function EducationForm({ initialData, onSave, onBack }: Education
                 <div className="sm:col-span-6 pt-4">
                     <h3 className="text-sm font-medium leading-6 text-gray-900 mb-2">Pós-graduação ou Formação Complementar</h3>
                     <div className="space-y-2">
-                        {["Educação Cristã Clássica", "Psicopedagogia", "Gestão Escolar", "Educação / Pedagogia (outras)"].map((area) => (
+                        {["Educação Cristã Clássica", "Psicopedagogia", "Gestão Escolar", "Outras"].map((area) => (
                             <label key={area} className="flex items-center gap-2">
                                 <input
                                     type="checkbox"
