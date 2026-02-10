@@ -42,7 +42,7 @@ export default function LandingNav({ user }: { user?: any }) {
     }, []);
 
     return (
-        <header className="fixed w-full z-50 flex flex-col font-sans">
+        <header className="fixed w-full z-50 flex flex-col font-sans pt-[env(safe-area-inset-top)] bg-[#0f172a]">
             {/* Top Bar */}
             <div className="bg-[#0f172a] text-white py-2 px-6 lg:px-12 flex justify-between items-center text-xs md:text-sm border-b border-white/5 relative z-50">
                 <span className="font-medium tracking-wide hidden sm:block">Educação que permanece</span>
@@ -68,7 +68,7 @@ export default function LandingNav({ user }: { user?: any }) {
                         {/* Logo */}
                         <div className="flex-shrink-0 flex items-center gap-3">
                             <Link href="/" className="flex items-center gap-3 group">
-                                <div className="relative w-[180px] transition-transform duration-300 group-hover:scale-105">
+                                <div className="relative w-[150px] md:w-[180px] transition-transform duration-300 group-hover:scale-105">
                                     <img src="/logo-education.png" alt="Cidade Viva Education" className="object-contain w-full h-auto brightness-0 invert" />
                                 </div>
                             </Link>
@@ -173,7 +173,7 @@ export default function LandingNav({ user }: { user?: any }) {
                         <div className="flex lg:hidden">
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
-                                className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-slate-800 hover:text-white focus:outline-none"
+                                className="inline-flex items-center justify-center rounded-md p-3 text-gray-400 hover:bg-slate-800 hover:text-white focus:outline-none touch-manipulation"
                             >
                                 <span className="sr-only">Open main menu</span>
                                 {isOpen ? (
@@ -203,7 +203,7 @@ export default function LandingNav({ user }: { user?: any }) {
                                     key={item.name}
                                     href={item.href}
                                     target={item.external ? "_blank" : undefined}
-                                    className="block rounded-md px-3 py-2 text-base font-medium text-gray-300 hover:bg-slate-800 hover:text-white transition-colors"
+                                    className="block rounded-md px-3 py-3 text-base font-medium text-gray-300 hover:bg-slate-800 hover:text-white transition-colors"
                                     onClick={() => setIsOpen(false)}
                                 >
                                     {item.name}
@@ -254,7 +254,7 @@ export default function LandingNav({ user }: { user?: any }) {
                                 <div className="px-5">
                                     <Link
                                         href="/login"
-                                        className="block w-full rounded-md bg-amber-600 px-3 py-2 text-center text-base font-semibold text-white shadow-sm hover:bg-amber-500 transition-colors"
+                                        className="block w-full rounded-md bg-amber-600 px-3 py-3 text-center text-base font-bold text-white shadow-sm hover:bg-amber-500 transition-colors"
                                         onClick={() => setIsOpen(false)}
                                     >
                                         Login / Entrar
