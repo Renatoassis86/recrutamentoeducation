@@ -27,6 +27,10 @@ export async function deleteUser(userId: string) {
 
     // Delete the user from auth.users (this should cascade if configured, or we might need to delete profile first)
     // Assuming Supabase cascade delete is set up for public.profiles -> auth.users
+    if (!adminClient) {
+        return { error: "Erro de configuração do servidor: Chave de Admin não encontrada." };
+    }
+
     const { error } = await adminClient.auth.admin.deleteUser(userId);
 
     if (error) {
