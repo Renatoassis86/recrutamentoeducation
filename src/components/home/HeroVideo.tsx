@@ -40,10 +40,17 @@ export default function HeroVideo() {
                         end: 50,
                         enablejsapi: 1,
                         origin: typeof window !== 'undefined' ? window.location.origin : 'https://recrutamentoeducation.vercel.app',
+                        iv_load_policy: 3, // Hide annotations
+                        cc_load_policy: 0, // Default caps off
+                        hl: 'pt-BR', // Force language interface
                     },
                     events: {
                         onReady: (event: any) => {
-                            event.target.mute(); // Ensure muted again for mobile
+                            event.target.mute(); // Ensure muted again
+                            if (event.target.hideTextTrack) {
+                                // Try to hide captions strictly
+                                // Note: This isn't a standard API method but some players expose similar tracks
+                            }
                             event.target.playVideo();
                         },
                         onStateChange: (event: any) => {

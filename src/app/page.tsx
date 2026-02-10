@@ -44,7 +44,7 @@ export default function Home() {
       </Dialog>
 
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-40 pb-20">
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-32 pb-16 md:pt-40 md:pb-20">
         {/* Video Background */}
         <div className="absolute inset-0 w-full h-full z-0">
           <HeroVideo />
@@ -57,9 +57,9 @@ export default function Home() {
             Chamada Editorial Aberta
           </div>
 
-          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl font-serif text-shadow-lg mb-6 max-w-4xl">
-            Faça parte da construção do <br />
-            <span className="text-amber-500">Currículo Paideia</span>
+          <h1 className="text-4xl font-bold tracking-tight text-white sm:text-6xl font-serif text-shadow-lg mb-6 max-w-4xl px-4">
+            Faça parte da construção do
+            <span className="text-amber-500 block sm:inline mt-2 sm:mt-0"> Currículo Paideia</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-100 max-w-2xl mx-auto font-medium text-shadow">
             Estamos selecionando autores licenciados e pedagogos para desenvolver materiais didáticos que integrarão uma educação cristã, clássica e de excelência.
