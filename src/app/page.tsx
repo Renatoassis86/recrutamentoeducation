@@ -62,7 +62,7 @@ export default function Home() {
             <span className="text-amber-500 block sm:inline mt-2 sm:mt-0"> Currículo Paideia</span>
           </h1>
           <p className="mt-6 text-lg leading-8 text-gray-100 max-w-2xl mx-auto font-medium text-shadow">
-            Estamos selecionando autores licenciados e pedagogos para desenvolver materiais didáticos que integrarão uma educação cristã, clássica e de excelência.
+            Estamos selecionando autores para desenvolver materiais didáticos que integrarão uma educação cristã, clássica e de excelência.
           </p>
 
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-6">
