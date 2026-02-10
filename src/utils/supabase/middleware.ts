@@ -9,13 +9,10 @@ export async function updateSession(request: NextRequest) {
         },
     });
 
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://mhkyutqqciueevjnlsfy.supabase.co";
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "sb_publishable_EN1IvzdsBVR3lFj8EV0tZg_m1e9Qh0G";
 
     if (!supabaseUrl || !supabaseKey) {
-        // Return a mock client (though for middleware we usually just proceed or redirect)
-        // Since middleware can't strictly return the client, we just skip session check
-        console.warn("Middleware: Missing Env Vars, skipping session refresh");
         return response;
     }
 

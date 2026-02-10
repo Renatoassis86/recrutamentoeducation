@@ -49,10 +49,16 @@ export default async function RootLayout({
   let user = null;
   try {
     const supabase = await createClient();
-    const { data } = await supabase.auth.getUser();
-    user = data.user;
+    if (supabase) {
+      const { data, error } = await supabase.auth.getUser();
+      if (error) {
+        console.warn("Aviso: Falha ao recuperar usuário (não crítico):", error.message);
+      } else {
+        user = data?.user || null;
+      }
+    }
   } catch (e) {
-    console.error("Supabase auth error (likely missing env vars):", e);
+    console.error("Erro crítico no Supabase (Layout):", e);
   }
 
   return (
