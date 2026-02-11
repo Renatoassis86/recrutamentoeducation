@@ -93,7 +93,7 @@ export default async function AuditPage() {
                     </tbody>
                 </table>
 
-                {logs.length === 0 && (
+                {logs?.length === 0 && (
                     <div className="py-20 text-center flex flex-col items-center">
                         <ClipboardList className="h-12 w-12 text-slate-100 mb-4" />
                         <h3 className="font-bold text-slate-900">Nenhum log registrado</h3>
