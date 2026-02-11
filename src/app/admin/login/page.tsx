@@ -65,15 +65,6 @@ export default function AdminLogin() {
                 <div className="bg-slate-900/50 backdrop-blur-2xl border border-white/10 rounded-[2.5rem] p-8 lg:p-12 shadow-2xl relative">
                     {/* Header */}
                     <div className="space-y-6 text-center mb-12">
-                        <div className="relative h-20 w-full mx-auto mb-8">
-                            <Image
-                                src="/logo-education.png"
-                                alt="Cidade Viva Education"
-                                fill
-                                className="object-contain filter brightness-0 invert"
-                            />
-                        </div>
-
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-[0.2em]">
                             <Sparkles className="h-3 w-3" />
                             Internal Command Center
