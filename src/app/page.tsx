@@ -11,6 +11,7 @@ import {
 import Image from "next/image";
 import CurriculumAccordion from "@/components/home/CurriculumAccordion";
 import HeroVideo from "@/components/home/HeroVideo";
+import LoopingVideo from "@/components/ui/LoopingVideo";
 import { Dialog } from "@headlessui/react";
 
 export default function Home() {
@@ -106,14 +107,13 @@ export default function Home() {
                 onClick={() => setIsVideoOpen(true)}
               >
                 {/* Background Loop (Zoomed to hide UI) */}
-                <div className="absolute inset-0 w-full h-full sm:scale-[2.2] scale-[1.5] pointer-events-none transition-opacity duration-1000">
-                  <iframe
-                    className="w-full h-full"
-                    src="https://www.youtube.com/embed/SXpz1uvfn-k?autoplay=1&mute=1&controls=0&loop=1&playlist=SXpz1uvfn-k&start=25&end=50&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&fs=0&playsinline=1"
-                    title="Thumbnail Loop"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  />
-                </div>
+                <LoopingVideo
+                  videoId="SXpz1uvfn-k"
+                  start={25}
+                  end={50}
+                  mobileScale={2.5}
+                  desktopScale={2.2}
+                />
 
                 {/* Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent pointer-events-none" />

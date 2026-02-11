@@ -99,10 +99,10 @@ export default function HeroVideo() {
     }, []);
 
     return (
-        <div className="w-full h-full overflow-hidden absolute inset-0 pointer-events-none">
+        <div className="w-full h-full overflow-hidden absolute inset-0 pointer-events-none bg-slate-900">
             <div
                 id="youtube-player"
-                className="w-full h-full object-cover sm:scale-150 scale-125 opacity-90 transition-opacity duration-1000"
+                className="w-full h-full object-cover sm:scale-[2.2] scale-[2.0] opacity-90 transition-opacity duration-1000"
             />
             {/* Mobile Fallback Overlay */}
             <div className={`absolute inset-0 bg-slate-900 z-[-1] transition-opacity duration-500`} />

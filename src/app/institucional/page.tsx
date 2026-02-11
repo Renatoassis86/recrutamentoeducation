@@ -4,6 +4,7 @@
 import { CheckCircle, Lightbulb, Quote, Play, X } from "lucide-react";
 import { useState } from "react";
 import { Dialog } from "@headlessui/react";
+import LoopingVideo from "@/components/ui/LoopingVideo";
 
 export default function Institucional() {
     return (
@@ -126,15 +127,13 @@ function VideoPlayer() {
                 onClick={() => setIsVideoOpen(true)}
             >
                 {/* Background Loop (Zoomed to hide UI) */}
-                <div className="absolute inset-0 w-full h-full scale-[2.2] pointer-events-none">
-                    <iframe
-                        className="w-full h-full"
-                        src="https://www.youtube.com/embed/gU00NwWoG8w?autoplay=1&mute=1&controls=0&loop=1&playlist=gU00NwWoG8w&start=25&end=40&modestbranding=1&showinfo=0&rel=0&iv_load_policy=3&disablekb=1&fs=0"
-                        title="Cidade Viva Education Preview"
-                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        tabIndex={-1}
-                    />
-                </div>
+                <LoopingVideo
+                    videoId="gU00NwWoG8w"
+                    start={25}
+                    end={50}
+                    mobileScale={3.0}
+                    desktopScale={2.5}
+                />
 
                 {/* Overlay Gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent pointer-events-none" />
