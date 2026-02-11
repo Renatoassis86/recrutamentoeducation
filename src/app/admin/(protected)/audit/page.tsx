@@ -1,9 +1,19 @@
 import { getAuditLogs } from "../../actions";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ClipboardList, Shield, Clock, Hash, Activity } from "lucide-react";
+import { ClipboardList, Shield, Clock, Hash, Activity, User, Settings, FileText, Trash2, Edit } from "lucide-react";
 
 export const dynamic = "force-dynamic";
+
+const ACTION_ICONS = {
+    "create": FileText,
+    "update": Edit,
+    "delete": Trash2,
+    "login": Shield,
+    "logout": Clock,
+    "update_status": Settings,
+    "user_update": User,
+};
 
 export default async function AuditPage() {
     const logs = await getAuditLogs();
