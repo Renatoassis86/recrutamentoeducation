@@ -1,23 +1,20 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import {
-    User, Mail, Phone, MapPin, GraduationCap, Briefcase, FileText,
-    Calendar, ArrowLeft, Download, Shield, Clock, ExternalLink,
-    MailCheck, MessageCircle
+    User, Mail, Phone, MapPin, GraduationCap, FileText,
+    ArrowLeft, ExternalLink, Shield, MessageCircle, Star, History
 } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import StatusUpdater from "@/components/admin/StatusUpdater";
-import Scorecard from "@/components/admin/Scorecard";
-import { getEvaluations } from "@/app/admin/actions-evaluations";
+import AdminFileLink from "@/components/admin/AdminFileLink";
 
 export const dynamic = "force-dynamic";
 
 async function getCandidateData(id: string) {
     const supabase = createClient();
 
-    // 1. Fetch Application
     const { data: application, error } = await supabase
         .from("applications")
         .select("*")
@@ -26,231 +23,144 @@ async function getCandidateData(id: string) {
 
     if (error || !application) return null;
 
-    // 2. Fetch Documents
     const { data: documents } = await supabase
         .from("documents")
         .select("*")
         .eq("application_id", id);
 
-    // 3. Fetch Evaluations
-    const { data: evaluations } = await supabase
-        .from("application_evaluations")
-        .select("*, profiles:admin_id(full_name)")
-        .eq("application_id", id);
+    const { data: history } = await supabase
+        .from("kanban_history")
+        .select("*, profiles:moved_by_admin_id(full_name)")
+        .eq("application_id", id)
+        .order("moved_at", { ascending: false });
 
-    return { application, documents, evaluations };
+    return { application, documents, history };
 }
 
 export default async function CandidateDossierPage({ params }: { params: { id: string } }) {
     const data = await getCandidateData(params.id);
 
-    if (!data) {
-        notFound();
-    }
+    if (!data) notFound();
 
-    const { application, documents, evaluations } = data;
+    const { application, documents, history } = data;
 
-    // Find current user's evaluation if exists
-    const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    const myEval = evaluations?.find((e: any) => e.admin_id === user?.id);
-
-    const Section = ({ title, icon: Icon, children }: any) => (
-        <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden mb-6">
-            <div className="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center gap-2">
-                <Icon className="h-5 w-5 text-amber-600" />
-                <h3 className="font-bold text-slate-800 uppercase tracking-wider text-sm">{title}</h3>
-            </div>
-            <div className="p-6">
-                {children}
-            </div>
-        </div>
-    );
-
-    const DataItem = ({ label, value, fullWidth = false }: any) => (
-        <div className={`${fullWidth ? 'col-span-full' : 'sm:col-span-1'} space-y-1 mb-4`}>
-            <span className="block text-xs font-semibold text-slate-500 uppercase">{label}</span>
-            <span className="block text-slate-900 font-medium">{value || "Não informado"}</span>
+    const DataRow = ({ label, value, fullWidth = false }: any) => (
+        <div className={`py-4 flex flex-col sm:flex-row sm:items-baseline sm:gap-4 border-b border-slate-50 last:border-0 ${fullWidth ? 'block' : ''}`}>
+            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest min-w-[140px]">{label}</span>
+            <span className="text-sm text-slate-900 font-bold whitespace-pre-wrap">{value || "---"}</span>
         </div>
     );
 
     return (
-        <div className="max-w-6xl mx-auto space-y-8 pb-20 animate-fade-in">
-            {/* Top Navigation */}
+        <div className="max-w-6xl mx-auto space-y-10 pb-24 animate-in fade-in duration-500">
+            {/* Header Navigation */}
             <div className="flex items-center justify-between">
-                <Link
-                    href="/admin/candidates"
-                    className="flex items-center gap-2 text-slate-500 hover:text-amber-600 transition-colors"
-                >
-                    <ArrowLeft className="h-4 w-4" />
-                    <span className="font-medium text-sm">Voltar para a Lista</span>
+                <Link href="/admin/candidates" className="flex items-center gap-2 text-slate-400 hover:text-amber-600 transition-all font-bold text-xs uppercase tracking-widest">
+                    <ArrowLeft className="h-4 w-4" /> Voltar para Listagem
                 </Link>
-
-                <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-amber-600 text-white rounded-lg text-sm font-bold shadow-md hover:bg-amber-500 transition-all">
-                        <MailCheck className="h-4 w-4" /> Enviar Email
-                    </button>
-                    <a
-                        href={`https://wa.me/${application.phone?.replace(/\D/g, '')}`}
-                        target="_blank"
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-bold shadow-md hover:bg-green-500 transition-all"
-                    >
-                        <MessageCircle className="h-4 w-4" /> WhatsApp
-                    </a>
+                <div className="flex items-center gap-4">
+                    <StatusUpdater id={application.id} currentStatus={application.status || 'received'} />
                 </div>
             </div>
 
-            {/* Header / Identity */}
-            <div className="bg-slate-900 rounded-2xl p-8 text-white relative overflow-hidden shadow-xl">
-                <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
-                    <div className="h-32 w-32 rounded-full bg-slate-800 border-4 border-slate-700 flex items-center justify-center text-4xl font-bold text-amber-500">
+            {/* Main Sheet */}
+            <div className="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+                {/* Visual Identity Header */}
+                <div className="bg-slate-900 px-10 py-12 text-white relative flex flex-col md:flex-row items-center gap-8">
+                    <div className="h-24 w-24 rounded-3xl bg-amber-500 flex items-center justify-center text-4xl font-black text-slate-950 shadow-2xl">
                         {application.full_name?.charAt(0)}
                     </div>
-                    <div className="text-center md:text-left space-y-2">
-                        <div className="flex flex-col md:flex-row md:items-center gap-3">
-                            <h1 className="text-3xl font-bold font-serif">{application.full_name}</h1>
-                            <span className={`px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest ${application.profile_type === 'licenciado' ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30' : 'bg-green-500/20 text-green-400 border border-green-500/30'
-                                }`}>
-                                {application.profile_type === 'licenciado' ? 'Licenciatura ou Bacharelado' : 'Pedagogo'}
+                    <div className="flex-1 text-center md:text-left">
+                        <h1 className="text-3xl font-black font-serif tracking-tighter mb-2">{application.full_name}</h1>
+                        <div className="flex flex-wrap justify-center md:justify-start gap-4">
+                            <span className="px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-widest border border-white/10 text-amber-500">
+                                {application.profile_type}
+                            </span>
+                            <span className="px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-widest border border-white/10">
+                                {application.state}
                             </span>
                         </div>
-                        <div className="flex flex-wrap justify-center md:justify-start gap-4 text-slate-400 text-sm">
-                            <span className="flex items-center gap-1"><Mail className="h-4 w-4" /> {application.email}</span>
-                            <span className="flex items-center gap-1"><MapPin className="h-4 w-4" /> {application.city}, {application.state}</span>
-                            <span className="flex items-center gap-1"><Clock className="h-4 w-4" /> Inscrito em {format(new Date(application.created_at), "dd/MM/yyyy", { locale: ptBR })}</span>
-                        </div>
                     </div>
-                    <div className="md:ml-auto bg-white p-4 rounded-xl border border-white/10 text-center min-w-[200px] shadow-lg">
-                        <span className="block text-xs text-slate-400 uppercase font-black mb-3">Gerenciar Status</span>
-                        <div className="flex justify-center">
-                            <StatusUpdater id={application.id} currentStatus={application.status || 'received'} />
-                        </div>
+                    <div className="absolute top-0 right-0 p-10 opacity-5">
+                        <Shield className="h-32 w-32" />
                     </div>
                 </div>
-                {/* Decoration */}
-                <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-amber-500 opacity-10 rounded-full blur-3xl"></div>
-            </div>
 
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                {/* Column 1: Personal & Education */}
-                <div className="lg:col-span-2 space-y-6">
-                    <Section title="Informações Pessoais" icon={User}>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
-                            <DataItem label="CPF" value={application.cpf} />
-                            <DataItem label="Telefone" value={application.phone} />
-                            <DataItem label="Endereço" value={`${application.city} - ${application.state}`} />
-                            <DataItem label="E-mail" value={application.email} />
-                        </div>
-                    </Section>
-
-                    <Section title="Formação Acadêmica" icon={GraduationCap}>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-2">
-                            <DataItem label="Curso" value={application.graduation_course} />
-                            <DataItem label="Instituição" value={application.graduation_institution} />
-                            <DataItem label="Ano de Conclusão" value={application.graduation_year} />
-                            <DataItem label="Área de Atuação" value={application.licensure_area || application.pedagogy_areas?.join(", ")} />
-                            <DataItem label="Pós-Graduações" value={application.postgrad_areas?.join(", ") || "Nenhuma informada"} fullWidth />
-                        </div>
-                    </Section>
-
-                    <Section title="Experiência Profissional" icon={Briefcase}>
-                        <div className="space-y-6">
-                            <DataItem label="Tempo de Experiência" value={application.experience_years} />
-                            <div>
-                                <span className="block text-xs font-semibold text-slate-500 uppercase mb-2">Resumo da Trajetória</span>
-                                <p className="text-slate-700 text-sm leading-relaxed bg-slate-50 p-4 rounded-lg border border-slate-100 italic">
-                                    "{application.experience_summary}"
-                                </p>
+                <div className="p-10 lg:p-16 grid grid-cols-1 lg:grid-cols-3 gap-16">
+                    {/* Left Column: Data Sheet */}
+                    <div className="lg:col-span-2 space-y-12">
+                        <section>
+                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Dados de Identificação</h3>
+                            <div className="space-y-1">
+                                <DataRow label="E-mail" value={application.email} />
+                                <DataRow label="Telefone" value={application.phone} />
+                                <DataRow label="CPF" value={application.cpf} />
+                                <DataRow label="Localização" value={`${application.city} - ${application.state}`} />
                             </div>
-                        </div>
-                    </Section>
+                        </section>
 
-                    {/* SCORECARD SECTION */}
-                    <Scorecard applicationId={application.id} initialData={myEval} />
-                </div>
+                        <section>
+                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Formação Acadêmica</h3>
+                            <div className="space-y-1">
+                                <DataRow label="Curso" value={application.graduation_course} />
+                                <DataRow label="Instituição" value={application.graduation_institution} />
+                                <DataRow label="Ano Formatura" value={application.graduation_year} />
+                                {application.profile_type === 'licenciado' && (
+                                    <DataRow label="Área Licenciatura" value={application.licensure_area} />
+                                )}
+                                {application.pedagogy_areas?.length > 0 && (
+                                    <DataRow label="Áreas Pedagogia" value={application.pedagogy_areas.join(", ")} />
+                                )}
+                            </div>
+                        </section>
 
-                {/* Column 2: Documents & Actions */}
-                <div className="space-y-6">
-                    <Section title="Documentos & Anexos" icon={FileText}>
-                        <div className="space-y-4">
-                            {/* Lattes URL */}
-                            {application.lattes_url && (
-                                <div className="p-3 bg-amber-50 rounded-lg border border-amber-100 flex items-center justify-between group hover:bg-amber-100 transition-colors">
-                                    <div className="flex items-center gap-3">
-                                        <Shield className="h-5 w-5 text-amber-600" />
-                                        <div>
-                                            <span className="block text-xs font-bold text-amber-800 uppercase">Currículo Lattes</span>
-                                            <span className="block text-[10px] text-amber-600 truncate max-w-[150px]">{application.lattes_url}</span>
+                        <section>
+                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Resumo da Experiência</h3>
+                            <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 text-slate-700 text-sm italic leading-relaxed">
+                                {application.experience_summary}
+                            </div>
+                        </section>
+                    </div>
+
+                    {/* Right Column: Assets & History */}
+                    <div className="space-y-12">
+                        <section>
+                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Documentação</h3>
+                            <div className="space-y-4">
+                                {documents?.map((doc: any) => (
+                                    <div key={doc.id} className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-amber-200 transition-all">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-8 w-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 group-hover:text-amber-500 transition-colors">
+                                                <FileText className="h-4 w-4" />
+                                            </div>
+                                            <span className="text-[10px] font-black uppercase text-slate-600 truncate max-w-[120px]">{doc.original_name}</span>
                                         </div>
+                                        <AdminFileLink path={doc.storage_path} name={doc.original_name} />
                                     </div>
-                                    <a href={application.lattes_url} target="_blank" className="p-2 text-amber-700 hover:bg-amber-200 rounded-md">
-                                        <ExternalLink className="h-4 w-4" />
-                                    </a>
-                                </div>
-                            )}
+                                ))}
+                            </div>
+                        </section>
 
-                            {/* Uploaded Files */}
-                            {documents?.map((doc: any) => (
-                                <div key={doc.id} className="p-3 bg-slate-50 rounded-lg border border-slate-200 flex items-center justify-between group hover:bg-slate-100 transition-colors">
-                                    <div className="flex items-center gap-3">
-                                        <FileText className="h-5 w-5 text-slate-400" />
-                                        <div>
-                                            <span className="block text-xs font-bold text-slate-800 uppercase">
-                                                {doc.storage_path.includes("lattes") ? "Currículo (PDF)" :
-                                                    doc.storage_path.includes("curriculo_completo") ? "Dossiê Completo" : "Escrita Autoral"}
-                                            </span>
-                                            <span className="block text-[10px] text-slate-500">{((doc.size_bytes || 0) / 1024 / 1024).toFixed(2)} MB</span>
+                        <section>
+                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Fluxo Editorial</h3>
+                            <div className="space-y-4">
+                                {history?.slice(0, 3).map((h: any) => (
+                                    <div key={h.id} className="text-[10px] p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="font-black text-slate-900 uppercase">Fase: {h.to_status}</span>
+                                            <span className="text-slate-400 font-bold">{format(new Date(h.moved_at), "dd/MM")}</span>
                                         </div>
+                                        <p className="text-slate-500 font-medium">Por: {h.profiles?.full_name}</p>
                                     </div>
-                                    {/* Link for Supabase Storage */}
-                                    <ViewDocumentButton path={doc.storage_path} name={doc.original_name} />
-                                </div>
-                            ))}
-
-                            {(!documents || documents.length === 0) && (
-                                <div className="text-center py-6 border-2 border-dashed border-slate-100 rounded-xl">
-                                    <span className="text-slate-400 text-xs">Nenhum anexo encontrado.</span>
-                                </div>
-                            )}
-                        </div>
-                    </Section>
-
-                    {/* ID Card */}
-                    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6">
-                        <span className="block text-xs font-bold text-slate-400 uppercase mb-4">Metadados do Registro</span>
-                        <div className="space-y-3">
-                            <div className="flex justify-between text-xs">
-                                <span className="text-slate-500">UUID Interno</span>
-                                <span className="font-mono text-slate-900">{application.id.slice(0, 8)}...</span>
+                                ))}
+                                {(!history || history.length === 0) && (
+                                    <p className="text-[10px] text-slate-400 italic">Sem movimentação registrada.</p>
+                                )}
                             </div>
-                            <div className="flex justify-between text-xs">
-                                <span className="text-slate-500">Iniciado em</span>
-                                <span className="text-slate-900">{format(new Date(application.created_at), "HH:mm, dd/MM/yy")}</span>
-                            </div>
-                            <div className="flex justify-between text-xs">
-                                <span className="text-slate-500">Última Modificação</span>
-                                <span className="text-slate-900">{format(new Date(application.updated_at || application.created_at), "HH:mm, dd/MM/yy")}</span>
-                            </div>
-                        </div>
+                        </section>
                     </div>
                 </div>
             </div>
         </div>
     );
 }
-
-// Client helper for signed URLs
-async function ViewDocumentButton({ path, name }: { path: string, name: string }) {
-    // This needs to be a client component or a server action to generate a private URL
-    // For now, let's assume a pattern or just a placeholder logic.
-    // Ideally, we generate a signed URL:
-    // const { data } = await supabase.storage.from('applications').createSignedUrl(path, 3600);
-    // return <a href={data.signedUrl} ... />
-
-    return (
-        <AdminFileLink path={path} name={name} />
-    );
-}
-
-// Sub-component for clarity
-import AdminFileLink from "@/components/admin/AdminFileLink";

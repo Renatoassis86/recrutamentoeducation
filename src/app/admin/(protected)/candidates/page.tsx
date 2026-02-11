@@ -11,6 +11,7 @@ import {
     Trash2, UserCheck, ShieldCheck, X
 } from "lucide-react";
 import CommunicationModal from "@/components/admin/CommunicationModal";
+import { deleteApplication } from "@/app/admin/actions";
 
 export default function CandidatesPageClient() {
     const [applications, setApplications] = useState<any[]>([]);
@@ -56,10 +57,21 @@ export default function CandidatesPageClient() {
     };
 
     const toggleSelectAll = () => {
-        if (selectedIds.length === filteredApps.length) {
+        if (selectedIds.length === filteredApps.length && filteredApps.length > 0) {
             setSelectedIds([]);
         } else {
             setSelectedIds(filteredApps.map(app => app.id));
+        }
+    };
+
+    const handleDelete = async (id: string, name: string) => {
+        if (!confirm(`Tem certeza que deseja excluir permanentemente a inscrição de ${name}? Esta ação não pode ser desfeita.`)) return;
+
+        const res = await deleteApplication(id);
+        if (res.success) {
+            loadApplications();
+        } else {
+            alert("Erro ao excluir: " + res.error);
         }
     };
 
@@ -230,6 +242,13 @@ export default function CandidatesPageClient() {
                                             >
                                                 <MessageCircle className="h-4 w-4" />
                                             </a>
+                                            <button
+                                                onClick={() => handleDelete(app.id, app.full_name)}
+                                                className="inline-flex items-center justify-center h-10 w-10 bg-red-50 text-red-600 rounded-xl hover:bg-red-600 hover:text-white transition-all shadow-sm active:scale-95"
+                                                title="Excluir"
+                                            >
+                                                <Trash2 className="h-4 w-4" />
+                                            </button>
                                             <Link
                                                 href={`/admin/candidates/${app.id}`}
                                                 className="inline-flex items-center justify-center h-10 w-10 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm active:scale-95"

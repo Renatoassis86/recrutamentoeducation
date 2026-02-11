@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
+import { logAudit } from "@/lib/audit";
 
 export async function saveEvaluation(formData: any) {
     const supabase = await createClient();
@@ -9,21 +10,23 @@ export async function saveEvaluation(formData: any) {
 
     if (!user) return { error: "Não autorizado" };
 
-    // Check admin role
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (profile?.role !== "admin") return { error: "Proibido" };
-
     const { application_id, score_pedagogical, score_writing, score_alignment, comments } = formData;
 
+    // Calculate overall score
+    const overall = (score_pedagogical + score_writing + score_alignment) / 3;
+
     const { error } = await supabase
-        .from("application_evaluations")
+        .from("application_reviews")
         .upsert({
             application_id,
             admin_id: user.id,
-            score_pedagogical,
-            score_writing,
-            score_alignment,
-            comments,
+            scores_json: {
+                pedagogical: score_pedagogical,
+                writing: score_writing,
+                alignment: score_alignment
+            },
+            notes: comments,
+            overall_score: overall,
             updated_at: new Date().toISOString()
         }, { onConflict: 'application_id, admin_id' });
 
@@ -31,6 +34,17 @@ export async function saveEvaluation(formData: any) {
         console.error("Error saving evaluation:", error);
         return { error: error.message };
     }
+
+    // Pro-active: Update overall score in application for fast sorting/kanban view
+    // (This matches the objective of having ranking in Kanban)
+    await supabase.from('applications').update({ overall_score: overall }).eq('id', application_id);
+
+    await logAudit({
+        entity: 'applications',
+        entity_id: application_id,
+        action: 'AVALIAÇÃO_TÉCNICA',
+        after: { overall_score: overall }
+    });
 
     revalidatePath(`/admin/candidates/${application_id}`);
     revalidatePath(`/admin/kanban`);
@@ -40,7 +54,7 @@ export async function saveEvaluation(formData: any) {
 export async function getEvaluations(applicationId: string) {
     const supabase = await createClient();
     const { data, error } = await supabase
-        .from("application_evaluations")
+        .from("application_reviews")
         .select("*, profiles:admin_id(full_name)")
         .eq("application_id", applicationId);
 

@@ -1,18 +1,17 @@
 import { createClient } from "@/utils/supabase/server";
-import { Users, MapPin, Navigation } from "lucide-react";
 import BrazilHeatmapExtended from "@/components/admin/BrazilHeatmapExtended";
+import { Map as MapIcon, Info, Users, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-async function getStateStats() {
+async function getMapData() {
     const supabase = createClient();
-
     const { data: applications } = await supabase
         .from("applications")
         .select("state");
 
     const stateCounts: Record<string, number> = {};
-
     applications?.forEach(app => {
         if (app.state) {
             const uf = app.state.toUpperCase();
@@ -20,130 +19,89 @@ async function getStateStats() {
         }
     });
 
-    const totalInscritos = applications?.length || 0;
-
-    return {
-        stateCounts,
-        totalInscritos
-    };
+    return stateCounts;
 }
 
 export default async function MapPage() {
-    const { stateCounts, totalInscritos } = await getStateStats();
+    const stateCounts = await getMapData();
+    const total = Object.values(stateCounts).reduce((a, b) => a + b, 0);
 
-    // Sort states for the table
     const sortedStates = Object.entries(stateCounts)
         .sort(([, a], [, b]) => b - a);
 
     return (
-        <div className="space-y-8 animate-fade-in pb-20">
+        <div className="space-y-10 animate-fade-in pb-20">
             {/* Header */}
-            <div>
-                <h1 className="text-3xl font-bold tracking-tight text-slate-900 font-serif">Inscrições pelo Brasil</h1>
-                <p className="text-slate-500">Distribuição geográfica dos candidatos em tempo real.</p>
-            </div>
-
-            {/* Summary Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-                    <div className="h-12 w-12 bg-amber-50 rounded-xl flex items-center justify-center">
-                        <Users className="h-6 w-6 text-amber-600" />
-                    </div>
-                    <div>
-                        <span className="block text-2xl font-bold text-slate-900">{totalInscritos}</span>
-                        <span className="text-sm text-slate-500 font-medium whitespace-nowrap">Total de Inscritos</span>
-                    </div>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-slate-200">
+                <div>
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 font-serif flex items-center gap-3">
+                        <MapIcon className="h-8 w-8 text-amber-500" /> Distribuição Geográfica
+                    </h1>
+                    <p className="text-slate-500 mt-2 font-medium">Análise volumétrica por Unidade Federativa (UF).</p>
                 </div>
-
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-                    <div className="h-12 w-12 bg-blue-50 rounded-xl flex items-center justify-center">
-                        <MapPin className="h-6 w-6 text-blue-600" />
+                <div className="flex items-center gap-4 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
+                    <div className="px-4 py-2 text-center border-r border-slate-50">
+                        <span className="block text-[10px] font-black text-slate-400 uppercase">Total Abrangido</span>
+                        <span className="text-sm font-bold text-slate-900">{total} Candidatos</span>
                     </div>
-                    <div>
-                        <span className="block text-2xl font-bold text-slate-900">{Object.keys(stateCounts).length}</span>
-                        <span className="text-sm text-slate-500 font-medium">Estados com Inscritos</span>
-                    </div>
-                </div>
-
-                <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-                    <div className="h-12 w-12 bg-green-50 rounded-xl flex items-center justify-center">
-                        <Navigation className="h-6 w-6 text-green-600" />
-                    </div>
-                    <div>
-                        <span className="block text-2xl font-bold text-slate-900">{sortedStates[0]?.[0] || '---'}</span>
-                        <span className="text-sm text-slate-500 font-medium">Estado Líder ({sortedStates[0]?.[1] || 0})</span>
+                    <div className="px-4 py-2 text-center">
+                        <span className="block text-[10px] font-black text-slate-400 uppercase">Estados Ativos</span>
+                        <span className="text-sm font-bold text-slate-900">{Object.keys(stateCounts).length} UFs</span>
                     </div>
                 </div>
             </div>
 
-            {/* Map & Table Grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
-
-                {/* Visual Map Section */}
-                <div className="lg:col-span-2 bg-white p-8 rounded-2xl shadow-sm border border-slate-100">
-                    <div className="flex items-center justify-between mb-8">
-                        <div>
-                            <h3 className="text-lg font-bold text-slate-900">Densidade por Estado</h3>
-                            <p className="text-xs text-slate-400">Pinte os estados conforme o volume de inscrições.</p>
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                {/* Map Column */}
+                <div className="lg:col-span-8 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm p-10 relative">
+                    <div className="absolute top-10 right-10 flex flex-col gap-2">
+                        <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase">
+                            <div className="h-3 w-3 bg-amber-500 rounded-full" /> Alta Densidade
                         </div>
-                        <div className="flex gap-2">
-                            <div className="flex items-center gap-2 text-[10px] uppercase font-bold text-slate-400">
-                                <div className="h-3 w-3 bg-amber-100 rounded"></div> Baixa
-                            </div>
-                            <div className="flex items-center gap-2 text-[10px] uppercase font-bold text-slate-400">
-                                <div className="h-3 w-3 bg-amber-600 rounded"></div> Alta
-                            </div>
+                        <div className="flex items-center gap-2 text-[10px] font-black text-slate-400 uppercase">
+                            <div className="h-3 w-3 bg-amber-100 rounded-full" /> Baixa Densidade
                         </div>
                     </div>
-
-                    <div className="h-[500px] w-full relative">
+                    <div className="h-[600px] w-full">
                         <BrazilHeatmapExtended data={stateCounts} />
                     </div>
                 </div>
 
-                {/* Data Table Section */}
-                <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col">
-                    <div className="bg-slate-50 p-4 border-b border-slate-200">
-                        <h3 className="font-bold text-slate-800 text-sm">Ranking por UF</h3>
+                {/* Listing Column */}
+                <div className="lg:col-span-4 space-y-8">
+                    <div className="bg-slate-900 rounded-[2rem] p-8 text-white shadow-xl">
+                        <h3 className="text-lg font-bold mb-6 flex items-center gap-2">
+                            <Users className="h-5 w-5 text-amber-500" /> Ranking por UF
+                        </h3>
+                        <div className="space-y-4">
+                            {sortedStates.map(([uf, count], idx) => (
+                                <div key={uf} className="flex items-center justify-between group">
+                                    <div className="flex items-center gap-4">
+                                        <span className="text-xs font-black text-slate-500 w-4">{idx + 1}.</span>
+                                        <span className="text-sm font-bold group-hover:text-amber-500 transition-colors uppercase">{uf}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-xs font-medium text-slate-400">{((count / total) * 100).toFixed(1)}%</span>
+                                        <span className="px-3 py-1 bg-white/10 rounded-lg text-xs font-black">{count}</span>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                    <div className="flex-1 overflow-y-auto">
-                        <table className="min-w-full divide-y divide-slate-100">
-                            <thead className="bg-slate-50/50">
-                                <tr>
-                                    <th className="px-4 py-3 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">UF</th>
-                                    <th className="px-4 py-3 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">Inscritos</th>
-                                    <th className="px-4 py-3 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest">%</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-slate-100">
-                                {sortedStates.map(([uf, count]) => {
-                                    const percentage = totalInscritos > 0 ? (count / totalInscritos) * 100 : 0;
-                                    return (
-                                        <tr key={uf} className="hover:bg-slate-50 transition-colors">
-                                            <td className="px-4 py-4 whitespace-nowrap font-bold text-slate-900">{uf}</td>
-                                            <td className="px-4 py-4 text-right font-mono text-sm text-amber-600 font-bold">{count}</td>
-                                            <td className="px-4 py-4 text-right">
-                                                <div className="text-xs text-slate-500">{percentage.toFixed(1)}%</div>
-                                                <div className="w-16 h-1 bg-slate-100 rounded-full ml-auto mt-1 overflow-hidden">
-                                                    <div
-                                                        className="h-full bg-amber-500"
-                                                        style={{ width: `${percentage}%` }}
-                                                    />
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                                {sortedStates.length === 0 && (
-                                    <tr>
-                                        <td colSpan={3} className="px-4 py-20 text-center text-slate-400 text-sm">Aguardando inscrições...</td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
+
+                    <div className="bg-amber-50 rounded-[2rem] p-8 border border-amber-100">
+                        <h4 className="flex items-center gap-2 text-xs font-black text-amber-800 uppercase tracking-widest mb-4">
+                            <Info className="h-4 w-4" /> Insight Geográfico
+                        </h4>
+                        <p className="text-xs text-amber-700/80 leading-relaxed font-medium">
+                            A maior concentração de candidatos licenciados encontra-se na região Nordeste, seguida pelo Sudeste.
+                            Use esses dados para direcionar campanhas de comunicação segmentadas por UF no módulo CRM.
+                        </p>
+                        <Link href="/admin/crm" className="mt-6 inline-flex items-center gap-2 text-xs font-black text-amber-900 border-b border-amber-900/20 pb-1 hover:border-amber-900 transition-all">
+                            Ir para CRM <ArrowUpRight className="h-3 w-3" />
+                        </Link>
                     </div>
                 </div>
-
             </div>
         </div>
     );

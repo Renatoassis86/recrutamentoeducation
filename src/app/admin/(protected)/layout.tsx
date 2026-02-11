@@ -1,25 +1,45 @@
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
 import AdminSidebar from "@/components/admin/Sidebar";
+import AdminChat from "@/components/admin/AdminChat";
+import { createClient } from "@/utils/supabase/server";
+import { redirect } from "next/navigation";
 
-export default function AdminLayout({
+/**
+ * LAYOUT PROTEGIDO COM VALIDAÇÃO DE SESSÃO E RBAC (ENTREPRISE SECURITY)
+ */
+export default async function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const cookieStore = cookies();
-    const isAdmin = cookieStore.get("admin_session")?.value === "true";
+    const supabase = await createClient();
 
-    if (!isAdmin) {
+    // 1. Verificar Sessão no Supabase (Fonte da Verdade Única)
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
         redirect("/admin/login");
+    }
+
+    // 2. Verificação de Role (Segurança Enterprise via RBAC)
+    const { data: profile } = await supabase
+        .from("profiles")
+        .select("role")
+        .eq("id", user.id)
+        .single();
+
+    if (profile?.role !== "admin") {
+        redirect("/admin/login?error=Acesso negado: Privilégios insuficientes");
     }
 
     return (
         <div className="min-h-screen bg-slate-50 flex">
             <AdminSidebar />
             <main className="flex-1 p-4 pt-20 lg:p-8 overflow-y-auto h-screen">
-                {children}
+                <div className="max-w-7xl mx-auto">
+                    {children}
+                </div>
             </main>
+            <AdminChat />
         </div>
     );
 }
