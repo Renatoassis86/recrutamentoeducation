@@ -118,3 +118,20 @@ export async function getAuditLogs() {
     if (error) throw error;
     return data;
 }
+
+/**
+ * BUSCA TODOS OS DOCUMENTOS ENVIADOS
+ */
+export async function getAllDocuments() {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+        .from('documents')
+        .select(`
+            *,
+            applications:application_id(full_name, email)
+        `)
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return data;
+}
