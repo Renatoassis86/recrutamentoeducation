@@ -46,8 +46,8 @@ export default async function AuditPage() {
                                 </td>
                                 <td className="px-6 py-4">
                                     <div className="flex flex-col">
-                                        <span className="text-xs font-bold text-slate-900">{log.profiles?.full_name || "Sistema"}</span>
-                                        <span className="text-[10px] text-slate-400 font-medium">{log.profiles?.email}</span>
+                                        <span className="text-xs font-bold text-slate-900">{log.admin?.full_name || "Sistema"}</span>
+                                        <span className="text-[10px] text-slate-400 font-medium">{log.admin?.email}</span>
                                     </div>
                                 </td>
                                 <td className="px-6 py-4">

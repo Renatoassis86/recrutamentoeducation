@@ -14,7 +14,7 @@ import Image from "next/image";
 const navigation = [
     { name: "Painel de Controle", href: "/admin", icon: LayoutDashboard },
     { name: "Base de Candidatos", href: "/admin/candidates", icon: Users },
-    { name: "Fluxo Editorial (Kanban)", href: "/admin/kanban", icon: LayoutGrid },
+    { name: "Jornada do Candidato (Kanban)", href: "/admin/kanban", icon: LayoutGrid },
     { name: "Trilha de Auditoria", href: "/admin/audit", icon: ClipboardList },
     { name: "Gestão de Usuários", href: "/admin/users", icon: ShieldCheck },
     { name: "Configurações", href: "/admin/settings", icon: Settings },

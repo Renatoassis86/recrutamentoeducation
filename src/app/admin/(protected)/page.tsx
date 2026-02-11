@@ -5,6 +5,8 @@ import {
     TrendingUp, Calendar, Clock
 } from "lucide-react";
 import { StatusChart, ProfilePieChart, EvolutionChart } from "@/components/admin/Charts";
+import BrazilHeatmap from "@/components/admin/BrazilHeatmap";
+import WordCloud from "@/components/admin/WordCloud";
 import { format, subDays } from "date-fns";
 import Link from "next/link";
 
@@ -14,7 +16,7 @@ async function getStats() {
     const supabase = createClient();
     const { data: applications } = await supabase
         .from("applications")
-        .select("id, profile_type, state, status, created_at, licensure_area");
+        .select("id, profile_type, state, status, created_at, licensure_area, experience_summary");
 
     const totalApps = applications?.length || 0;
     const statusCounts: Record<string, number> = {};
@@ -54,6 +56,8 @@ async function getStats() {
         .sort(([, a], [, b]) => b - a)
         .slice(0, 4);
 
+    const summariesText = applications?.map(a => a.experience_summary).filter(Boolean).join(" ") || "";
+
     return {
         totalApps,
         statusCounts,
@@ -61,6 +65,7 @@ async function getStats() {
         profileData,
         stateCounts,
         topAreas,
+        summariesText,
         licenciados: profileCounts['licenciado'],
         pedagogos: profileCounts['pedagogo']
     };
@@ -120,9 +125,8 @@ export default async function AdminDashboard() {
                 />
             </div>
 
-            {/* Main Content Layout */}
+            {/* Visual Analytics */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-                {/* Visual Analytics */}
                 <div className="lg:col-span-8 space-y-8">
                     <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
                         <div className="flex items-center justify-between mb-8">
@@ -132,21 +136,32 @@ export default async function AdminDashboard() {
                         <EvolutionChart data={stats.evolutionData} />
                     </div>
 
-                    <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                        <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-lg font-black text-slate-900 uppercase tracking-tighter">Distribuição por Status</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col">
+                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Mapa de Densidade</h3>
+                            <BrazilHeatmap data={stats.stateCounts} />
                         </div>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <StatusMiniCard label="Recebido" value={(stats.statusCounts['draft'] || 0) + (stats.statusCounts['received'] || 0)} color="bg-slate-100 text-slate-600" />
-                            <StatusMiniCard label="Em Análise" value={stats.statusCounts['under_review'] || 0} color="bg-amber-100 text-amber-600" />
-                            <StatusMiniCard label="Entrevista" value={stats.statusCounts['interview_invited'] || 0} color="bg-blue-100 text-blue-600" />
-                            <StatusMiniCard label="Aprovado" value={stats.statusCounts['hired'] || 0} color="bg-green-100 text-green-600" />
+
+                        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 px-1">Nuvem de Competências</h3>
+                            <WordCloud text={stats.summariesText} />
+                            <p className="text-[10px] text-slate-400 font-bold uppercase mt-4 text-center">Baseado nos resumos profissionais</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Right Column Insights */}
                 <div className="lg:col-span-4 space-y-8">
+                    <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Distribuição por Status</h3>
+                        <div className="grid grid-cols-2 gap-3">
+                            <StatusMiniCard label="Rascunho" value={stats.statusCounts['draft'] || 0} color="bg-slate-50 text-slate-400" />
+                            <StatusMiniCard label="Recebido" value={stats.statusCounts['received'] || 0} color="bg-slate-100 text-slate-600" />
+                            <StatusMiniCard label="Em Análise" value={stats.statusCounts['under_review'] || 0} color="bg-amber-100 text-amber-600" />
+                            <StatusMiniCard label="Aprovado" value={stats.statusCounts['hired'] || 0} color="bg-green-100 text-green-600" />
+                        </div>
+                    </div>
+
                     <div className="bg-slate-900 p-8 rounded-[2.5rem] shadow-xl text-white">
                         <h3 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2">
                             Mix de Formação
@@ -166,7 +181,7 @@ export default async function AdminDashboard() {
                                     <div className="w-full bg-slate-50 h-1.5 rounded-full overflow-hidden border border-slate-100">
                                         <div
                                             className="h-full bg-amber-500 rounded-full"
-                                            style={{ width: `${(count / stats.totalApps) * 100}%` }}
+                                            style={{ width: `${(stats.totalApps > 0 ? (count / stats.totalApps) * 100 : 0)}%` }}
                                         />
                                     </div>
                                 </div>

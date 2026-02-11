@@ -165,11 +165,18 @@ export default function UsersPage() {
                         </div>
 
                         {/* Actions Overlay */}
-                        <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="absolute top-4 right-4 flex gap-1.5 opacity-100 transition-opacity">
+                            <button
+                                onClick={() => alert("Funcionalidade de edição manual será implementada via modal em breve.")}
+                                className="h-8 w-8 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center hover:bg-amber-500 hover:text-white transition-all shadow-sm"
+                                title="Editar Dados"
+                            >
+                                <MoreVertical className="h-4 w-4" />
+                            </button>
                             <button
                                 onClick={() => handleDelete(user.id)}
                                 disabled={deletingId === user.id}
-                                className="h-8 w-8 bg-red-50 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"
+                                className="h-8 w-8 bg-red-50 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm"
                                 title="Excluir Usuário"
                             >
                                 {deletingId === user.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}

@@ -7,8 +7,9 @@ import {
 import Link from "next/link";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import StatusUpdater from "@/components/admin/StatusUpdater";
-import AdminFileLink from "@/components/admin/AdminFileLink";
+import StatusUpdater from "../../../../../components/admin/StatusUpdater";
+import AdminFileLink from "../../../../../components/admin/AdminFileLink";
+import CandidateNotes from "../../../../../components/admin/CandidateNotes";
 
 export const dynamic = "force-dynamic";
 
@@ -122,8 +123,17 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
                         </section>
                     </div>
 
-                    {/* Right Column: Assets & History */}
+                    {/* Right Column: Assets & History & Team Space */}
                     <div className="space-y-12">
+                        {/* Team Space (Notes & Tags) */}
+                        <div className="h-full">
+                            <CandidateNotes
+                                id={application.id}
+                                initialNotes={application.internal_notes}
+                                initialTags={application.tags}
+                            />
+                        </div>
+
                         <section>
                             <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Documentação</h3>
                             <div className="space-y-4">
@@ -138,19 +148,22 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
                                         <AdminFileLink path={doc.storage_path} name={doc.original_name} />
                                     </div>
                                 ))}
+                                {(!documents || documents.length === 0) && (
+                                    <p className="text-[10px] text-slate-400 italic p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">Nenhum documento anexado.</p>
+                                )}
                             </div>
                         </section>
 
                         <section>
-                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Fluxo Editorial</h3>
+                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Jornada do Candidato</h3>
                             <div className="space-y-4">
-                                {history?.slice(0, 3).map((h: any) => (
+                                {history?.slice(0, 5).map((h: any) => (
                                     <div key={h.id} className="text-[10px] p-4 bg-slate-50 rounded-2xl border border-slate-100">
                                         <div className="flex justify-between items-center mb-1">
                                             <span className="font-black text-slate-900 uppercase">Fase: {h.to_status}</span>
                                             <span className="text-slate-400 font-bold">{format(new Date(h.moved_at), "dd/MM")}</span>
                                         </div>
-                                        <p className="text-slate-500 font-medium">Por: {h.profiles?.full_name}</p>
+                                        <p className="text-slate-500 font-medium">Por: {h.profiles?.full_name || "Sistema"}</p>
                                     </div>
                                 ))}
                                 {(!history || history.length === 0) && (

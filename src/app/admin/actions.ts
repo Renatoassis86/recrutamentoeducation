@@ -110,7 +110,7 @@ export async function getAuditLogs() {
         .from('audit_log')
         .select(`
             *,
-            profiles:admin_id(full_name, email)
+            admin:admin_id(full_name, email)
         `)
         .order('created_at', { ascending: false })
         .limit(100);

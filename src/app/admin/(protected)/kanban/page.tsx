@@ -1,5 +1,5 @@
 import { getApplications } from "../../actions";
-import KanbanBoard from "@/components/admin/KanbanBoard";
+import KanbanBoard from "../../../../components/admin/KanbanBoard";
 import { LayoutGrid, Info } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -23,7 +23,7 @@ export default async function KanbanPage() {
             <div className="flex items-center justify-between px-2">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 font-serif flex items-center gap-3">
-                        <LayoutGrid className="h-8 w-8 text-amber-500" /> Pipeline Editorial
+                        <LayoutGrid className="h-8 w-8 text-amber-500" /> Jornada do Candidato (Kanban)
                     </h1>
                     <p className="text-slate-500 mt-1 font-medium">Gerencie o fluxo de candidatos entre as fases do chamamento.</p>
                 </div>

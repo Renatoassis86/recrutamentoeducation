@@ -45,9 +45,12 @@ export default function AdminChat() {
     async function fetchMessages() {
         const { data } = await supabase
             .from('admin_chat_messages')
-            .select('*, profiles:admin_id(full_name)')
+            .select(`
+                *,
+                admin:admin_id(full_name, email)
+            `)
             .order('created_at', { ascending: true })
-            .limit(50);
+            .limit(100);
 
         if (data) setMessages(data);
         setLoading(false);
@@ -58,17 +61,26 @@ export default function AdminChat() {
         if (!newMessage.trim() || sending) return;
 
         setSending(true);
-        const { data: { user } } = await supabase.auth.getUser();
+        try {
+            const { data: { user } } = await supabase.auth.getUser();
 
-        const { error } = await supabase
-            .from('admin_chat_messages')
-            .insert({
-                content: newMessage,
-                admin_id: user?.id
-            });
+            const { error } = await supabase
+                .from('admin_chat_messages')
+                .insert({
+                    content: newMessage,
+                    admin_id: user?.id
+                });
 
-        if (!error) setNewMessage("");
-        setSending(false);
+            if (error) throw error;
+            setNewMessage("");
+            // We fetch messages again to get the one we just sent with its profile joined
+            // or we could optimistically update, but simpler for now to let realtime/refetch handle it
+            fetchMessages();
+        } catch (err) {
+            console.error("Chat Error:", err);
+        } finally {
+            setSending(false);
+        }
     }
 
     if (!isOpen) {
@@ -116,7 +128,7 @@ export default function AdminChat() {
                     <div key={msg.id || idx} className="flex flex-col gap-1 animate-fade-in">
                         <div className="flex items-center justify-between px-1">
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">
-                                {msg.profiles?.full_name || "Admin"}
+                                {msg.admin?.full_name || "Admin"}
                             </span>
                             <span className="text-[9px] font-bold text-slate-300">
                                 {format(new Date(msg.created_at), "HH:mm")}
