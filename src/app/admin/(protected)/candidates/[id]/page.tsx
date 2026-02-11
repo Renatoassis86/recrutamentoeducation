@@ -119,6 +119,15 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
                                 {application.experience_summary || "Nenhum resumo fornecido."}
                             </div>
                         </section>
+
+                        {application.authorial_text_preview && (
+                            <section>
+                                <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-6 border-l-4 border-amber-500 pl-4">Texto Autoral (Preview)</h3>
+                                <div className="p-8 bg-amber-50/30 rounded-[2rem] border border-amber-100 text-slate-800 text-sm leading-relaxed whitespace-pre-wrap font-serif">
+                                    {application.authorial_text_preview}
+                                </div>
+                            </section>
+                        )}
                     </div>
 
                     {/* Right Column: Process & Notes */}

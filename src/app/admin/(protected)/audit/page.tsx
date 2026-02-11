@@ -1,7 +1,10 @@
 import { getAuditLogs } from "../../actions";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { ClipboardList, Shield, Clock, Hash, Activity, User, Settings, FileText, Trash2, Edit } from "lucide-react";
+import {
+    ClipboardList, Shield, Clock, Hash, Activity,
+    User, Settings, FileText, Trash2, Edit, AlertTriangle
+} from "lucide-react";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +19,26 @@ const ACTION_ICONS = {
 };
 
 export default async function AuditPage() {
-    const logs = await getAuditLogs();
+    let logs: any[] = [];
+    let errorMessage: string | null = null;
+
+    try {
+        logs = await getAuditLogs();
+        if (!logs) logs = [];
+    } catch (error: any) {
+        console.error("Audit Logs Error:", error);
+        errorMessage = "Não foi possível carregar os logs de auditoria no momento.";
+    }
+
+    if (errorMessage) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[400px] space-y-4">
+                <AlertTriangle className="h-12 w-12 text-red-500" />
+                <h2 className="text-xl font-bold text-slate-900">{errorMessage}</h2>
+                <p className="text-slate-500">Tente novamente em alguns instantes ou contate o suporte técnico.</p>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8 animate-fade-in pb-20">
@@ -45,8 +67,19 @@ export default async function AuditPage() {
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
-                        {logs && logs.length > 0 ? logs.map((log: any) => {
-                            const Icon = ACTION_ICONS[log.action as keyof typeof ACTION_ICONS] || Activity; // Fallback to Activity if icon not found
+                        {logs.length > 0 ? logs.map((log: any) => {
+                            const Icon = (ACTION_ICONS as any)[log.action] || Activity;
+
+                            // Safe date formatting
+                            let formattedDate = "Data inválida";
+                            try {
+                                if (log.created_at) {
+                                    formattedDate = format(new Date(log.created_at), "dd MMM yyyy HH:mm", { locale: ptBR });
+                                }
+                            } catch (e) {
+                                console.error("Date formatting error:", e);
+                            }
+
                             return (
                                 <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
                                     <td className="px-6 py-4 whitespace-nowrap">
@@ -55,20 +88,20 @@ export default async function AuditPage() {
                                                 <Icon className="h-4 w-4" />
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-xs font-black text-slate-900 uppercase tracking-tighter">{log.action.replace(/_/g, ' ')}</span>
-                                                <span className="text-[10px] text-slate-400 font-bold">{format(new Date(log.created_at), "dd MMM yyyy HH:mm", { locale: ptBR })}</span>
+                                                <span className="text-xs font-black text-slate-900 uppercase tracking-tighter">{(log.action || 'Ação desconhecida').replace(/_/g, ' ')}</span>
+                                                <span className="text-[10px] text-slate-400 font-bold">{formattedDate}</span>
                                             </div>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <div className="flex flex-col">
                                             <span className="text-xs font-bold text-slate-900">{log.admin?.full_name || "Sistema"}</span>
-                                            <span className="text-[10px] text-slate-400 font-medium">{log.admin?.email}</span>
+                                            <span className="text-[10px] text-slate-400 font-medium">{log.admin?.email || "---"}</span>
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 border border-slate-200">
-                                            {log.entity}
+                                            {log.entity || "Outro"}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 text-right">
@@ -82,24 +115,18 @@ export default async function AuditPage() {
                                         )}
                                     </td>
                                 </tr>
-                            )
+                            );
                         }) : (
                             <tr>
-                                <td colSpan={4} className="px-6 py-12 text-center text-slate-400 italic text-sm">
-                                    Nenhum registro de auditoria encontrado.
+                                <td colSpan={4} className="px-6 py-20 text-center flex flex-col items-center justify-center">
+                                    <ClipboardList className="h-12 w-12 text-slate-100 mb-4" />
+                                    <h3 className="font-bold text-slate-900">Nenhum registro encontrado</h3>
+                                    <p className="text-sm text-slate-400">As ações de auditoria aparecerão aqui conforme o uso do sistema.</p>
                                 </td>
                             </tr>
                         )}
                     </tbody>
                 </table>
-
-                {logs?.length === 0 && (
-                    <div className="py-20 text-center flex flex-col items-center">
-                        <ClipboardList className="h-12 w-12 text-slate-100 mb-4" />
-                        <h3 className="font-bold text-slate-900">Nenhum log registrado</h3>
-                        <p className="text-sm text-slate-400">As ações começarão a aparecer aqui conforme o sistema for usado.</p>
-                    </div>
-                )}
             </div>
         </div>
     );

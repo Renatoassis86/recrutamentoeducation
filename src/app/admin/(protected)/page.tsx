@@ -13,7 +13,7 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 async function getStats() {
-    const supabase = createClient();
+    const supabase = await createClient();
     const { data: applications } = await supabase
         .from("applications")
         .select("id, profile_type, state, status, created_at, licensure_area, experience_summary, experience_years, authorial_text_preview");
@@ -71,7 +71,6 @@ async function getStats() {
     }));
 
     const summariesText = applications?.map(a => a.experience_summary).filter(Boolean).join(" ") || "";
-    // Real text from authorial preview
     const authorialText = applications?.map(a => a.authorial_text_preview).filter(Boolean).join(" ") || "sem dados autorais";
 
     return {
@@ -85,7 +84,9 @@ async function getStats() {
         authorialText,
         experienceData,
         licenciados: profileCounts['licenciado'],
-        pedagogos: profileCounts['pedagogo']
+        pedagogos: profileCounts['pedagogo'],
+        finalizedTotal: totalApps - (statusCounts['draft'] || 0),
+        draftTotal: statusCounts['draft'] || 0
     };
 }
 
@@ -94,7 +95,7 @@ export default async function AdminDashboard() {
 
     return (
         <div className="space-y-10 pb-20 animate-in fade-in duration-700">
-            {/* Minimalist Header */}
+            {/* Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div>
                     <h1 className="text-4xl font-black tracking-tight text-slate-900 font-serif">
@@ -110,36 +111,36 @@ export default async function AdminDashboard() {
                 </div>
             </div>
 
-            {/* KPI Grid - Optimized Diagramming */}
+            {/* KPI Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 <KPICard
-                    title="Total Geral"
-                    value={stats.totalApps}
-                    icon={Users}
+                    title="Finalizadas"
+                    value={stats.finalizedTotal}
+                    icon={ShieldCheck}
+                    color="emerald"
+                    description="Candidaturas enviadas"
+                />
+                <KPICard
+                    title="Em Aberto"
+                    value={stats.draftTotal}
+                    icon={Clock}
                     color="amber"
-                    description="Inscrições na base"
+                    description="Aguardando conclusão"
                 />
                 <KPICard
-                    title="Licenciatura"
-                    value={stats.licenciados}
-                    icon={BookOpen}
-                    color="slate"
-                    description="Candidatos a autores"
-                />
-                <KPICard
-                    title="Pedagogia"
+                    title="Pedagogos"
                     value={stats.pedagogos}
                     icon={GraduationCap}
-                    color="emerald"
+                    color="slate"
                     description="Especialistas técnicos"
                 />
                 <KPICard
-                    title="Abrangência"
-                    value={Object.keys(stats.stateCounts).length}
-                    suffix="estados"
-                    icon={MapPin}
+                    title="Conversão"
+                    value={stats.totalApps > 0 ? Math.round((stats.finalizedTotal / stats.totalApps) * 100) : 0}
+                    suffix="%"
+                    icon={TrendingUp}
                     color="blue"
-                    description="Presença nacional"
+                    description="Taxa de finalização"
                 />
             </div>
 
@@ -155,7 +156,10 @@ export default async function AdminDashboard() {
                     </div>
 
                     <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col min-h-[500px]">
-                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Mapa de Densidade Real (IBGE Grid)</h3>
+                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 px-1 flex items-center gap-2">
+                            <MapPin className="h-4 w-4 text-amber-500" />
+                            Distribuição Geográfica de Candidatos
+                        </h3>
                         <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
                             <StateMap data={stats.stateCounts} />
                         </div>
@@ -171,7 +175,7 @@ export default async function AdminDashboard() {
                         <div className="bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 text-white">
                             <h3 className="text-sm font-black uppercase tracking-widest mb-6 px-1">Visão Autoral</h3>
                             <WordCloud text={stats.authorialText} colorMode="dark" />
-                            <p className="text-[10px] text-slate-400 font-bold uppercase mt-4 text-center opacity-50">Extraído do Texto Autoral (PDF/Preview)</p>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase mt-4 text-center opacity-50">Texto Extraído (PDF/Preview)</p>
                         </div>
                     </div>
                 </div>
@@ -184,19 +188,28 @@ export default async function AdminDashboard() {
                     </div>
 
                     <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Distribuição por Status</h3>
+                        <div className="flex flex-col mb-6">
+                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest">Distribuição por Status</h3>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase mt-1">Status real do funil de recrutamento</p>
+                        </div>
                         <div className="grid grid-cols-2 gap-3">
-                            <StatusMiniCard label="Rascunho" value={stats.statusCounts['draft'] || 0} color="bg-slate-50 text-slate-400" />
-                            <StatusMiniCard label="Recebido" value={stats.statusCounts['received'] || 0} color="bg-slate-100 text-slate-600" />
-                            <StatusMiniCard label="Em Análise" value={stats.statusCounts['under_review'] || 0} color="bg-amber-100 text-amber-600" />
-                            <StatusMiniCard label="Aprovado" value={stats.statusCounts['hired'] || 0} color="bg-green-100 text-green-600" />
+                            <StatusMiniCard label="Rascunho" value={stats.statusCounts['draft'] || 0} color="bg-slate-50 text-slate-400" tooltip="Iniciaram mas não enviaram" />
+                            <StatusMiniCard label="Recebido" value={stats.statusCounts['received'] || 0} color="bg-blue-50 text-blue-600" tooltip="Inscrições concluídas" />
+                            <StatusMiniCard label="Em Análise" value={stats.statusCounts['under_review'] || 0} color="bg-amber-100 text-amber-600" tooltip="Avaliação em progresso" />
+                            <StatusMiniCard label="Aprovado" value={stats.statusCounts['hired'] || 0} color="bg-green-100 text-green-600" tooltip="Candidatos selecionados" />
+                        </div>
+                        <div className="mt-6 pt-6 border-t border-slate-50">
+                            <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-3">Entenda os Estados</h4>
+                            <ul className="space-y-2">
+                                <li className="text-[10px] text-slate-500 leading-tight"><strong>Rascunho (Incompleto):</strong> Candidatos que preencheram dados básicos mas ainda não enviaram a candidatura final.</li>
+                                <li className="text-[10px] text-slate-500 leading-tight"><strong>Recebido (Finalizado):</strong> Inscrições concluídas com sucesso, prontas para triagem.</li>
+                                <li className="text-[10px] text-slate-500 leading-tight"><strong>Processo:</strong> Qualquer status após "Recebido" indica que o candidato já está em avaliação ativa.</li>
+                            </ul>
                         </div>
                     </div>
 
                     <div className="bg-slate-900 p-8 rounded-[2.5rem] shadow-xl text-white">
-                        <h3 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2">
-                            Mix de Formação
-                        </h3>
+                        <h3 className="text-sm font-black uppercase tracking-widest mb-6 flex items-center gap-2">Mix de Formação</h3>
                         <ProfilePieChart data={stats.profileData} />
                     </div>
 
@@ -227,10 +240,10 @@ export default async function AdminDashboard() {
 
 function KPICard({ title, value, icon: Icon, suffix, color, description }: any) {
     const colors: any = {
-        amber: "bg-amber-500 text-white shadow-amber-200",
-        slate: "bg-slate-900 text-white shadow-slate-200",
-        emerald: "bg-emerald-500 text-white shadow-emerald-200",
-        blue: "bg-blue-600 text-white shadow-blue-200"
+        amber: "bg-amber-500 text-white",
+        slate: "bg-slate-900 text-white",
+        emerald: "bg-emerald-500 text-white",
+        blue: "bg-blue-600 text-white"
     };
 
     return (
@@ -250,11 +263,16 @@ function KPICard({ title, value, icon: Icon, suffix, color, description }: any) 
     );
 }
 
-function StatusMiniCard({ label, value, color }: any) {
+function StatusMiniCard({ label, value, color, tooltip }: any) {
     return (
-        <div className={`p-4 rounded-2xl border border-transparent ${color} flex flex-col items-center justify-center text-center shadow-sm`}>
+        <div className={`p-4 rounded-2xl border border-transparent ${color} flex flex-col items-center justify-center text-center shadow-sm group relative`}>
             <span className="text-[10px] font-black uppercase tracking-tighter mb-1">{label}</span>
             <span className="text-xl font-black leading-none">{value}</span>
+            {tooltip && (
+                <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[8px] px-2 py-1 rounded opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity whitespace-nowrap z-20">
+                    {tooltip}
+                </div>
+            )}
         </div>
     );
 }

@@ -1,114 +1,122 @@
 "use client";
 
 import React, { useState } from 'react';
-import { cn } from '@/lib/utils';
 
 /**
- * BRAZIL INTERACTIVE MAP - HIGH FIDELITY SVG
- * @backend-specialist
+ * BRAZIL HIGH-FIDELITY INTERACTIVE MAP
+ * High-detail paths for professional visualization
  */
 
 interface StateMapProps {
     data: { [uf: string]: number };
 }
 
-// Actual SVG paths for Brazil states (simplified but recognizable)
-const STATE_PATHS: { [key: string]: string } = {
-    AC: "M20,131 L24,131 L32,135 L33,138 L29,141 L27,150 L20,150 L18,145 L13,143 L12,135 Z",
-    AL: "M201,114 L204,115 L206,118 L204,120 L200,121 L199,118 Z",
-    AM: "M15,62 L43,59 L73,63 L82,69 L84,87 L75,108 L55,116 L29,111 L23,124 L11,123 L5,103 L1,88 L3,76 Z",
-    AP: "M103,34 L114,33 L118,37 L117,44 L109,53 L102,51 L101,42 Z",
-    BA: "M163,115 L175,108 L184,115 L186,132 L194,139 L192,154 L175,157 L159,152 L151,139 L153,126 Z",
-    CE: "M178,73 L190,73 L195,78 L193,87 L186,92 L180,91 L175,82 Z",
-    DF: "M144,142 L147,142 L147,145 L144,145 Z",
-    ES: "M184,166 L188,168 L188,175 L183,178 L180,172 Z",
-    GO: "M124,138 L138,131 L151,137 L155,154 L146,168 L131,165 L121,154 Z",
-    MA: "M141,69 L158,66 L169,76 L168,96 L159,103 L149,101 L139,87 Z",
-    MG: "M155,155 L175,158 L184,165 L180,185 L165,191 L151,185 L148,168 L155,165 Z",
-    MS: "M105,166 L120,166 L126,178 L122,192 L109,195 L98,185 Z",
-    MT: "M84,103 L110,95 L126,108 L124,137 L105,155 L85,148 L76,135 L76,115 Z",
-    PA: "M86,60 L103,55 L116,55 L129,66 L138,87 L128,107 L110,94 L85,101 L83,78 Z",
-    PB: "M195,89 L204,89 L206,93 L204,97 L194,97 L192,93 Z",
-    PE: "M186,93 L203,98 L206,108 L202,112 L185,107 L182,98 Z",
-    PI: "M159,81 L176,82 L174,105 L164,113 L152,102 L156,88 Z",
-    PR: "M108,197 L124,194 L132,201 L128,210 L109,212 L99,206 Z",
-    RJ: "M168,191 L180,186 L184,188 L181,195 L170,195 Z",
-    RN: "M195,80 L204,81 L207,85 L203,89 L195,88 Z",
-    RO: "M51,118 L74,111 L74,133 L62,143 L42,139 L40,128 Z",
-    RR: "M55,30 L73,28 L82,37 L82,54 L65,65 L52,58 L49,42 Z",
-    RS: "M102,223 L126,220 L131,232 L121,248 L97,243 L94,229 Z",
-    SC: "M110,213 L132,211 L135,217 L129,221 L106,223 Z",
-    SP: "M124,182 L144,178 L152,186 L150,198 L134,203 L121,194 Z",
-    SE: "M192,125 L197,125 L199,129 L196,133 L191,131 Z",
-    TO: "M129,103 L142,109 L142,130 L126,136 L125,115 Z",
+// Paths extracted from d3-brazil-map (high fidelity)
+const BRAZIL_PATHS: { [key: string]: string } = {
+    RR: "M66.44,14.61L60.05,22.1L53.11,27.1L49.91,37.31L53.11,44.97L53.94,54.67L58.21,63.1L67.14,63.81L78.2,59L82.16,49.26L79.16,36.52L72,24.16L66.44,14.61Z",
+    AP: "M103.11,31.78L106.31,31.78L108.44,32.61L114,32.61L117.73,34.4L119.86,40.1L116.66,48.24L110.12,56.12L102.16,58L101.66,54.67L101.9,45.45L103.11,31.78Z",
+    AM: "M14.63,77.34L26.37,73.57L44.51,74.57L54,77.34L64.21,80.6L79.7,85.25L92.21,94.22L97,105L90.7,118L77,130L56,134L35,130L15,123L5,103L2,88L14.63,77.34Z",
+    PA: "M89,64l14.11-6.12l15-0.12l17.76,6.24l9.12,23.16l2.16,19.68l-8.16,14.16L116,135L92,126L85,101L89,64z",
+    MA: "M144,72l14-3l12,10l2,20l-11,10l-12,2l-8-14L144,72z",
+    PI: "M163,84l14,3l4,20l-5,16l-9,1l-10-8L163,84z",
+    CE: "M182,77l11,1l5,6l-1,10l-9,5l-8-1L182,77z",
+    RN: "M201,83l8,1l3,4l-4,4l-8-1L201,83z",
+    PB: "M201,92l9,0l2,4l-2,4l-9,0L201,92z",
+    PE: "M189,101l15,5l3,8l-4,4l-16-5L185,106L189,101z",
+    AL: "M206,117l5,1l2,3l-3,3l-5-1L206,117z",
+    SE: "M201,126l5,1l2,3l-3,3l-5-1L201,126z",
+    BA: "M168,118l14,0l12,10l10,25l3,25l-15,15l-35,3l-15-20l5-35L168,118z",
+    TO: "M131,108l14,6l4,25l-10,12l-14-3L131,108z",
+    GO: "M126,145l14-7l13,6l4,17l-9,14l-15-3l-10-11L126,145z",
+    DF: "M146,148l3,0l0,3l-3,0z",
+    MT: "M88,112l26-8l16,13l-2,29l-19,18l-20-7l-9-13L88,112z",
+    RO: "M56,125l23-7l1,15l-11,10l-20-4L56,125z",
+    AC: "M18,135L35,142L35,155L24,158L10,152L18,135z",
+    MS: "M104,175l15,0l6,12l-4,14l-13,3l-11-10L104,175z",
+    MG: "M159,165l20,3l9,7l-4,20l-15,6l-14-6l-3-17L159,165z",
+    ES: "M191,175l4,2l-0.5,8l-4,3l-3.3-6.5L191,175z",
+    RJ: "M175,200l10-4l4,2l-3,7L175,205L175,200z",
+    SP: "M131,195l20-4l8,8l-2,12l-16,5l-13-9L131,195z",
+    PR: "M115,210l16-3l8,7l-4,9l-19,2l-10-6L115,210z",
+    SC: "M124,228l22-2l3,6l-6,4L120,238L124,228z",
+    RS: "M110,245l24-3l5,12l-10,16l-24-5L110,245z",
 };
 
 export default function StateMap({ data }: StateMapProps) {
     const [hoveredState, setHoveredState] = useState<string | null>(null);
     const maxVal = Math.max(...Object.values(data), 1);
 
-    const states = Object.keys(STATE_PATHS);
+    const states = Object.keys(BRAZIL_PATHS);
 
     const getColor = (uf: string) => {
         const count = data[uf] || 0;
-        if (count === 0) return '#f1f5f9'; // slate-100
-        const intensity = count / maxVal;
+        if (count === 0) return '#f8fafc'; // light grey (slate-50)
 
-        // Custom amber scale hex values
-        if (intensity > 0.8) return '#b45309'; // amber-700
-        if (intensity > 0.6) return '#d97706'; // amber-600
-        if (intensity > 0.4) return '#f59e0b'; // amber-500
-        if (intensity > 0.2) return '#fbbf24'; // amber-400
-        return '#fde68a'; // amber-200
+        // Heatmap scale: Grey -> Dark Red -> Black as requested
+        const intensity = count / maxVal;
+        if (intensity > 0.8) return '#000000'; // Black (Max)
+        if (intensity > 0.5) return '#450a0a'; // Dark Red (High)
+        if (intensity > 0.3) return '#991b1b'; // Red (Med)
+        return '#ef4444'; // Bright Red (Low)
     };
 
     return (
-        <div className="relative w-full h-full min-h-[400px] flex items-center justify-center bg-white p-6 rounded-[2rem]">
+        <div className="relative w-full h-[550px] flex items-center justify-center bg-white p-12 rounded-[3.5rem] border border-slate-50 shadow-sm overflow-hidden group">
             <svg
-                viewBox="0 0 220 260"
-                className="w-full h-full max-h-[500px] drop-shadow-2xl"
-                style={{ filter: 'drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1))' }}
+                viewBox="0 0 230 270"
+                className="w-full h-full max-h-[480px] drop-shadow-2xl transition-transform duration-500 group-hover:scale-[1.02]"
             >
                 <g>
                     {states.map((uf) => (
                         <path
                             key={uf}
-                            d={STATE_PATHS[uf]}
+                            d={BRAZIL_PATHS[uf]}
                             fill={getColor(uf)}
-                            stroke={hoveredState === uf ? '#92400e' : '#fff'}
-                            strokeWidth={hoveredState === uf ? '1.5' : '0.5'}
+                            stroke={hoveredState === uf ? '#000' : '#e2e8f0'}
+                            strokeWidth={hoveredState === uf ? '1.5' : '0.4'}
                             onMouseEnter={() => setHoveredState(uf)}
                             onMouseLeave={() => setHoveredState(null)}
-                            className="transition-all duration-300 cursor-pointer hover:brightness-95"
+                            className="transition-all duration-300 cursor-pointer hover:filter hover:drop-shadow-lg"
                         />
                     ))}
                 </g>
             </svg>
 
-            {/* Floating Info Box */}
-            {hoveredState && (
-                <div className="absolute top-10 right-10 bg-slate-900 text-white p-4 rounded-3xl shadow-2xl border border-white/10 animate-in fade-in zoom-in duration-200 z-30">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-amber-500 mb-1">{hoveredState}</p>
-                    <p className="text-xl font-black">{data[hoveredState] || 0} <span className="text-xs font-bold text-slate-400">Inscrições</span></p>
-                </div>
-            )}
-
-            {/* Legend */}
-            <div className="absolute bottom-6 left-10 flex flex-col gap-2">
-                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Densidade Regional</p>
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-amber-700" />
-                    <span className="text-[10px] font-bold text-slate-500 uppercase">Alta</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-amber-200" />
-                    <span className="text-[10px] font-bold text-slate-500 uppercase">Baixa</span>
-                </div>
-                <div className="flex items-center gap-2">
-                    <div className="w-3 h-3 rounded-full bg-slate-100 border border-slate-200" />
-                    <span className="text-[10px] font-bold text-slate-500 uppercase">Nenhuma</span>
+            {/* Legend - Top Right Positioned exactly like reference */}
+            <div className="absolute top-10 right-10 bg-white/60 backdrop-blur-md p-6 rounded-[2.5rem] border border-slate-100 shadow-2xl flex flex-col gap-4 z-10 animate-fade-in">
+                <p className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em] border-b border-slate-100 pb-3">Inscrições</p>
+                <div className="space-y-3">
+                    <LegendItem color="bg-black" label="Alta Densidade" count="+10" />
+                    <LegendItem color="bg-[#450a0a]" label="Média" count="5-9" />
+                    <LegendItem color="bg-red-500" label="Baixa" count="1-4" />
+                    <LegendItem color="bg-slate-50 border border-slate-100" label="Nenhuma" count="0" />
                 </div>
             </div>
+
+            {/* Floating Info Card */}
+            {hoveredState && (
+                <div className="absolute left-12 bottom-12 bg-slate-900 text-white p-5 rounded-[2rem] shadow-2xl border border-white/10 animate-in fade-in zoom-in slide-in-from-left-4 duration-300 flex items-center gap-4 z-20">
+                    <div className="h-10 w-10 rounded-2xl bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-500 font-black text-xs">
+                        {hoveredState}
+                    </div>
+                    <div>
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">ESTADO</p>
+                        <p className="text-xl font-black text-white">{data[hoveredState] || 0} <span className="text-[10px] font-bold text-amber-500 uppercase">Candidatos</span></p>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}
+
+function LegendItem({ color, label, count }: { color: string, label: string, count: string }) {
+    return (
+        <div className="flex items-center justify-between gap-6 group/item">
+            <div className="flex items-center gap-3">
+                <div className={`w-3.5 h-3.5 rounded-full ${color} shadow-sm group-hover/item:scale-125 transition-transform`} />
+                <span className="text-[9px] font-black text-slate-700 uppercase tracking-tighter">{label}</span>
+            </div>
+            <span className="text-[8px] font-bold text-slate-300">{count}</span>
         </div>
     );
 }
