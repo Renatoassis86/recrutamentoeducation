@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { createClient } from "@/utils/supabase/client";
 import { Download, Loader2, Eye } from "lucide-react";
 
 export default function AdminFileLink({ path, name }: { path: string, name: string }) {
@@ -11,16 +10,13 @@ export default function AdminFileLink({ path, name }: { path: string, name: stri
     const handleGetUrl = async () => {
         setLoading(true);
         try {
-            const supabase = createClient();
-            const { data, error } = await supabase
-                .storage
-                .from('applications')
-                .createSignedUrl(path, 3600); // 1 hour
+            const { getAdminSignedUrl } = await import("@/app/admin/actions");
+            const res = await getAdminSignedUrl(path);
 
-            if (error) throw error;
+            if (res.error) throw new Error(res.error);
 
-            if (data?.signedUrl) {
-                window.open(data.signedUrl, '_blank');
+            if (res.signedUrl) {
+                window.open(res.signedUrl, '_blank');
             }
         } catch (error) {
             console.error("Error getting signed URL:", error);

@@ -137,9 +137,30 @@ export default function UsersPage() {
                                     </span>
                                 </div>
                             </div>
-                            <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${user.role === 'admin' ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-400'}`}>
-                                <Shield className="h-4 w-4" />
+                            <div className="flex flex-col items-center gap-1">
+                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center transition-all shadow-sm ${user.role === 'admin' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}>
+                                    <Shield className="h-5 w-5" />
+                                </div>
+                                <span className="text-[8px] font-black uppercase tracking-tighter opacity-40">{user.role}</span>
                             </div>
+                        </div>
+
+                        <div className="absolute top-4 right-16 flex gap-2">
+                            <button
+                                onClick={() => alert("A edição direta será habilitada na próxima atualização de segurança.")}
+                                className="h-8 w-8 bg-slate-50 text-slate-400 rounded-lg flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all shadow-sm"
+                                title="Editar"
+                            >
+                                <MoreVertical className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                                onClick={() => handleDelete(user.id)}
+                                disabled={deletingId === user.id}
+                                className="h-8 w-8 bg-red-50 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm"
+                                title="Remover"
+                            >
+                                {deletingId === user.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
+                            </button>
                         </div>
 
                         <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between relative z-10">
@@ -164,24 +185,6 @@ export default function UsersPage() {
                             </div>
                         </div>
 
-                        {/* Actions Overlay */}
-                        <div className="absolute top-4 right-4 flex gap-1.5 opacity-100 transition-opacity">
-                            <button
-                                onClick={() => alert("Funcionalidade de edição manual será implementada via modal em breve.")}
-                                className="h-8 w-8 bg-amber-50 text-amber-600 rounded-lg flex items-center justify-center hover:bg-amber-500 hover:text-white transition-all shadow-sm"
-                                title="Editar Dados"
-                            >
-                                <MoreVertical className="h-4 w-4" />
-                            </button>
-                            <button
-                                onClick={() => handleDelete(user.id)}
-                                disabled={deletingId === user.id}
-                                className="h-8 w-8 bg-red-50 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-500 hover:text-white transition-all shadow-sm"
-                                title="Excluir Usuário"
-                            >
-                                {deletingId === user.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
-                            </button>
-                        </div>
 
                         {/* Background Decoration */}
                         <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-slate-50 rounded-full opacity-50 transition-transform group-hover:scale-125"></div>

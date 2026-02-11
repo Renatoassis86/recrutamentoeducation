@@ -251,6 +251,13 @@ function CandidatesPageClient() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
+                                            <Link
+                                                href={`/admin/candidates/${app.id}`}
+                                                className="inline-flex items-center justify-center h-10 w-10 bg-slate-100 text-slate-800 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm active:scale-95"
+                                                title="Ver Dossiê Completo"
+                                            >
+                                                <Eye className="h-4 w-4" />
+                                            </Link>
                                             <button
                                                 onClick={() => {
                                                     setCommsType('email');
@@ -278,13 +285,6 @@ function CandidatesPageClient() {
                                             >
                                                 <Trash2 className="h-4 w-4" />
                                             </button>
-                                            <Link
-                                                href={`/admin/candidates/${app.id}`}
-                                                className="inline-flex items-center justify-center h-10 w-10 bg-slate-100 text-slate-600 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm active:scale-95"
-                                                title="Ver Dossiê"
-                                            >
-                                                <Eye className="h-4 w-4" />
-                                            </Link>
                                         </td>
                                     </tr>
                                 )

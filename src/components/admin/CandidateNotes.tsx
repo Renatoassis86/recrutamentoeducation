@@ -10,6 +10,7 @@ export default function CandidateNotes({ id, initialNotes, initialTags }: { id: 
     const [tags, setTags] = useState<string[]>(initialTags || []);
     const [newTag, setNewTag] = useState("");
     const [isSaving, setIsSaving] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
     const router = useRouter();
 
     const handleSave = async () => {
@@ -25,6 +26,8 @@ export default function CandidateNotes({ id, initialNotes, initialTags }: { id: 
             .eq("id", id);
 
         if (!error) {
+            setShowSuccess(true);
+            setTimeout(() => setShowSuccess(false), 3000);
             router.refresh();
         }
         setIsSaving(false);
@@ -42,16 +45,25 @@ export default function CandidateNotes({ id, initialNotes, initialTags }: { id: 
     };
 
     return (
-        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-8 space-y-8 h-full flex flex-col">
-            <div className="flex items-center justify-between">
-                <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] border-l-4 border-amber-500 pl-4">Espaço da Comissão</h3>
+        <div className="bg-white rounded-[2rem] border border-slate-100 shadow-sm p-8 space-y-8 h-full flex flex-col relative overflow-hidden">
+            {showSuccess && (
+                <div className="absolute top-0 left-0 right-0 bg-emerald-500 text-white text-[10px] font-black uppercase tracking-widest py-2 text-center animate-in slide-in-from-top duration-300">
+                    Alterações salvas no dossiê
+                </div>
+            )}
+
+            <div className="flex items-center justify-between mt-2">
+                <div>
+                    <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] border-l-4 border-amber-500 pl-4">Espaço da Comissão</h3>
+                    <p className="text-[9px] text-slate-400 font-bold uppercase mt-1 pl-4 tracking-tighter">Observações privadas não visíveis ao candidato</p>
+                </div>
                 <button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase hover:bg-slate-800 transition-all disabled:opacity-50"
+                    className="flex items-center gap-2 px-4 py-2 bg-slate-900 text-white rounded-xl text-[10px] font-black uppercase hover:bg-slate-800 transition-all disabled:opacity-50 shadow-lg shadow-slate-200"
                 >
                     {isSaving ? <Loader2 className="h-3 w-3 animate-spin" /> : <Save className="h-3 w-3" />}
-                    Salvar Notas
+                    Sincronizar Notas
                 </button>
             </div>
 

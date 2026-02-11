@@ -135,3 +135,32 @@ export async function getAllDocuments() {
     if (error) throw error;
     return data;
 }
+/**
+ * GERA URL ASSINADA COM PRIVILÉGIOS DE ADMIN (SERVICE ROLE)
+ */
+export async function getAdminSignedUrl(path: string) {
+    const supabase = await createClient(); // This normally uses anon key, we need server client with service role
+
+    // To use service role, we need a special client. 
+    // Let's modify our server client creator or use it here if available.
+    // For now, I'll use the environment variable directly if I can import it.
+
+    const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
+
+    const adminSupabase = createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_SERVICE_ROLE_KEY!
+    );
+
+    const { data, error } = await adminSupabase
+        .storage
+        .from('applications')
+        .createSignedUrl(path, 3600);
+
+    if (error) {
+        console.error("Storage Error:", error);
+        return { error: error.message };
+    }
+
+    return { signedUrl: data.signedUrl };
+}
