@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import {
     Users, BookOpen, GraduationCap, MapPin,
     ArrowUpRight, Zap, Target, BarChart3, Star, ShieldCheck,
-    TrendingUp, Calendar, Clock
+    TrendingUp, Calendar, Clock, AlertTriangle
 } from "lucide-react";
 import { StatusChart, ProfilePieChart, EvolutionChart, ExperienceChart } from "@/components/admin/Charts";
 import StateMap from "@/components/admin/StateMap";
@@ -30,8 +30,10 @@ async function getStats() {
     }
 
     applications?.forEach(app => {
+        // PRECISE STATUS MAPPING
         const status = app.status || 'draft';
         statusCounts[status] = (statusCounts[status] || 0) + 1;
+
         if (app.profile_type === 'licenciado' || app.profile_type === 'pedagogo') {
             profileCounts[app.profile_type]++;
         }
@@ -73,6 +75,12 @@ async function getStats() {
     const summariesText = applications?.map(a => a.experience_summary).filter(Boolean).join(" ") || "";
     const authorialText = applications?.map(a => a.authorial_text_preview).filter(Boolean).join(" ") || "sem dados autorais";
 
+    // CONSISTENCY LOGIC:
+    // Finalized = Any status that is NOT 'draft'
+    // Draft = exactly 'draft' or null
+    const finalizedTotal = totalApps - (statusCounts['draft'] || 0);
+    const draftTotal = statusCounts['draft'] || 0;
+
     return {
         totalApps,
         statusCounts,
@@ -85,8 +93,8 @@ async function getStats() {
         experienceData,
         licenciados: profileCounts['licenciado'],
         pedagogos: profileCounts['pedagogo'],
-        finalizedTotal: totalApps - (statusCounts['draft'] || 0),
-        draftTotal: statusCounts['draft'] || 0
+        finalizedTotal,
+        draftTotal
     };
 }
 
@@ -111,21 +119,32 @@ export default async function AdminDashboard() {
                 </div>
             </div>
 
-            {/* KPI Grid */}
+            {/* KPI Grid - NOW CLICKABLE FOR DRILL-DOWN */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+                <Link href="/admin/candidates?status=received">
+                    <KPICard
+                        title="Finalizadas"
+                        value={stats.finalizedTotal}
+                        icon={ShieldCheck}
+                        color="emerald"
+                        description="Candidaturas enviadas (Clique para ver)"
+                    />
+                </Link>
+                <Link href="/admin/candidates?status=draft">
+                    <KPICard
+                        title="Em Aberto"
+                        value={stats.draftTotal}
+                        icon={Clock}
+                        color="amber"
+                        description="Aguardando conclusão (Clique para ver)"
+                    />
+                </Link>
                 <KPICard
-                    title="Finalizadas"
-                    value={stats.finalizedTotal}
-                    icon={ShieldCheck}
-                    color="emerald"
-                    description="Candidaturas enviadas"
-                />
-                <KPICard
-                    title="Em Aberto"
-                    value={stats.draftTotal}
-                    icon={Clock}
-                    color="amber"
-                    description="Aguardando conclusão"
+                    title="Licenciados"
+                    value={stats.licenciados}
+                    icon={BookOpen}
+                    color="blue"
+                    description="Candidatos a autores"
                 />
                 <KPICard
                     title="Pedagogos"
@@ -133,14 +152,6 @@ export default async function AdminDashboard() {
                     icon={GraduationCap}
                     color="slate"
                     description="Especialistas técnicos"
-                />
-                <KPICard
-                    title="Conversão"
-                    value={stats.totalApps > 0 ? Math.round((stats.finalizedTotal / stats.totalApps) * 100) : 0}
-                    suffix="%"
-                    icon={TrendingUp}
-                    color="blue"
-                    description="Taxa de finalização"
                 />
             </div>
 
@@ -158,7 +169,7 @@ export default async function AdminDashboard() {
                     <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col min-h-[500px]">
                         <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 px-1 flex items-center gap-2">
                             <MapPin className="h-4 w-4 text-amber-500" />
-                            Distribuição Geográfica de Candidatos
+                            Distribuição Geográfica Real (Por UF)
                         </h3>
                         <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
                             <StateMap data={stats.stateCounts} />
@@ -196,8 +207,16 @@ export default async function AdminDashboard() {
                             <StatusMiniCard label="Rascunho" value={stats.statusCounts['draft'] || 0} color="bg-slate-50 text-slate-400" tooltip="Iniciaram mas não enviaram" />
                             <StatusMiniCard label="Recebido" value={stats.statusCounts['received'] || 0} color="bg-blue-50 text-blue-600" tooltip="Inscrições concluídas" />
                             <StatusMiniCard label="Em Análise" value={stats.statusCounts['under_review'] || 0} color="bg-amber-100 text-amber-600" tooltip="Avaliação em progresso" />
+                            <StatusMiniCard label="Entrevista" value={stats.statusCounts['interview_invited'] || 0} color="bg-purple-50 text-purple-600" tooltip="Convocados para conversa" />
                             <StatusMiniCard label="Aprovado" value={stats.statusCounts['hired'] || 0} color="bg-green-100 text-green-600" tooltip="Candidatos selecionados" />
                         </div>
+                        {/* ALERT FOR INCONSISTENCIES */}
+                        {Object.entries(stats.statusCounts).some(([k, v]) => !['draft', 'received', 'under_review', 'hired', 'interview_invited'].includes(k) && v > 0) && (
+                            <div className="mt-4 p-3 bg-red-50 rounded-xl border border-red-100 flex items-center gap-3">
+                                <AlertTriangle className="h-4 w-4 text-red-500" />
+                                <p className="text-[8px] font-black text-red-700 uppercase">Atenção: Candidatos em estados não mapeados</p>
+                            </div>
+                        )}
                         <div className="mt-6 pt-6 border-t border-slate-50">
                             <h4 className="text-[10px] font-black text-slate-900 uppercase tracking-widest mb-3">Entenda os Estados</h4>
                             <ul className="space-y-2">
@@ -214,8 +233,11 @@ export default async function AdminDashboard() {
                     </div>
 
                     <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Ranking por Área</h3>
-                        <div className="space-y-5">
+                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 px-1 flex items-center justify-between">
+                            Ranking por Área
+                            <span className="text-[8px] font-bold text-slate-400">Top 4 Áreas</span>
+                        </h3>
+                        <div className="space-y-5 mt-6">
                             {stats.topAreas.map(([area, count]) => (
                                 <div key={area} className="group">
                                     <div className="flex items-center justify-between mb-2">
@@ -240,14 +262,14 @@ export default async function AdminDashboard() {
 
 function KPICard({ title, value, icon: Icon, suffix, color, description }: any) {
     const colors: any = {
-        amber: "bg-amber-500 text-white",
-        slate: "bg-slate-900 text-white",
-        emerald: "bg-emerald-500 text-white",
-        blue: "bg-blue-600 text-white"
+        amber: "bg-amber-500 text-white shadow-amber-200",
+        slate: "bg-slate-900 text-white shadow-slate-200",
+        emerald: "bg-emerald-500 text-white shadow-emerald-200",
+        blue: "bg-blue-600 text-white shadow-blue-200"
     };
 
     return (
-        <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group overflow-hidden relative">
+        <div className="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all group overflow-hidden relative h-full">
             <div className={`h-12 w-12 rounded-2xl ${colors[color]} flex items-center justify-center mb-6 shadow-lg transition-transform group-hover:scale-110`}>
                 <Icon className="h-6 w-6" />
             </div>
@@ -256,7 +278,7 @@ function KPICard({ title, value, icon: Icon, suffix, color, description }: any) 
                 <span className="text-4xl font-black text-slate-900 tracking-tighter">{value}</span>
                 {suffix && <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">{suffix}</span>}
             </div>
-            <p className="mt-2 text-[10px] font-bold text-slate-500 italic opacity-0 group-hover:opacity-100 transition-opacity">
+            <p className="mt-2 text-[10px] font-bold text-slate-500 italic opacity-60 group-hover:opacity-100 transition-opacity">
                 {description}
             </p>
         </div>

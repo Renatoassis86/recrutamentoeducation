@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -13,12 +14,28 @@ import {
 import CommunicationModal from "@/components/admin/CommunicationModal";
 import { deleteApplication } from "@/app/admin/actions";
 
-export default function CandidatesPageClient() {
+export default function CandidatesPage() {
+    return (
+        <Suspense fallback={<div>Carregando...</div>}>
+            <CandidatesPageClient />
+        </Suspense>
+    );
+}
+
+function CandidatesPageClient() {
+    const searchParams = useSearchParams();
+    const initialStatus = searchParams.get('status') || "all";
+
     const [applications, setApplications] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
-    const [filterStatus, setFilterStatus] = useState("all");
+    const [filterStatus, setFilterStatus] = useState(initialStatus);
+
+    useEffect(() => {
+        const statusFromUrl = searchParams.get('status');
+        if (statusFromUrl) setFilterStatus(statusFromUrl);
+    }, [searchParams]);
 
     // Modal state
     const [commsModalOpen, setCommsModalOpen] = useState(false);

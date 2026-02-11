@@ -70,7 +70,7 @@ export type EducationFormData = z.infer<typeof educationSchema>;
 // --- Experience ---
 export const experienceSchema = z.object({
     experience_years: z.enum(["Até 2 anos", "3 a 5 anos", "6 a 10 anos", "Mais de 10 anos"]),
-    experience_summary: z.string().optional(),
+    experience_summary: z.string().min(50, "O resumo deve ter pelo menos 50 caracteres para uma avaliação adequada"),
 });
 
 export type ExperienceFormData = z.infer<typeof experienceSchema>;

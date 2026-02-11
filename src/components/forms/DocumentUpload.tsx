@@ -42,6 +42,11 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
     };
 
     const handleUpload = async () => {
+        if (!authorialText || authorialText.length < 100) {
+            setError("Por favor, cole o conteúdo do seu texto autoral no campo indicado (mínimo 100 caracteres).");
+            return;
+        }
+
         if (!combinedFile) {
             setError("Por favor, anexe o arquivo PDF único contendo o Currículo e o Texto Autoral.");
             return;
