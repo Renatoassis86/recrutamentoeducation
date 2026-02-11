@@ -109,8 +109,8 @@ export default function Home() {
                 {/* Background Loop (Zoomed to hide UI) */}
                 <LoopingVideo
                   videoId="SXpz1uvfn-k"
-                  start={25}
-                  end={50}
+                  start={30}
+                  end={55}
                   mobileScale={2.5}
                   desktopScale={2.2}
                 />

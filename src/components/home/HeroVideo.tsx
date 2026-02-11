@@ -35,10 +35,10 @@ export default function HeroVideo() {
                         playsinline: 1, // Critical for mobile
                         rel: 0,
                         showinfo: 0,
-                        start: 25,
-                        end: 50,
+                        start: 30,
+                        end: 55,
                         enablejsapi: 1,
-                        origin: typeof window !== 'undefined' ? window.location.origin : 'https://recrutamentoeducation.vercel.app',
+                        origin: typeof window !== 'undefined' ? window.location.origin : '',
                         iv_load_policy: 3, // Hide annotations
                         cc_load_policy: 0, // Default caps off
                         hl: 'pt-BR', // Force language interface
@@ -58,8 +58,8 @@ export default function HeroVideo() {
                             if (event.data === 0) {
                                 event.target.loadVideoById({
                                     videoId: 'gU00NwWoG8w',
-                                    startSeconds: 25,
-                                    endSeconds: 50
+                                    startSeconds: 30,
+                                    endSeconds: 55
                                 });
                             }
                         }

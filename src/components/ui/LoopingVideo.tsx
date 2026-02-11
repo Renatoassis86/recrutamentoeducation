@@ -12,8 +12,8 @@ interface LoopingVideoProps {
 
 export default function LoopingVideo({
     videoId,
-    start = 25,
-    end = 50,
+    start = 30,
+    end = 55,
     mobileScale = 2.0,
     desktopScale = 2.2
 }: LoopingVideoProps) {
@@ -52,18 +52,30 @@ export default function LoopingVideo({
                         enablejsapi: 1,
                         origin: typeof window !== 'undefined' ? window.location.origin : '',
                         iv_load_policy: 3,
+                        playlist: videoId, // Required for loop in some mobile browsers
+                        loop: 1,
                     },
                     events: {
                         onReady: (event: any) => {
                             if (!isMounted) return;
                             event.target.mute();
-                            event.target.playVideo();
+                            const promise = event.target.playVideo();
+                            // Some players return a promise
+                            if (promise && promise.catch) {
+                                promise.catch(() => {
+                                    console.log("Autoplay blocked, waiting for interaction");
+                                });
+                            }
                         },
                         onStateChange: (event: any) => {
                             if (!isMounted) return;
-                            // Reset when ended (0) or if it reaches very close to the end
+                            // Reset when ended (0)
                             if (event.data === (window as any).YT.PlayerState.ENDED) {
                                 event.target.seekTo(start);
+                                event.target.playVideo();
+                            }
+                            // Force play if unstarted or paused by browser (sometimes happen on mobile)
+                            if (event.data === -1 || event.data === 2) {
                                 event.target.playVideo();
                             }
                         }

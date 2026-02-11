@@ -129,8 +129,8 @@ function VideoPlayer() {
                 {/* Background Loop (Zoomed to hide UI) */}
                 <LoopingVideo
                     videoId="gU00NwWoG8w"
-                    start={25}
-                    end={50}
+                    start={30}
+                    end={55}
                     mobileScale={3.0}
                     desktopScale={2.5}
                 />
