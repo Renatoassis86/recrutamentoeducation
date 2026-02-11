@@ -234,6 +234,18 @@ export default function CandidatesPageClient() {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-right space-x-2">
+                                            <button
+                                                onClick={() => {
+                                                    setCommsType('email');
+                                                    setCommsRecipients([app.email]);
+                                                    setCommsNames([app.full_name]);
+                                                    setCommsModalOpen(true);
+                                                }}
+                                                className="inline-flex items-center justify-center h-10 w-10 bg-amber-50 text-amber-600 rounded-xl hover:bg-amber-600 hover:text-white transition-all shadow-sm active:scale-95"
+                                                title="Enviar E-mail"
+                                            >
+                                                <Mail className="h-4 w-4" />
+                                            </button>
                                             <a
                                                 href={`https://wa.me/${app.phone?.replace(/\D/g, '')}`}
                                                 target="_blank"

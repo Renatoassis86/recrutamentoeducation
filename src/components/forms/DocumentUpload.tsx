@@ -11,6 +11,7 @@ interface DocumentUploadProps {
 
 export default function DocumentUpload({ onComplete, onBack }: DocumentUploadProps) {
     const [lattesUrl, setLattesUrl] = useState("");
+    const [authorialText, setAuthorialText] = useState("");
 
     // File state
     const [combinedFile, setCombinedFile] = useState<File | null>(null);
@@ -64,10 +65,13 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
 
             if (!application) throw new Error("Candidatura não encontrada.");
 
-            // 2. Save Lattes URL
+            // 2. Save Lattes & Authorial Text Preview
             const { error: urlError } = await supabase
                 .from("applications")
-                .update({ lattes_url: lattesUrl })
+                .update({
+                    lattes_url: lattesUrl,
+                    authorial_text_preview: authorialText
+                })
                 .eq("id", application.id);
 
             if (urlError) throw urlError;
@@ -210,6 +214,22 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                     />
                 </div>
                 <p className="text-xs text-gray-500">Copie e cole a URL do seu currículo Lattes (se houver).</p>
+            </div>
+
+            {/* 2. Authorial Text Paste (For WordCloud analysis) */}
+            <div className="space-y-2">
+                <label htmlFor="authorial_text" className="block text-sm font-medium leading-6 text-gray-900">
+                    Texto Autoral (Cole o conteúdo do seu texto abaixo para análise)
+                </label>
+                <textarea
+                    id="authorial_text"
+                    rows={8}
+                    className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-amber-600 sm:text-sm sm:leading-6"
+                    placeholder="Cole aqui o conteúdo do seu texto autoral..."
+                    value={authorialText}
+                    onChange={(e) => setAuthorialText(e.target.value)}
+                />
+                <p className="text-xs text-gray-500">Este conteúdo será utilizado para análise de perfil e geração de insights estatísticos.</p>
             </div>
 
             <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">

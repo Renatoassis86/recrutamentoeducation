@@ -103,3 +103,29 @@ export function EvolutionChart({ data }: { data: any[] }) {
         </div>
     );
 }
+
+export function ExperienceChart({ data }: { data: any[] }) {
+    return (
+        <div className="h-64 w-full">
+            <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data} layout="vertical">
+                    <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="#f1f5f9" />
+                    <XAxis type="number" hide />
+                    <YAxis
+                        dataKey="name"
+                        type="category"
+                        width={100}
+                        axisLine={false}
+                        tickLine={false}
+                        tick={{ fill: '#64748b', fontSize: 10, fontWeight: 'bold' }}
+                    />
+                    <Tooltip
+                        cursor={{ fill: '#f8fafc' }}
+                        contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)' }}
+                    />
+                    <Bar dataKey="value" fill="#f59e0b" radius={[0, 8, 8, 0]} barSize={20} />
+                </BarChart>
+            </ResponsiveContainer>
+        </div>
+    );
+}

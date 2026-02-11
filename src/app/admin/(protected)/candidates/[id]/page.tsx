@@ -1,12 +1,10 @@
 import { createClient } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import {
-    User, Mail, Phone, MapPin, GraduationCap, FileText,
-    ArrowLeft, ExternalLink, Shield, MessageCircle, Star, History
+    FileText, ArrowLeft, Shield, MapPin, Search, Hash
 } from "lucide-react";
 import Link from "next/link";
 import { format } from "date-fns";
-import { ptBR } from "date-fns/locale";
 import StatusUpdater from "../../../../../components/admin/StatusUpdater";
 import AdminFileLink from "../../../../../components/admin/AdminFileLink";
 import CandidateNotes from "../../../../../components/admin/CandidateNotes";
@@ -31,7 +29,7 @@ async function getCandidateData(id: string) {
 
     const { data: history } = await supabase
         .from("kanban_history")
-        .select("*, profiles:moved_by_admin_id(full_name)")
+        .select("*, admin:moved_by_admin_id(full_name)")
         .eq("application_id", id)
         .order("moved_at", { ascending: false });
 
@@ -45,9 +43,9 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
 
     const { application, documents, history } = data;
 
-    const DataRow = ({ label, value, fullWidth = false }: any) => (
-        <div className={`py-4 flex flex-col sm:flex-row sm:items-baseline sm:gap-4 border-b border-slate-50 last:border-0 ${fullWidth ? 'block' : ''}`}>
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest min-w-[140px]">{label}</span>
+    const DataRow = ({ label, value }: any) => (
+        <div className="py-3 flex flex-col sm:flex-row sm:items-baseline sm:gap-4 border-b border-slate-50 last:border-0">
+            <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest min-w-[140px]">{label}</span>
             <span className="text-sm text-slate-900 font-bold whitespace-pre-wrap">{value || "---"}</span>
         </div>
     );
@@ -65,7 +63,7 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
             </div>
 
             {/* Main Sheet */}
-            <div className="bg-white rounded-[2.5rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
+            <div className="bg-white rounded-[3rem] shadow-xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
                 {/* Visual Identity Header */}
                 <div className="bg-slate-900 px-10 py-12 text-white relative flex flex-col md:flex-row items-center gap-8">
                     <div className="h-24 w-24 rounded-3xl bg-amber-500 flex items-center justify-center text-4xl font-black text-slate-950 shadow-2xl">
@@ -77,8 +75,8 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
                             <span className="px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-widest border border-white/10 text-amber-500">
                                 {application.profile_type}
                             </span>
-                            <span className="px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-widest border border-white/10">
-                                {application.state}
+                            <span className="px-3 py-1 bg-white/10 rounded-full text-[9px] font-black uppercase tracking-widest border border-white/10 flex items-center gap-1">
+                                <MapPin className="h-2.5 w-2.5" /> {application.state}
                             </span>
                         </div>
                     </div>
@@ -91,7 +89,7 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
                     {/* Left Column: Data Sheet */}
                     <div className="lg:col-span-2 space-y-12">
                         <section>
-                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Dados de Identificação</h3>
+                            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-6 border-l-4 border-amber-500 pl-4">Dossiê de Identificação</h3>
                             <div className="space-y-1">
                                 <DataRow label="E-mail" value={application.email} />
                                 <DataRow label="Telefone" value={application.phone} />
@@ -101,77 +99,113 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
                         </section>
 
                         <section>
-                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Formação Acadêmica</h3>
+                            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-6 border-l-4 border-amber-500 pl-4">Qualificação Acadêmica</h3>
                             <div className="space-y-1">
-                                <DataRow label="Curso" value={application.graduation_course} />
+                                <DataRow label="Curso Principal" value={application.graduation_course} />
                                 <DataRow label="Instituição" value={application.graduation_institution} />
-                                <DataRow label="Ano Formatura" value={application.graduation_year} />
+                                <DataRow label="Ano de Conclusão" value={application.graduation_year} />
                                 {application.profile_type === 'licenciado' && (
-                                    <DataRow label="Área Licenciatura" value={application.licensure_area} />
+                                    <DataRow label="Área de Licenciatura" value={application.licensure_area} />
                                 )}
                                 {application.pedagogy_areas?.length > 0 && (
-                                    <DataRow label="Áreas Pedagogia" value={application.pedagogy_areas.join(", ")} />
+                                    <DataRow label="Especialidades" value={application.pedagogy_areas.join(", ")} />
                                 )}
                             </div>
                         </section>
 
                         <section>
-                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Resumo da Experiência</h3>
-                            <div className="p-6 bg-slate-50 rounded-3xl border border-slate-100 text-slate-700 text-sm italic leading-relaxed">
-                                {application.experience_summary}
+                            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-6 border-l-4 border-amber-500 pl-4">Resumo Executivo</h3>
+                            <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 text-slate-700 text-sm italic leading-relaxed shadow-inner">
+                                {application.experience_summary || "Nenhum resumo fornecido."}
                             </div>
                         </section>
                     </div>
 
-                    {/* Right Column: Assets & History & Team Space */}
+                    {/* Right Column: Process & Notes */}
                     <div className="space-y-12">
-                        {/* Team Space (Notes & Tags) */}
-                        <div className="h-full">
-                            <CandidateNotes
-                                id={application.id}
-                                initialNotes={application.internal_notes}
-                                initialTags={application.tags}
-                            />
-                        </div>
+                        <CandidateNotes
+                            id={application.id}
+                            initialNotes={application.internal_notes}
+                            initialTags={application.tags}
+                        />
 
                         <section>
-                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Documentação</h3>
-                            <div className="space-y-4">
-                                {documents?.map((doc: any) => (
-                                    <div key={doc.id} className="p-4 bg-white rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between group hover:border-amber-200 transition-all">
-                                        <div className="flex items-center gap-3">
-                                            <div className="h-8 w-8 bg-slate-50 rounded-lg flex items-center justify-center text-slate-400 group-hover:text-amber-500 transition-colors">
-                                                <FileText className="h-4 w-4" />
-                                            </div>
-                                            <span className="text-[10px] font-black uppercase text-slate-600 truncate max-w-[120px]">{doc.original_name}</span>
-                                        </div>
-                                        <AdminFileLink path={doc.storage_path} name={doc.original_name} />
-                                    </div>
-                                ))}
-                                {(!documents || documents.length === 0) && (
-                                    <p className="text-[10px] text-slate-400 italic p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">Nenhum documento anexado.</p>
-                                )}
-                            </div>
-                        </section>
-
-                        <section>
-                            <h3 className="text-xs font-black text-slate-900 uppercase tracking-[0.2em] mb-6 border-l-4 border-amber-500 pl-4">Jornada do Candidato</h3>
-                            <div className="space-y-4">
-                                {history?.slice(0, 5).map((h: any) => (
-                                    <div key={h.id} className="text-[10px] p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                            <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-6 border-l-4 border-amber-500 pl-4">Fluxo de Kandban</h3>
+                            <div className="space-y-3">
+                                {history?.map((h: any) => (
+                                    <div key={h.id} className="text-[10px] p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:bg-white transition-colors">
                                         <div className="flex justify-between items-center mb-1">
-                                            <span className="font-black text-slate-900 uppercase">Fase: {h.to_status}</span>
-                                            <span className="text-slate-400 font-bold">{format(new Date(h.moved_at), "dd/MM")}</span>
+                                            <span className="font-black text-slate-900 uppercase">PARA: {h.to_status}</span>
+                                            <span className="text-slate-400 font-bold">{format(new Date(h.moved_at || h.created_at), "dd/MM/yy")}</span>
                                         </div>
-                                        <p className="text-slate-500 font-medium">Por: {h.profiles?.full_name || "Sistema"}</p>
+                                        <p className="text-slate-500 font-medium opacity-70">Responsável: {h.admin?.full_name || "Sistema"}</p>
                                     </div>
                                 ))}
                                 {(!history || history.length === 0) && (
-                                    <p className="text-[10px] text-slate-400 italic">Sem movimentação registrada.</p>
+                                    <p className="text-[10px] text-slate-400 italic">Sem histórico registrado.</p>
                                 )}
                             </div>
                         </section>
                     </div>
+                </div>
+
+                {/* Full Width Asset Central */}
+                <div className="px-10 lg:px-16 pb-16">
+                    <section className="bg-slate-900 p-10 rounded-[3rem] text-white shadow-2xl">
+                        <div className="flex items-center gap-4 mb-10">
+                            <div className="h-14 w-14 bg-amber-500 rounded-3xl flex items-center justify-center text-slate-950 shadow-lg shadow-amber-500/20">
+                                <FileText className="h-7 w-7" />
+                            </div>
+                            <div>
+                                <h3 className="text-xl font-black uppercase tracking-widest">Repositório de Documentos</h3>
+                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-tighter">Download seguro via Supabase Storage</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {documents?.map((doc: any) => (
+                                <div key={doc.id} className="p-6 bg-white/5 rounded-[2.5rem] border border-white/10 flex flex-col gap-6 hover:bg-white/10 transition-all group">
+                                    <div className="flex items-center gap-4">
+                                        <div className="h-12 w-12 bg-white/10 rounded-2xl flex items-center justify-center text-amber-500 group-hover:scale-110 transition-transform">
+                                            <FileText className="h-6 w-6" />
+                                        </div>
+                                        <div className="flex-1 overflow-hidden">
+                                            <p className="text-[10px] font-black uppercase truncate text-slate-200">{doc.original_name}</p>
+                                            <p className="text-[9px] font-bold text-slate-500 mt-1 uppercase">PDF • {(doc.size_bytes / 1024 / 1024).toFixed(2)} MB</p>
+                                        </div>
+                                    </div>
+                                    <AdminFileLink path={doc.storage_path} name={doc.original_name} />
+                                </div>
+                            ))}
+                            {(!documents || documents.length === 0) && (
+                                <div className="col-span-full py-12 text-center border-2 border-dashed border-white/5 rounded-[2.5rem]">
+                                    <p className="text-sm text-slate-500 font-bold uppercase">Nenhum documento detectado no storage</p>
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                </div>
+
+                {/* Technical Meta Data */}
+                <div className="px-10 lg:px-16 pb-20">
+                    <section className="bg-slate-50 p-12 rounded-[3.5rem] border border-slate-100">
+                        <div className="flex items-center justify-center gap-4 mb-12">
+                            <Hash className="h-5 w-5 text-slate-300" />
+                            <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-[0.5em]">Ficha Técnica Estruturada</h3>
+                            <Hash className="h-5 w-5 text-slate-300" />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-16 gap-y-4">
+                            {Object.entries(application).map(([key, value]) => {
+                                if (key === 'id' || key === 'user_id' || typeof value === 'object') return null;
+                                return (
+                                    <div key={key} className="flex justify-between items-center py-2 border-b border-slate-200/50">
+                                        <span className="text-[9px] font-black text-slate-400 uppercase">{key.replace(/_/g, ' ')}</span>
+                                        <span className="text-[11px] font-bold text-slate-900 truncate max-w-[150px]">{String(value)}</span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </section>
                 </div>
             </div>
         </div>

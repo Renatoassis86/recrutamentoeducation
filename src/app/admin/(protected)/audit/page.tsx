@@ -28,51 +28,58 @@ export default async function AuditPage() {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-slate-50 border-b border-slate-100">
-                            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Data / Hora</th>
+                            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Ação / Data</th>
                             <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Administrador</th>
                             <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Módulo</th>
-                            <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">Ação Realizada</th>
                             <th className="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">ID Relacionado</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-50">
-                        {logs.map((log: any) => (
-                            <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-900">
-                                        <Clock className="h-3.5 w-3.5 text-slate-300" />
-                                        {format(new Date(log.created_at), "dd/MM/yy 'às' HH:mm", { locale: ptBR })}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex flex-col">
-                                        <span className="text-xs font-bold text-slate-900">{log.admin?.full_name || "Sistema"}</span>
-                                        <span className="text-[10px] text-slate-400 font-medium">{log.admin?.email}</span>
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <span className="px-2 py-1 bg-slate-100 text-slate-600 rounded-md text-[10px] font-black uppercase tracking-tighter">
-                                        {log.entity}
-                                    </span>
-                                </td>
-                                <td className="px-6 py-4">
-                                    <div className="flex items-center gap-2 text-xs font-bold text-slate-600">
-                                        <Activity className="h-3.5 w-3.5 text-amber-500" />
-                                        {log.action}
-                                    </div>
-                                </td>
-                                <td className="px-6 py-4 text-right">
-                                    {log.entity_id ? (
-                                        <div className="inline-flex items-center gap-1 px-2 py-1 bg-amber-50 rounded text-[10px] font-mono font-bold text-amber-700">
-                                            <Hash className="h-2.5 w-2.5 opacity-50" />
-                                            {log.entity_id.split('-')[0]}...
+                        {logs && logs.length > 0 ? logs.map((log: any) => {
+                            const Icon = ACTION_ICONS[log.action as keyof typeof ACTION_ICONS] || Activity; // Fallback to Activity if icon not found
+                            return (
+                                <tr key={log.id} className="hover:bg-slate-50/50 transition-colors">
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex items-center gap-3">
+                                            <div className="h-8 w-8 bg-amber-100 rounded-lg flex items-center justify-center text-amber-600">
+                                                <Icon className="h-4 w-4" />
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-xs font-black text-slate-900 uppercase tracking-tighter">{log.action.replace(/_/g, ' ')}</span>
+                                                <span className="text-[10px] text-slate-400 font-bold">{format(new Date(log.created_at), "dd MMM yyyy HH:mm", { locale: ptBR })}</span>
+                                            </div>
                                         </div>
-                                    ) : (
-                                        <span className="text-slate-300">---</span>
-                                    )}
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="flex flex-col">
+                                            <span className="text-xs font-bold text-slate-900">{log.admin?.full_name || "Sistema"}</span>
+                                            <span className="text-[10px] text-slate-400 font-medium">{log.admin?.email}</span>
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-widest bg-slate-100 text-slate-500 border border-slate-200">
+                                            {log.entity}
+                                        </span>
+                                    </td>
+                                    <td className="px-6 py-4 text-right">
+                                        {log.entity_id ? (
+                                            <div className="inline-flex items-center gap-1 px-2 py-1 bg-amber-50 rounded text-[10px] font-mono font-bold text-amber-700">
+                                                <Hash className="h-2.5 w-2.5 opacity-50" />
+                                                {String(log.entity_id).split('-')[0]}...
+                                            </div>
+                                        ) : (
+                                            <span className="text-slate-300">---</span>
+                                        )}
+                                    </td>
+                                </tr>
+                            )
+                        }) : (
+                            <tr>
+                                <td colSpan={4} className="px-6 py-12 text-center text-slate-400 italic text-sm">
+                                    Nenhum registro de auditoria encontrado.
                                 </td>
                             </tr>
-                        ))}
+                        )}
                     </tbody>
                 </table>
 

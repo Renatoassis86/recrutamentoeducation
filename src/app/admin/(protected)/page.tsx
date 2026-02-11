@@ -4,8 +4,8 @@ import {
     ArrowUpRight, Zap, Target, BarChart3, Star, ShieldCheck,
     TrendingUp, Calendar, Clock
 } from "lucide-react";
-import { StatusChart, ProfilePieChart, EvolutionChart } from "@/components/admin/Charts";
-import BrazilHeatmap from "@/components/admin/BrazilHeatmap";
+import { StatusChart, ProfilePieChart, EvolutionChart, ExperienceChart } from "@/components/admin/Charts";
+import StateMap from "@/components/admin/StateMap";
 import WordCloud from "@/components/admin/WordCloud";
 import { format, subDays } from "date-fns";
 import Link from "next/link";
@@ -16,7 +16,7 @@ async function getStats() {
     const supabase = createClient();
     const { data: applications } = await supabase
         .from("applications")
-        .select("id, profile_type, state, status, created_at, licensure_area, experience_summary");
+        .select("id, profile_type, state, status, created_at, licensure_area, experience_summary, experience_years, authorial_text_preview");
 
     const totalApps = applications?.length || 0;
     const statusCounts: Record<string, number> = {};
@@ -56,7 +56,23 @@ async function getStats() {
         .sort(([, a], [, b]) => b - a)
         .slice(0, 4);
 
+    const experienceCounts: Record<string, number> = {};
+    const experienceOrder = ["Até 2 anos", "3 a 5 anos", "6 a 10 anos", "Mais de 10 anos"];
+
+    applications?.forEach(app => {
+        if (app.experience_years) {
+            experienceCounts[app.experience_years] = (experienceCounts[app.experience_years] || 0) + 1;
+        }
+    });
+
+    const experienceData = experienceOrder.map(range => ({
+        name: range,
+        value: experienceCounts[range] || 0
+    }));
+
     const summariesText = applications?.map(a => a.experience_summary).filter(Boolean).join(" ") || "";
+    // Real text from authorial preview
+    const authorialText = applications?.map(a => a.authorial_text_preview).filter(Boolean).join(" ") || "sem dados autorais";
 
     return {
         totalApps,
@@ -66,6 +82,8 @@ async function getStats() {
         stateCounts,
         topAreas,
         summariesText,
+        authorialText,
+        experienceData,
         licenciados: profileCounts['licenciado'],
         pedagogos: profileCounts['pedagogo']
     };
@@ -136,22 +154,35 @@ export default async function AdminDashboard() {
                         <EvolutionChart data={stats.evolutionData} />
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col">
-                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Mapa de Densidade</h3>
-                            <BrazilHeatmap data={stats.stateCounts} />
+                    <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col min-h-[500px]">
+                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Mapa de Densidade Real (IBGE Grid)</h3>
+                        <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
+                            <StateMap data={stats.stateCounts} />
                         </div>
+                    </div>
 
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
                             <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 px-1">Nuvem de Competências</h3>
                             <WordCloud text={stats.summariesText} />
-                            <p className="text-[10px] text-slate-400 font-bold uppercase mt-4 text-center">Baseado nos resumos profissionais</p>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase mt-4 text-center">Resumo Profissional</p>
+                        </div>
+
+                        <div className="bg-slate-900 p-8 rounded-[2.5rem] shadow-sm border border-slate-100 text-white">
+                            <h3 className="text-sm font-black uppercase tracking-widest mb-6 px-1">Visão Autoral</h3>
+                            <WordCloud text={stats.authorialText} colorMode="dark" />
+                            <p className="text-[10px] text-slate-400 font-bold uppercase mt-4 text-center opacity-50">Extraído do Texto Autoral (PDF/Preview)</p>
                         </div>
                     </div>
                 </div>
 
                 {/* Right Column Insights */}
                 <div className="lg:col-span-4 space-y-8">
+                    <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
+                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Experiência Docente</h3>
+                        <ExperienceChart data={stats.experienceData} />
+                    </div>
+
                     <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
                         <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6">Distribuição por Status</h3>
                         <div className="grid grid-cols-2 gap-3">
