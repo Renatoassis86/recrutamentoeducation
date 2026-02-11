@@ -39,12 +39,12 @@ export default function LoopingVideo({
                     videoId,
                     playerVars: {
                         autoplay: 1,
-                        mute: 1,
+                        mute: 1, // Crucial: Must be 1 for autoplay to work
                         controls: 0,
                         disablekb: 1,
                         fs: 0,
                         modestbranding: 1,
-                        playsinline: 1,
+                        playsinline: 1, // Crucial for mobile
                         rel: 0,
                         showinfo: 0,
                         start,
@@ -52,30 +52,45 @@ export default function LoopingVideo({
                         enablejsapi: 1,
                         origin: typeof window !== 'undefined' ? window.location.origin : '',
                         iv_load_policy: 3,
-                        playlist: videoId, // Required for loop in some mobile browsers
+                        playlist: videoId, // Required for loop naturally
                         loop: 1,
+                        widget_referrer: typeof window !== 'undefined' ? window.location.origin : '',
                     },
                     events: {
                         onReady: (event: any) => {
                             if (!isMounted) return;
                             event.target.mute();
-                            const promise = event.target.playVideo();
-                            // Some players return a promise
-                            if (promise && promise.catch) {
-                                promise.catch(() => {
-                                    console.log("Autoplay blocked, waiting for interaction");
-                                });
-                            }
+                            event.target.playVideo();
+
+                            // Interval to check if we passed the end point
+                            const checkInterval = setInterval(() => {
+                                if (!isMounted || !playerRef.current) {
+                                    clearInterval(checkInterval);
+                                    return;
+                                }
+                                try {
+                                    const currentTime = event.target.getCurrentTime();
+                                    if (currentTime >= end - 0.5) {
+                                        event.target.seekTo(start);
+                                        event.target.playVideo();
+                                    }
+                                } catch (e) {
+                                    // Ignore errors if player is destroyed
+                                }
+                            }, 1000);
                         },
                         onStateChange: (event: any) => {
                             if (!isMounted) return;
-                            // Reset when ended (0)
-                            if (event.data === (window as any).YT.PlayerState.ENDED) {
+
+                            // If ended or paused/unstarted (which happens on mobile when blocked), force play
+                            if (
+                                event.data === (window as any).YT.PlayerState.ENDED ||
+                                event.data === (window as any).YT.PlayerState.PAUSED ||
+                                event.data === (window as any).YT.PlayerState.UNSTARTED ||
+                                event.data === -1
+                            ) {
+                                event.target.mute();
                                 event.target.seekTo(start);
-                                event.target.playVideo();
-                            }
-                            // Force play if unstarted or paused by browser (sometimes happen on mobile)
-                            if (event.data === -1 || event.data === 2) {
                                 event.target.playVideo();
                             }
                         }
@@ -109,13 +124,15 @@ export default function LoopingVideo({
     }, [videoId, start, end]);
 
     return (
-        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none bg-slate-900">
+        <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none bg-slate-900 flex items-center justify-center">
             <div
                 id={containerId.current}
-                className="w-full h-full"
+                className="w-full h-full pointer-events-none"
                 style={{
                     transform: `scale(${isMobile ? mobileScale : desktopScale})`,
-                    transformOrigin: 'center center'
+                    transformOrigin: 'center center',
+                    width: '100%',
+                    height: '100%'
                 }}
             />
         </div>
