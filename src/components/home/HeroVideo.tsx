@@ -102,10 +102,10 @@ export default function HeroVideo() {
         <div className="w-full h-full overflow-hidden absolute inset-0 pointer-events-none">
             <div
                 id="youtube-player"
-                className="w-full h-full object-cover scale-[2] sm:scale-150 opacity-90"
+                className="w-full h-full object-cover sm:scale-150 scale-125 opacity-90 transition-opacity duration-1000"
             />
-            {/* Mobile Fallback Overlay (Optional, acts as poster if video fails to autoplay) */}
-            <div className={`absolute inset-0 bg-slate-900 z-[-1] ${isMobile ? 'block' : 'hidden'}`} />
+            {/* Mobile Fallback Overlay */}
+            <div className={`absolute inset-0 bg-slate-900 z-[-1] transition-opacity duration-500`} />
         </div>
     );
 }

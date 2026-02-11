@@ -3,14 +3,17 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { LayoutDashboard, Users, Map as MapIcon, LogOut, BookOpen, ExternalLink, Menu, X } from "lucide-react";
+import { LayoutDashboard, Users, Map as MapIcon, LogOut, BookOpen, ExternalLink, Menu, X, LayoutGrid, MessageSquare } from "lucide-react";
 import { logoutAdmin } from "@/app/actions/auth-admin";
 import Image from "next/image";
 
 const navigation = [
-    { name: "Dashboard", href: "/admin", icon: LayoutDashboard },
-    { name: "Candidatos", href: "/admin/candidates", icon: Users },
-    { name: "Usuários", href: "/admin/users", icon: Users },
+    { name: "Informações Gerais", href: "/admin", icon: LayoutDashboard },
+    { name: "Pipeline (Kanban)", href: "/admin/kanban", icon: LayoutGrid },
+    { name: "Base de Dados", href: "/admin/candidates", icon: BookOpen },
+    { name: "CRM / Comunicação", href: "/admin/crm", icon: MessageSquare },
+    { name: "Mapa do Brasil", href: "/admin/map", icon: MapIcon },
+    { name: "Gestão de Usuários", href: "/admin/users", icon: Users },
 ];
 
 export default function AdminSidebar() {

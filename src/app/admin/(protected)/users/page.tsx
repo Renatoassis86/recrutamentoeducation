@@ -1,8 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { deleteUser, getUsers } from "./actions";
-import { Trash2, AlertCircle, Loader2 } from "lucide-react";
+import { deleteUser, getUsers, updateUserRole } from "./actions";
+import {
+    Trash2, AlertCircle, Loader2, UserPlus, Shield,
+    User, Mail, Calendar, MoreVertical, CheckCircle,
+    Search, Filter, ShieldAlert, BadgeCheck, X
+} from "lucide-react";
+import InviteAdminModal from "@/components/admin/InviteAdminModal";
 
 type Profile = {
     id: string;
@@ -16,7 +21,10 @@ export default function UsersPage() {
     const [users, setUsers] = useState<Profile[]>([]);
     const [loading, setLoading] = useState(true);
     const [deletingId, setDeletingId] = useState<string | null>(null);
+    const [updatingId, setUpdatingId] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
 
     useEffect(() => {
         loadUsers();
@@ -40,97 +48,157 @@ export default function UsersPage() {
             setError(result.error);
             setTimeout(() => setError(null), 3000);
         } else {
-            // Remove from list locally
             setUsers(users.filter(u => u.id !== id));
         }
     }
 
+    async function handleToggleRole(id: string, currentRole: string) {
+        const newRole = currentRole === 'admin' ? 'candidate' : 'admin';
+        if (!confirm(`Deseja alterar o perfil deste usuário para ${newRole === 'admin' ? 'Administrador' : 'Candidato'}?`)) return;
+
+        setUpdatingId(id);
+        const result = await updateUserRole(id, newRole);
+        setUpdatingId(null);
+
+        if (result.success) {
+            setUsers(users.map(u => u.id === id ? { ...u, role: newRole } : u));
+        } else {
+            setError("Erro ao atualizar perfil.");
+            setTimeout(() => setError(null), 3000);
+        }
+    }
+
+    const filteredUsers = users.filter(u =>
+        u.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        u.email.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
     if (loading) {
         return (
-            <div className="flex h-96 items-center justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-amber-600" />
+            <div className="flex h-[60vh] items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <Loader2 className="h-10 w-10 animate-spin text-amber-600" />
+                    <span className="text-sm font-bold text-slate-400 uppercase tracking-widest">Carregando usuários...</span>
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="space-y-8 animate-fade-in pb-20">
+            {/* Header */}
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
                 <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-slate-900">Gerenciar Usuários</h1>
-                    <p className="mt-2 text-sm text-slate-500">
-                        Visualize e gerencie os usuários cadastrados no sistema.
-                    </p>
+                    <h1 className="text-3xl font-black tracking-tight text-slate-900 font-serif">Gestão de Usuários</h1>
+                    <p className="text-slate-500 font-medium">Controle de acessos e perfis administrativos do sistema.</p>
                 </div>
+                <button
+                    onClick={() => setIsInviteModalOpen(true)}
+                    className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-bold shadow-lg shadow-slate-200 hover:bg-slate-800 transition-all active:scale-95"
+                >
+                    <UserPlus className="h-4 w-4 text-amber-500" /> Convidar Usuário
+                </button>
             </div>
 
             {error && (
-                <div className="rounded-md bg-red-50 p-4 text-sm text-red-700 flex gap-2 items-center animate-fade-in-up">
-                    <AlertCircle className="h-5 w-5" />
-                    {error}
+                <div className="rounded-2xl bg-red-50 p-4 text-sm text-red-700 flex gap-3 items-center animate-fade-in-up border border-red-100">
+                    <div className="h-8 w-8 bg-red-100 rounded-full flex items-center justify-center text-red-600">
+                        <ShieldAlert className="h-5 w-5" />
+                    </div>
+                    <span className="font-bold">{error}</span>
                 </div>
             )}
 
-            <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow">
-                <table className="min-w-full divide-y divide-slate-200">
-                    <thead className="bg-slate-50">
-                        <tr>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Nome / Email
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Função
-                            </th>
-                            <th scope="col" className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-slate-500">
-                                Data Cadastro
-                            </th>
-                            <th scope="col" className="relative px-6 py-3">
-                                <span className="sr-only">Ações</span>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-slate-200 bg-white">
-                        {users.map((user) => (
-                            <tr key={user.id}>
-                                <td className="whitespace-nowrap px-6 py-4">
-                                    <div className="flex flex-col">
-                                        <span className="font-medium text-slate-900">{user.full_name || "Sem nome"}</span>
-                                        <span className="text-slate-500">{user.email}</span>
-                                    </div>
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4">
-                                    <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-green-100 text-green-800'
-                                        }`}>
-                                        {user.role === 'admin' ? 'Admin' : 'Candidato'}
+            {/* Filters */}
+            <div className="relative max-w-md">
+                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <input
+                    type="text"
+                    placeholder="Filtrar por nome ou e-mail..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full pl-12 pr-4 py-3 rounded-2xl border border-slate-200 bg-white shadow-sm text-sm focus:ring-2 focus:ring-amber-500 outline-none transition-all"
+                />
+            </div>
+
+            {/* Users Grid/List */}
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                {filteredUsers.map((user) => (
+                    <div key={user.id} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
+                        <div className="flex items-start justify-between relative z-10">
+                            <div className="flex items-center gap-4">
+                                <div className="h-12 w-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 font-black text-lg">
+                                    {user.full_name?.charAt(0) || <User className="h-5 w-5" />}
+                                </div>
+                                <div className="flex flex-col min-w-0">
+                                    <h3 className="text-sm font-black text-slate-900 truncate">{user.full_name || "Sem Nome"}</h3>
+                                    <span className="text-xs text-slate-400 truncate flex items-center gap-1.5 mt-0.5">
+                                        <Mail className="h-3 w-3" /> {user.email}
                                     </span>
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4 text-sm text-slate-500">
-                                    {new Date(user.created_at).toLocaleDateString('pt-BR')}
-                                </td>
-                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                                    <button
-                                        onClick={() => handleDelete(user.id)}
-                                        disabled={deletingId === user.id}
-                                        className="text-red-600 hover:text-red-900 disabled:opacity-50 transition-colors"
-                                        title="Excluir Usuário"
-                                    >
-                                        {deletingId === user.id ? (
-                                            <Loader2 className="h-5 w-5 animate-spin" />
-                                        ) : (
-                                            <Trash2 className="h-5 w-5" />
-                                        )}
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-                {users.length === 0 && (
-                    <div className="p-12 text-center text-slate-500">
-                        Nenhum usuário encontrado.
+                                </div>
+                            </div>
+                            <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${user.role === 'admin' ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-400'}`}>
+                                <Shield className="h-4 w-4" />
+                            </div>
+                        </div>
+
+                        <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between relative z-10">
+                            <div className="flex flex-col">
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nível de Acesso</span>
+                                <button
+                                    onClick={() => handleToggleRole(user.id, user.role)}
+                                    disabled={updatingId === user.id}
+                                    className={`mt-1 flex items-center gap-1.5 text-xs font-bold transition-all hover:scale-105 ${user.role === 'admin' ? 'text-amber-600' : 'text-slate-600'
+                                        }`}
+                                >
+                                    {user.role === 'admin' ? <BadgeCheck className="h-3.5 w-3.5" /> : <Shield className="h-3.5 w-3.5" />}
+                                    {user.role === 'admin' ? 'Administrador' : 'Candidato'}
+                                    {updatingId === user.id && <Loader2 className="h-3 w-3 animate-spin" />}
+                                </button>
+                            </div>
+                            <div className="flex flex-col items-end">
+                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Desde</span>
+                                <span className="mt-1 text-xs font-bold text-slate-600 flex items-center gap-1">
+                                    <Calendar className="h-3 w-3" /> {new Date(user.created_at).toLocaleDateString('pt-BR')}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Actions Overlay */}
+                        <div className="absolute top-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                                onClick={() => handleDelete(user.id)}
+                                disabled={deletingId === user.id}
+                                className="h-8 w-8 bg-red-50 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-500 hover:text-white transition-all"
+                                title="Excluir Usuário"
+                            >
+                                {deletingId === user.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-4 w-4" />}
+                            </button>
+                        </div>
+
+                        {/* Background Decoration */}
+                        <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-slate-50 rounded-full opacity-50 transition-transform group-hover:scale-125"></div>
+                    </div>
+                ))}
+
+                {filteredUsers.length === 0 && (
+                    <div className="col-span-full py-20 text-center bg-white rounded-3xl border-2 border-dashed border-slate-100">
+                        <div className="h-16 w-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <User className="h-8 w-8 text-slate-200" />
+                        </div>
+                        <h3 className="font-black text-slate-900">Nenhum usuário encontrado</h3>
+                        <p className="text-slate-400 text-sm mt-1">Tente ajustar sua busca ou limpar os filtros.</p>
                     </div>
                 )}
             </div>
+
+            <InviteAdminModal
+                isOpen={isInviteModalOpen}
+                onClose={() => {
+                    setIsInviteModalOpen(false);
+                    loadUsers();
+                }}
+            />
         </div>
     );
 }
