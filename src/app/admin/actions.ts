@@ -74,7 +74,7 @@ export async function updateApplicationStatus(id: string, newStatus: string, not
 }
 
 /**
- * EXCLUSÃO DE INSCRIÇÃO (APENAS ADMIN MASTER)
+ * EXCLUSÃO DEFINITIVA DE INSCRIÇÃO E CONTA (ADMIN MASTER)
  */
 export async function deleteApplication(id: string) {
     const supabase = await createClient();
@@ -84,22 +84,110 @@ export async function deleteApplication(id: string) {
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user?.id).single();
     if (profile?.role !== 'admin') return { error: "Acesso negado: Apenas administradores mestre podem excluir registros." };
 
-    // Audit before delete
-    const { data: current } = await supabase.from("applications").select("*").eq("id", id).single();
+    const adminClient = createAdminClient();
+    if (!adminClient) {
+        return { error: "Erro de Configuração: SUPABASE_SERVICE_ROLE_KEY não encontrada. A conta não pode ser excluída do sistema de autenticação sem esta chave." };
+    }
 
-    const { error } = await supabase.from("applications").delete().eq("id", id);
-    if (error) return { error: error.message };
+    try {
+        // 1. Get current application and user_id before delete
+        const { data: appData, error: fetchError } = await supabase
+            .from("applications")
+            .select("*, user_id")
+            .eq("id", id)
+            .single();
 
-    await logAudit({
-        entity: 'applications',
-        entity_id: id,
-        action: 'EXCLUSÃO_REGISTRO',
-        before: current
-    });
+        if (fetchError || !appData) {
+            return { error: "Inscrição não encontrada no banco de dados." };
+        }
+
+        const candidateUserId = appData.user_id;
+
+        console.log(`🗑️ Iniciando exclusão definitiva do candidato: ${appData.full_name} (${id})`);
+
+        // 2. Se houver um user_id associado, deletamos via Auth (Cascateia para tudo)
+        if (candidateUserId) {
+            const { error: authError } = await adminClient.auth.admin.deleteUser(candidateUserId);
+            if (authError) {
+                console.error("Erro ao excluir conta auth:", authError);
+                // Se der erro no auth, tentamos apagar pelo menos a inscrição
+                await supabase.from("applications").delete().eq("id", id);
+            }
+        } else {
+            // Se não houver user_id (caso raro), apaga apenas a linha da inscrição
+            await supabase.from("applications").delete().eq("id", id);
+        }
+
+        // 3. Log Audit
+        await logAudit({
+            entity: 'applications',
+            entity_id: id,
+            action: 'EXCLUSÃO_DEFINITIVA_CANDIDATO',
+            before: appData
+        });
+
+        revalidatePath("/admin/candidates");
+        revalidatePath("/admin/users");
+        revalidatePath("/admin/kanban");
+
+        return { success: true };
+    } catch (err: any) {
+        console.error("Erro em deleteApplication:", err);
+        return { error: `Erro inesperado: ${err.message}` };
+    }
+}
+
+
+/**
+ * EXCLUSÃO EM MASSA DE CANDIDATOS E CONTAS
+ */
+export async function deleteApplicationsBulk(ids: string[]) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user?.id).single();
+    if (profile?.role !== 'admin') return { error: "Acesso negado." };
+
+    const adminClient = createAdminClient();
+    if (!adminClient) return { error: "Erro de Configuração." };
+
+    const results = { success: 0, errors: 0 };
+
+    for (const id of ids) {
+        try {
+            const { data: appData } = await supabase.from("applications").select("user_id, full_name").eq("id", id).single();
+            if (appData?.user_id) {
+                const { error } = await adminClient.auth.admin.deleteUser(appData.user_id);
+                if (!error) {
+                    results.success++;
+                    await logAudit({
+                        entity: 'applications',
+                        entity_id: id,
+                        action: 'EXCLUSÃO_MASSA_CANDIDATO',
+                        before: appData
+                    });
+                } else {
+                    results.errors++;
+                }
+            } else {
+                await supabase.from("applications").delete().eq("id", id);
+                results.success++;
+            }
+        } catch (e) {
+            results.errors++;
+        }
+    }
 
     revalidatePath("/admin/candidates");
-    return { success: true };
+    revalidatePath("/admin/users");
+    revalidatePath("/admin/kanban");
+
+    return {
+        success: true,
+        message: `${results.success} candidatos excluídos com sucesso.${results.errors > 0 ? ` ${results.errors} falhas.` : ''}`
+    };
 }
+
 
 /**
  * BUSCA DE AUDITORIA

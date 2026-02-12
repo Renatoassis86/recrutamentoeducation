@@ -12,7 +12,7 @@ import {
     Trash2, UserCheck, ShieldCheck, X, Download
 } from "lucide-react";
 import CommunicationModal from "@/components/admin/CommunicationModal";
-import { deleteApplication } from "@/app/admin/actions";
+import { deleteApplication, deleteApplicationsBulk } from "@/app/admin/actions";
 
 export default function CandidatesPage() {
     return (
@@ -97,13 +97,28 @@ function CandidatesPageClient() {
     };
 
     const handleDelete = async (id: string, name: string) => {
-        if (!confirm(`Tem certeza que deseja excluir permanentemente a inscrição de ${name}? Esta ação não pode ser desfeita.`)) return;
+        if (!confirm(`Tem certeza que deseja excluir permanentemente a conta e os dados de ${name}? Esta ação não pode ser desfeita.`)) return;
 
         const res = await deleteApplication(id);
         if (res.success) {
             loadApplications();
         } else {
             alert("Erro ao excluir: " + res.error);
+        }
+    };
+
+    const handleBulkDelete = async () => {
+        if (!confirm(`Tem certeza que deseja excluir permanentemente estes ${selectedIds.length} candidatos? Todas as contas e dados associados serão removidos.`)) return;
+
+        setLoading(true);
+        const res = await deleteApplicationsBulk(selectedIds);
+        setLoading(false);
+
+        if (res.success) {
+            setSelectedIds([]);
+            loadApplications();
+        } else {
+            alert("Erro ao excluir em massa: " + res.error);
         }
     };
 
@@ -199,9 +214,13 @@ function CandidatesPageClient() {
                             <button className="flex items-center gap-2 text-xs font-bold bg-white/10 hover:bg-white/20 px-3 py-1.5 rounded-lg transition-colors">
                                 <ShieldCheck className="h-3.5 w-3.5" /> Mudar Status
                             </button>
-                            <button className="flex items-center gap-2 text-xs font-bold bg-red-500 hover:bg-red-400 px-3 py-1.5 rounded-lg transition-colors">
+                            <button
+                                onClick={handleBulkDelete}
+                                className="flex items-center gap-2 text-xs font-bold bg-red-500 hover:bg-red-400 px-3 py-1.5 rounded-lg transition-colors"
+                            >
                                 <Trash2 className="h-3.5 w-3.5" /> Excluir
                             </button>
+
                         </div>
                     </div>
                     <button onClick={() => setSelectedIds([])} className="text-xs font-bold opacity-70 hover:opacity-100">Desmarcar tudo</button>
