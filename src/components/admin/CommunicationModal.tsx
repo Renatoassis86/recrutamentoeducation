@@ -6,6 +6,7 @@ import {
     CheckCircle2, Info, MessageSquare, Mail,
     AtSign, Phone
 } from "lucide-react";
+import { sendAdminEmail } from "@/app/admin/actions-email";
 
 interface CommunicationModalProps {
     isOpen: boolean;
@@ -28,8 +29,6 @@ export default function CommunicationModal({ isOpen, onClose, recipients, names,
         setError(null);
 
         try {
-            const { sendAdminEmail } = await import("@/app/admin/actions-email");
-
             const res = await sendAdminEmail({
                 recipients,
                 subject: subject || (type === 'email' ? "Importante: Recrutamento Cidade Viva Education" : ""),
@@ -48,9 +47,9 @@ export default function CommunicationModal({ isOpen, onClose, recipients, names,
                 setMessage("");
                 setSubject("");
             }, 3000);
-        } catch (err) {
+        } catch (err: any) {
             console.error("Communication Modal Error:", err);
-            setError("Erro ao processar o envio. Verifique sua conexão.");
+            setError(err.message || "Erro ao processar o envio. Verifique sua conexão.");
         } finally {
             setSending(false);
         }
