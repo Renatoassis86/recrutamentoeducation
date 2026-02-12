@@ -87,7 +87,7 @@ export default function StateMap({ data }: StateMapProps) {
             <div className="flex-1 relative overflow-hidden flex items-center justify-center">
                 <svg
                     viewBox="0 0 450 460"
-                    className="w-full h-full filter drop-shadow-2xl transition-transform duration-500 hover:scale-[1.02]"
+                    className="w-full h-full filter drop-shadow-2xl"
                     style={{ maxHeight: "100%" }}
                 >
                     <g>
@@ -100,14 +100,13 @@ export default function StateMap({ data }: StateMapProps) {
                                     key={state.uf}
                                     d={state.d}
                                     fill={count > 0 ? colorScale(count) : "#f8fafc"}
-                                    stroke="#ffffff"
-                                    strokeWidth={isHovered ? 2 : 0.5}
-                                    className="transition-all duration-300 cursor-pointer"
+                                    stroke={isHovered ? "#000" : "#ffffff"}
+                                    strokeWidth={isHovered ? 1.5 : 0.5}
+                                    className="transition-all duration-200 cursor-pointer hover:opacity-80"
                                     onMouseEnter={() => setHoveredState({ ...state, count })}
                                     onMouseLeave={() => setHoveredState(null)}
                                     style={{
-                                        filter: isHovered ? "brightness(1.1) drop-shadow(0 0 8px rgba(244,180,0,0.4))" : "none",
-                                        fill: isHovered ? "#F4B400" : (count > 0 ? colorScale(count) : "#f8fafc")
+                                        filter: isHovered ? "drop-shadow(0 0 4px rgba(0,0,0,0.2))" : "none"
                                     }}
                                 />
                             );
@@ -116,30 +115,19 @@ export default function StateMap({ data }: StateMapProps) {
                 </svg>
             </div>
 
-            {/* Dynamic Legend */}
-            <div className="absolute top-24 right-10 flex flex-col gap-2 bg-white/80 backdrop-blur-md p-4 rounded-3xl border border-slate-100 shadow-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-                <p className="text-[9px] font-black uppercase tracking-widest text-slate-400 mb-1">Densidade</p>
-                <div className="flex flex-col gap-1.5">
-                    <LegendDot color="bg-blue-900" label="Alta Concentração" />
-                    <LegendDot color="bg-blue-600" label="Média" />
-                    <LegendDot color="bg-blue-300" label="Inicial" />
-                    <LegendDot color="bg-slate-100 border border-slate-200" label="Sem Dados" />
-                </div>
-            </div>
-
-            {/* Floating Tooltip */}
+            {/* Floating Tooltip - Only State Data */}
             {hoveredState && (
                 <div className="absolute bottom-10 left-10 animate-in slide-in-from-bottom-5 duration-300">
                     <div className="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-2xl border border-white/10 flex items-center gap-5">
-                        <div className="w-14 h-14 bg-amber-500 rounded-2xl flex items-center justify-center text-slate-900 font-bold text-lg shadow-lg rotate-3 transition-transform">
+                        <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-white border border-white/10 font-bold text-lg shadow-lg transition-transform">
                             {hoveredState.uf}
                         </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-0.5">Estado Selecionado</p>
+                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-0.5">Informação do Estado</p>
                             <h4 className="text-xl font-black">{hoveredState.name}</h4>
                             <div className="flex items-center gap-2 mt-1">
-                                <span className="text-amber-500 font-black text-sm">{hoveredState.count}</span>
-                                <span className="text-xs font-bold text-slate-400 uppercase tracking-tighter">Candidatos Cadastrados</span>
+                                <span className="text-blue-400 font-black text-sm">{hoveredState.count}</span>
+                                <span className="text-xs font-bold text-slate-400 uppercase tracking-tighter">Candidatos</span>
                             </div>
                         </div>
                     </div>
@@ -147,18 +135,9 @@ export default function StateMap({ data }: StateMapProps) {
             )}
 
             {/* Interaction Hint */}
-            <div className="absolute bottom-10 right-10 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 bg-white/50 px-4 py-2 rounded-full backdrop-blur-sm pointer-events-none">
-                Explore por Estado
+            <div className="absolute bottom-10 right-10 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 bg-white/50 px-4 py-2 rounded-full backdrop-blur-sm pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                Passe o mouse para detalhes
             </div>
-        </div>
-    );
-}
-
-function LegendDot({ color, label }: { color: string; label: string }) {
-    return (
-        <div className="flex items-center gap-2">
-            <div className={`h-2.5 w-2.5 rounded-full ${color}`} />
-            <span className="text-[10px] font-bold text-slate-600 tracking-tighter">{label}</span>
         </div>
     );
 }

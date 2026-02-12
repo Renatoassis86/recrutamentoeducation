@@ -37,7 +37,7 @@ async function getStats() {
         if (app.profile_type === 'licenciado' || app.profile_type === 'pedagogo') {
             profileCounts[app.profile_type]++;
         }
-        if (app.licensure_area) {
+        if (app.licensure_area && app.status !== 'draft') {
             areaCounts[app.licensure_area] = (areaCounts[app.licensure_area] || 0) + 1;
         }
         if (app.state) {
@@ -268,11 +268,14 @@ export default async function AdminDashboard() {
                     </div>
 
                     <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 px-1 flex items-center justify-between">
-                            Ranking por Área
-                            <span className="text-[8px] font-bold text-slate-400">Top 4 Áreas</span>
-                        </h3>
-                        <div className="space-y-5 mt-6">
+                        <div className="flex flex-col mb-6">
+                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest flex items-center justify-between">
+                                Ranking por Área
+                                <span className="text-[8px] font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">Finalizadas</span>
+                            </h3>
+                            <p className="text-[9px] text-slate-400 font-bold uppercase mt-1">Demanda real (Exclui rascunhos)</p>
+                        </div>
+                        <div className="space-y-5">
                             {stats.topAreas.map(([area, count]) => (
                                 <div key={area} className="group">
                                     <div className="flex items-center justify-between mb-2">
