@@ -79,13 +79,15 @@ export default function StateMap({ data }: StateMapProps) {
         });
     };
 
+    const isNearRightEdge = mousePos.x > 300; // Threshold for flipping tooltip
+
     return (
         <div
-            className="relative w-full h-[600px] bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden p-8 flex flex-col group cursor-crosshair"
+            className="relative w-full h-[600px] bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden p-10 flex flex-col group cursor-crosshair"
             onMouseMove={handleMouseMove}
         >
             {/* Header Info */}
-            <div className="mb-4">
+            <div className="mb-6">
                 <div className="flex items-center gap-2 mb-1">
                     <div className="h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
                     <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
@@ -93,14 +95,14 @@ export default function StateMap({ data }: StateMapProps) {
                     </h4>
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 font-serif">
-                    Mapa de Inscritos por Regional
+                    Distribuição Nacional (SVG)
                 </h3>
             </div>
 
-            <div className="flex-1 relative flex items-center justify-center">
+            <div className="flex-1 relative flex items-center justify-center p-8 bg-slate-50/50 rounded-[2.5rem] border border-slate-50">
                 <svg
                     viewBox="0 0 450 460"
-                    className="w-full h-full filter drop-shadow-2xl"
+                    className="w-full h-full filter drop-shadow-xl"
                     style={{ maxHeight: "100%" }}
                 >
                     <g>
@@ -112,14 +114,14 @@ export default function StateMap({ data }: StateMapProps) {
                                 <path
                                     key={state.uf}
                                     d={state.d}
-                                    fill={count > 0 ? colorScale(count) : "#f8fafc"}
-                                    stroke={isHovered ? "#000" : "#ffffff"}
-                                    strokeWidth={isHovered ? 1.5 : 0.5}
+                                    fill={count > 0 ? colorScale(count) : "#fff"}
+                                    stroke={isHovered ? "#000" : "#cbd5e1"}
+                                    strokeWidth={isHovered ? 1.5 : 0.4}
                                     className="transition-all duration-300 cursor-pointer hover:opacity-90"
                                     onMouseEnter={() => setHoveredState({ ...state, count })}
                                     onMouseLeave={() => setHoveredState(null)}
                                     style={{
-                                        filter: isHovered ? "drop-shadow(0 0 8px rgba(0,0,0,0.2))" : "none"
+                                        filter: isHovered ? "drop-shadow(0 0 12px rgba(0,0,0,0.2))" : "none"
                                     }}
                                 />
                             );
@@ -128,27 +130,27 @@ export default function StateMap({ data }: StateMapProps) {
                 </svg>
             </div>
 
-            {/* Floating Mouse-Follow Tooltip */}
+            {/* Smart-Flipping Tooltip */}
             {hoveredState && (
                 <div
-                    className="fixed pointer-events-none z-[9999] transition-transform duration-75 ease-out"
+                    className="pointer-events-none z-[100] transition-transform duration-200 ease-out"
                     style={{
                         left: `${mousePos.x}px`,
                         top: `${mousePos.y}px`,
-                        transform: 'translate(20px, -50%)',
+                        transform: isNearRightEdge ? 'translate(calc(-100% - 20px), -50%)' : 'translate(20px, -50%)',
                         position: 'absolute'
                     }}
                 >
-                    <div className="bg-slate-900/95 backdrop-blur-md text-white p-4 rounded-[1.5rem] shadow-2xl border border-white/20 flex items-center gap-4 min-w-[200px] animate-in fade-in zoom-in duration-200">
-                        <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-white border border-white/10 font-bold text-lg">
+                    <div className="bg-slate-900/90 backdrop-blur-xl text-white p-5 rounded-[2rem] shadow-2xl border border-white/20 flex items-center gap-5 min-w-[220px] animate-in fade-in zoom-in duration-200">
+                        <div className="w-14 h-14 bg-blue-600 rounded-2xl flex items-center justify-center text-white border border-blue-400/30 font-black text-xl shadow-lg ring-4 ring-blue-600/10">
                             {hoveredState.uf}
                         </div>
-                        <div>
-                            <p className="text-[9px] font-black uppercase tracking-widest text-blue-400 mb-0.5">Estado</p>
-                            <h4 className="text-base font-black truncate">{hoveredState.name}</h4>
-                            <div className="flex items-center gap-2 mt-0.5">
+                        <div className="flex-1">
+                            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-blue-400 mb-1">Estado Detectado</p>
+                            <h4 className="text-lg font-black truncate leading-tight">{hoveredState.name}</h4>
+                            <div className="flex items-center gap-2 mt-1 bg-white/5 p-2 rounded-xl border border-white/5">
                                 <span className="text-white font-black text-sm">{hoveredState.count}</span>
-                                <span className="text-[10px] font-bold text-slate-400 uppercase">Candidatos</span>
+                                <span className="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Inscritos</span>
                             </div>
                         </div>
                     </div>
@@ -156,8 +158,8 @@ export default function StateMap({ data }: StateMapProps) {
             )}
 
             {/* Interaction Hint */}
-            <div className="absolute bottom-6 right-8 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 bg-white/50 px-4 py-2 rounded-full backdrop-blur-sm pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-                Explore o Mapa
+            <div className="absolute bottom-6 right-8 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 bg-white/80 px-5 py-2.5 rounded-full border border-slate-100 shadow-sm pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                Explore a Malha Geográfica
             </div>
         </div>
     );
