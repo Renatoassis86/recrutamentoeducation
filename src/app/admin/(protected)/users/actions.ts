@@ -191,8 +191,7 @@ export async function createCommitteeUser(email: string, fullName: string, passw
             id: userId,
             role: "committee",
             full_name: fullName,
-            position: position || "Membro da Comissão",
-            email: email.toLowerCase()
+            position: position || "Membro da Comissão"
         }, { onConflict: 'id' });
 
     if (profileError) return { error: profileError.message };
@@ -249,7 +248,7 @@ export async function updateUser(userId: string, data: { full_name?: string, rol
         entity_id: userId,
         action: `ATUALIZAÇÃO_PERFIL: ${beforeUpdate?.email}`,
         before: beforeUpdate,
-        after: { ...beforeUpdate, ...profileUpdates, email: data.email || beforeUpdate?.email }
+        after: { ...beforeUpdate, ...profileUpdates }
     });
 
     revalidatePath("/admin/users");
