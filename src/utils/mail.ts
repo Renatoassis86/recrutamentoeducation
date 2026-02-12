@@ -1,10 +1,11 @@
 import { Resend } from 'resend';
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function sendConfirmationEmail(email: string, name: string) {
     try {
-        if (!process.env.RESEND_API_KEY) return { success: true };
+        const apiKey = process.env.RESEND_API_KEY;
+        if (!apiKey) return { success: true };
+
+        const resend = new Resend(apiKey);
 
         await resend.emails.send({
             from: 'Cidade Viva Education <administrativo.education@cidadeviva.org>',

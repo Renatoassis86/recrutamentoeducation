@@ -160,7 +160,8 @@ export default function CRMClient({ initialApplications }: { initialApplications
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 type={commsType}
-                recipients={selectedIds}
+                recipients={initialApplications.filter(a => selectedIds.includes(a.id)).map(a => a.email)}
+                names={initialApplications.filter(a => selectedIds.includes(a.id)).map(a => a.full_name)}
             />
         </div>
     );
