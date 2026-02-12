@@ -39,10 +39,12 @@ export default function LoginPage() {
         setError(null);
         setSuccessMessage(null);
         const res: any = await signup(formData);
+
+        // If there's an error, handle it. 
+        // If success, the server-side redirect in 'signup' will take over.
         if (res?.error) {
             if (res.error.includes("User already registered") || res.error.includes("already registered")) {
                 setError("Este e-mail já está cadastrado. Redirecionando para login...");
-                // Auto switch to login after short delay
                 setTimeout(() => {
                     setIsLogin(true);
                     setError("Conta encontrada. Por favor, digite sua senha.");
@@ -50,15 +52,9 @@ export default function LoginPage() {
             } else {
                 setError(res.error);
             }
-        } else if (res?.success) {
-            setSuccessMessage(res.message);
-            setIsLogin(true);
-        } else if (res?.message) {
-            // Fallback for old message structure, treat as success if checking email
-            setSuccessMessage(res.message);
-            setIsLogin(true);
         }
     }
+
 
     const handleClearCookies = async () => {
         const { clearAllCookies } = await import("./actions");

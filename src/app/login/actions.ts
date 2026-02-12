@@ -63,41 +63,26 @@ export async function signup(formData: FormData) {
             return { error: error.message };
         }
 
-        // AUTO-CONFIRM user immediately if admin API is available (It should be now with hardcoded keys)
+        // AUTO-CONFIRM user immediately if admin API is available
         if (data.user && admin) {
-            // Confirm email in DB
+            console.log("✅ Auto-confirming user:", email);
             await admin.auth.admin.updateUserById(
                 data.user.id,
                 { email_confirm: true }
             );
 
-            // Attempt auto-login with the password provided
-            const { error: loginError } = await supabase.auth.signInWithPassword({
+            // Force Sign In to establish session for redirect
+            await supabase.auth.signInWithPassword({
                 email,
                 password,
             });
-
-            if (loginError) {
-                // Should rare happen, but fallback
-                console.error("Auto-login failed:", loginError);
-                return {
-                    success: true,
-                    message: "Conta criada com sucesso! Por favor, faça login com sua senha."
-                };
-            }
-        } else if (data.user && !admin) {
-            // Fallback if admin client failed to init (should receive green message too)
-            return {
-                success: true,
-                message: "Conta criada! Você já pode tentar fazer login."
-            };
         }
     } catch (e: any) {
         console.error("Critical Signup Failure:", e);
         return { error: "Ocorreu um erro interno no servidor. Por favor, tente novamente." };
     }
 
-    // Redirect to Dashboard (Painel)
+    // Redirect directly to dashboard
     revalidatePath("/", "layout");
     redirect("/dashboard");
 }

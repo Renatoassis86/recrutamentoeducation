@@ -128,21 +128,8 @@ export default function LandingNav({ user }: { user?: any }) {
                                                     )}
                                                 </Menu.Item>
 
-                                                {/* Hidden Admin Link for specific emails */}
-                                                {(user.email?.includes('secretaria@cidadeviva.org') || user.email?.includes('admin')) && (
-                                                    <Menu.Item>
-                                                        {({ active }) => (
-                                                            <Link
-                                                                href="/admin"
-                                                                className={`${active ? 'bg-gray-100' : ''
-                                                                    } flex items-center gap-2 px-4 py-2 text-sm text-amber-700 font-bold border-t border-gray-100`}
-                                                            >
-                                                                <ShieldCheck className="w-4 h-4" />
-                                                                Painel Administrativo
-                                                            </Link>
-                                                        )}
-                                                    </Menu.Item>
-                                                )}
+                                                {/* Admin link removed from candidate view as requested */}
+
 
                                                 <Menu.Item>
                                                     {({ active }) => (
