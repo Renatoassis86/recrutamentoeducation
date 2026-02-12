@@ -6,6 +6,7 @@ import {
 import Link from "next/link";
 import { format } from "date-fns";
 import StatusUpdater from "../../../../../components/admin/StatusUpdater";
+import DossierContactActions from "../../../../../components/admin/DossierContactActions";
 import AdminFileViewer from "../../../../../components/admin/AdminFileViewer";
 import CandidateNotes from "../../../../../components/admin/CandidateNotes";
 
@@ -58,6 +59,7 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
                     <ArrowLeft className="h-4 w-4" /> Voltar para Listagem
                 </Link>
                 <div className="flex items-center gap-4">
+                    <DossierContactActions email={application.email} fullName={application.full_name} />
                     <StatusUpdater id={application.id} currentStatus={application.status || 'received'} />
                 </div>
             </div>
