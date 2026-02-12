@@ -208,6 +208,11 @@ export default function AdminChat() {
                     <div className="h-full flex items-center justify-center">
                         <Loader2 className="h-6 w-6 animate-spin text-[#075e54]" />
                     </div>
+                ) : messages.length === 0 ? (
+                    <div className="h-full flex flex-col items-center justify-center opacity-40 grayscale">
+                        <MessageSquare className="h-12 w-12 text-[#075e54] mb-2" />
+                        <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">Ainda não há mensagens neste grupo</p>
+                    </div>
                 ) : messages.map((msg, idx) => {
                     const isMine = msg.admin_id === currentUserId;
                     return (
