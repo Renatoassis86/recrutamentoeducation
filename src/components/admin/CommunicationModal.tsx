@@ -28,14 +28,18 @@ export default function CommunicationModal({ isOpen, onClose, recipients, names,
         setError(null);
 
         try {
-            // Simulated sending logic or call to Resend/SendGrid/etc.
-            await new Promise(resolve => setTimeout(resolve, 2000));
+            const { sendAdminEmail } = await import("@/app/admin/actions-email");
 
-            // In a real implementation:
-            // await fetch('/api/admin/send-email', {
-            //   method: 'POST',
-            //   body: JSON.stringify({ recipients, subject, message })
-            // });
+            const res = await sendAdminEmail({
+                recipients,
+                subject: subject || (type === 'email' ? "Importante: Recrutamento Cidade Viva Education" : ""),
+                message
+            });
+
+            if (res.error) {
+                setError(res.error);
+                return;
+            }
 
             setSent(true);
             setTimeout(() => {
@@ -43,8 +47,9 @@ export default function CommunicationModal({ isOpen, onClose, recipients, names,
                 setSent(false);
                 setMessage("");
                 setSubject("");
-            }, 2000);
+            }, 3000);
         } catch (err) {
+            console.error("Communication Modal Error:", err);
             setError("Erro ao processar o envio. Verifique sua conexão.");
         } finally {
             setSending(false);

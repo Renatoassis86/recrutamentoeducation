@@ -94,7 +94,7 @@ export default async function ApplicationDetail({
                             <div className="mb-4">
                                 <span className="text-sm font-medium text-gray-900">Tempo de Experiência:</span> <span className="text-sm text-gray-700">{app.experience_years}</span>
                             </div>
-                            <p className="text-sm loading-6 text-gray-700 whitespace-pre-wrap">{app.experience_summary}</p>
+                            <p className="text-sm loading-6 text-gray-700 whitespace-pre-wrap break-words">{app.experience_summary}</p>
                         </div>
                     </div>
                 </div>

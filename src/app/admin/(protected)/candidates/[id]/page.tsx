@@ -115,7 +115,7 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
 
                         <section>
                             <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-6 border-l-4 border-amber-500 pl-4">Resumo Executivo</h3>
-                            <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 text-slate-700 text-sm italic leading-relaxed shadow-inner">
+                            <div className="p-8 bg-slate-50 rounded-[2rem] border border-slate-100 text-slate-700 text-sm italic leading-relaxed shadow-inner whitespace-pre-wrap break-words">
                                 {application.experience_summary || "Nenhum resumo fornecido."}
                             </div>
                         </section>
@@ -123,7 +123,7 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
                         {application.authorial_text_preview && (
                             <section>
                                 <h3 className="text-[10px] font-black text-slate-900 uppercase tracking-[0.3em] mb-6 border-l-4 border-amber-500 pl-4">Texto Autoral (Preview)</h3>
-                                <div className="p-8 bg-amber-50/30 rounded-[2rem] border border-amber-100 text-slate-800 text-sm leading-relaxed whitespace-pre-wrap font-serif">
+                                <div className="p-8 bg-amber-50/30 rounded-[2rem] border border-amber-100 text-slate-800 text-sm leading-relaxed whitespace-pre-wrap break-words font-serif">
                                     {application.authorial_text_preview}
                                 </div>
                             </section>

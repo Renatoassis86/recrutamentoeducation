@@ -242,7 +242,7 @@ export default function AdminChat() {
                                         <Mic className="h-3 w-3 text-slate-400" />
                                     </div>
                                 ) : (
-                                    <span className="block whitespace-pre-wrap">{msg.content}</span>
+                                    <span className="block whitespace-pre-wrap break-words">{msg.content}</span>
                                 )}
                                 <div className="flex justify-end items-center gap-1 mt-1">
                                     <span className="text-[9px] font-bold text-slate-400">
