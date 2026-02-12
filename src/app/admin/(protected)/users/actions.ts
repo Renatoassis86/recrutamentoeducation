@@ -11,33 +11,57 @@ export async function deleteUser(userId: string) {
 
     if (!user) return { error: "Não autorizado" };
 
+    // Check if the current user is an admin
     const { data: profile } = await supabase.from("profiles").select("role").eq("id", user.id).single();
-    if (profile?.role !== "admin") return { error: "Acesso negado" };
+    if (profile?.role !== "admin") return { error: "Acesso negado: Apenas administradores podem gerenciar usuários." };
 
     const adminClient = createAdminClient();
-    if (!adminClient) return { error: "Erro de configuração do servidor." };
+    if (!adminClient) {
+        return {
+            error: "Erro de Configuração: A chave mestre (Service Role) não foi configurada no servidor Vercel. Esta chave é necessária para excluir contas de usuários do sistema de autenticação. Por favor, adicione SUPABASE_SERVICE_ROLE_KEY nas variáveis de ambiente."
+        };
+    }
 
-    // Get info for audit
-    const { data: targetProfile } = await supabase.from("profiles").select("*").eq("id", userId).single();
+    try {
+        // 1. Get user info for audit before they are gone
+        const { data: targetProfile } = await supabase.from("profiles").select("*").eq("id", userId).single();
+        const targetEmail = targetProfile?.email || "Usuário desconhecido";
 
-    // Delete profile first to avoid orphan records or foreign key issues if any (though usually it's the other way around)
-    // Actually, delete from profiles
-    const { error: profileError } = await adminClient.from("profiles").delete().eq("id", userId);
-    if (profileError) return { error: "Erro ao excluir perfil: " + profileError.message };
+        console.log(`🗑️ Iniciando exclusão definitiva do usuário: ${targetEmail} (${userId})`);
 
-    const { error } = await adminClient.auth.admin.deleteUser(userId);
-    if (error) return { error: error.message };
+        // 2. Delete the user from Auth - This will automatically cascade to:
+        // - public.profiles (via profiles_id_fkey)
+        // - public.applications (via applications_user_id_fkey)
+        // - public.documents (via documents_user_id_fkey)
+        // No need to delete from profiles manually first, which can cause FK issues with audit logs.
+        const { error: authError } = await adminClient.auth.admin.deleteUser(userId);
 
-    await logAudit({
-        entity: 'admin_users',
-        entity_id: userId,
-        action: `EXCLUSÃO_USUÁRIO: ${targetProfile?.email}`,
-        before: targetProfile
-    });
+        if (authError) {
+            console.error("Erro ao excluir usuário Auth:", authError);
+            return { error: `Erro na autenticação: ${authError.message}` };
+        }
 
-    revalidatePath("/admin/users");
-    return { success: true };
+        // 3. Register in audit log (use targetEmail collected before delete)
+        await logAudit({
+            entity: 'admin_users',
+            entity_id: userId,
+            action: `EXCLUSÃO_DEFINITIVA_USUÁRIO: ${targetEmail}`,
+            before: targetProfile
+        });
+
+        // 4. Force refresh of relevant panels
+        revalidatePath("/admin/users");
+        revalidatePath("/admin/candidates");
+        revalidatePath("/admin/kanban");
+        revalidatePath("/admin");
+
+        return { success: true };
+    } catch (err: any) {
+        console.error("Erro interno em deleteUser:", err);
+        return { error: `Erro inesperado no servidor: ${err.message}` };
+    }
 }
+
 
 export async function getUsers() {
     const supabase = await createClient();
