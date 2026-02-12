@@ -2,7 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import {
     Users, BookOpen, GraduationCap, MapPin,
     ArrowUpRight, Zap, Target, BarChart3, Star, ShieldCheck,
-    TrendingUp, Calendar, Clock, AlertTriangle
+    TrendingUp, Calendar, Clock, AlertTriangle, FileText
 } from "lucide-react";
 import { StatusChart, ProfilePieChart, EvolutionChart, ExperienceChart } from "@/components/admin/Charts";
 import StateMap from "@/components/admin/StateMap";
@@ -14,9 +14,21 @@ export const dynamic = "force-dynamic";
 
 async function getStats() {
     const supabase = await createClient();
+
+    // 1. Fetch Applications
     const { data: applications } = await supabase
         .from("applications")
         .select("id, profile_type, state, status, created_at, licensure_area, experience_summary, experience_years, authorial_text_preview");
+
+    // 3. Fetch Total Documents for consistency check
+    const { count: totalDocs } = await supabase
+        .from("documents")
+        .select("id", { count: 'exact', head: true });
+
+    // 4. Fetch Total Profiles (Total registered potential candidates)
+    const { count: totalProfiles } = await supabase
+        .from("profiles")
+        .select("id", { count: 'exact', head: true });
 
     const totalApps = applications?.length || 0;
     const statusCounts: Record<string, number> = {};
@@ -37,9 +49,15 @@ async function getStats() {
         if (app.profile_type === 'licenciado' || app.profile_type === 'pedagogo') {
             profileCounts[app.profile_type]++;
         }
-        if (app.licensure_area && app.status !== 'draft') {
-            areaCounts[app.licensure_area] = (areaCounts[app.licensure_area] || 0) + 1;
+
+        // IMPROVED AREA RANKING: Include Pedagogia as an area for Pedagogos
+        if (app.status !== 'draft') {
+            const area = app.profile_type === 'pedagogo' ? 'Pedagogia' : app.licensure_area;
+            if (area) {
+                areaCounts[area] = (areaCounts[area] || 0) + 1;
+            }
         }
+
         if (app.state) {
             const uf = app.state.trim().toUpperCase();
             stateCounts[uf] = (stateCounts[uf] || 0) + 1;
@@ -49,14 +67,11 @@ async function getStats() {
     });
 
     const evolutionData = Object.entries(dailyStats).map(([name, value]) => ({ name, value }));
-    const profileData = [
-        { name: 'Licenciatura', value: profileCounts['licenciado'] },
-        { name: 'Pedagogia', value: profileCounts['pedagogo'] }
-    ].filter(i => i.value > 0);
 
+    // Areas organized for the chart
     const topAreas = Object.entries(areaCounts)
         .sort(([, a], [, b]) => b - a)
-        .slice(0, 4);
+        .slice(0, 6); // Top 6 to be more inclusive
 
     const experienceCounts: Record<string, number> = {};
     const experienceOrder = ["Até 2 anos", "3 a 5 anos", "6 a 10 anos", "Mais de 10 anos"];
@@ -75,18 +90,27 @@ async function getStats() {
     const summariesText = applications?.map(a => a.experience_summary).filter(Boolean).join(" ") || "";
     const authorialText = applications?.map(a => a.authorial_text_preview).filter(Boolean).join(" ") || "sem dados autorais";
 
-    // CONSISTENCY LOGIC:
-    // Finalized = Any status that is NOT 'draft'
-    // Draft = exactly 'draft' or null
     const finalizedTotal = totalApps - (statusCounts['draft'] || 0);
     const draftTotal = statusCounts['draft'] || 0;
+
+    // User divergence metrics
+    const totalUsers = totalProfiles || 0;
+    const pendingApps = Math.max(0, totalUsers - totalApps);
 
     const topStates = Object.entries(stateCounts)
         .sort(([, a], [, b]) => b - a)
         .slice(0, 5);
 
+    const profileData = [
+        { name: 'Licenciatura', value: profileCounts['licenciado'] },
+        { name: 'Pedagogia', value: profileCounts['pedagogo'] }
+    ].filter(i => i.value > 0);
+
     return {
         totalApps,
+        totalUsers,
+        pendingApps,
+        totalDocs: totalDocs || 0,
         statusCounts,
         evolutionData,
         profileData,
@@ -114,52 +138,64 @@ export default async function AdminDashboard() {
                     <h1 className="text-4xl font-black tracking-tight text-slate-900 font-serif">
                         Central de Inteligência
                     </h1>
-                    <p className="text-slate-500 mt-2 font-medium">Controle de inscrições e balanço editorial Paideia.</p>
+                    <p className="text-slate-500 mt-2 font-medium">Análise de dados e balanço editorial Paideia.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <div className="bg-white px-4 py-2 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-2">
-                        <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                        <span className="text-xs font-black text-slate-700 uppercase tracking-widest">Sincronizado</span>
+                    <div className="bg-white px-6 py-4 rounded-[2rem] border border-slate-100 shadow-sm flex flex-col items-end">
+                        <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Total de Contas</span>
+                        <div className="flex items-center gap-2">
+                            <Users className="h-4 w-4 text-blue-500" />
+                            <span className="text-2xl font-black text-slate-900">{stats.totalUsers}</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
             {/* KPI Grid - NOW CLICKABLE FOR DRILL-DOWN */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-6">
                 <Link href="/admin/candidates?status=finalized">
                     <KPICard
                         title="Submetidas"
                         value={stats.finalizedTotal}
                         icon={ShieldCheck}
                         color="emerald"
-                        description="Inscrições concluídas com sucesso"
+                        description="Inscrições concluídas"
                     />
                 </Link>
                 <Link href="/admin/candidates?status=draft">
                     <KPICard
-                        title="Incompletas (Rascunhos)"
+                        title="Rascunhos"
                         value={stats.draftTotal}
                         icon={Clock}
                         color="amber"
-                        description="Candidatos com cadastro inacabado"
+                        description="Formulário incompleto"
                     />
                 </Link>
+                <div className="opacity-60 cursor-not-allowed">
+                    <KPICard
+                        title="Só registro"
+                        value={stats.pendingApps}
+                        icon={Users}
+                        color="slate"
+                        description="Sem iniciar formulário"
+                    />
+                </div>
                 <Link href="/admin/candidates?profile_type=licenciado">
                     <KPICard
-                        title="Base Licenciados"
+                        title="Licenciados"
                         value={stats.licenciados}
                         icon={BookOpen}
                         color="blue"
-                        description="Ver apenas perfil de Licenciatura"
+                        description="Base total iniciada"
                     />
                 </Link>
                 <Link href="/admin/candidates?profile_type=pedagogo">
                     <KPICard
-                        title="Base Pedagogos"
+                        title="Pedagogos"
                         value={stats.pedagogos}
                         icon={GraduationCap}
                         color="slate"
-                        description="Ver apenas perfil de Pedagogia"
+                        description="Base total iniciada"
                     />
                 </Link>
             </div>
@@ -178,8 +214,8 @@ export default async function AdminDashboard() {
                     <div className="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col md:flex-row gap-8 min-h-[500px]">
                         <div className="flex-1">
                             <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 px-1 flex items-center gap-2">
-                                <MapPin className="h-4 w-4 text-amber-500" />
-                                Mapa de Inscritos por Estado
+                                <MapPin className="h-4 w-4 text-blue-500" />
+                                Candidatos por Região
                             </h3>
                             <div className="w-full flex items-center justify-center overflow-hidden">
                                 <StateMap data={stats.stateCounts} />
@@ -245,6 +281,15 @@ export default async function AdminDashboard() {
                             <StatusMiniCard label="Entrevista" value={stats.statusCounts['interview_invited'] || 0} color="bg-purple-50 text-purple-600" tooltip="Convocados para conversa" />
                             <StatusMiniCard label="Aprovado" value={stats.statusCounts['hired'] || 0} color="bg-green-100 text-green-600" tooltip="Candidatos selecionados" />
                         </div>
+
+                        <div className="mt-4 p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                            <div className="flex items-center gap-2">
+                                <FileText className="h-4 w-4 text-slate-400" />
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-tight">Arquivos no Storage</span>
+                            </div>
+                            <span className="text-sm font-black text-slate-900">{stats.totalDocs}</span>
+                        </div>
+
                         {/* ALERT FOR INCONSISTENCIES */}
                         {Object.entries(stats.statusCounts).some(([k, v]) => !['draft', 'received', 'under_review', 'hired', 'interview_invited'].includes(k) && v > 0) && (
                             <div className="mt-4 p-3 bg-red-50 rounded-xl border border-red-100 flex items-center gap-3">
@@ -285,7 +330,7 @@ export default async function AdminDashboard() {
                                     <div className="w-full bg-slate-50 h-1.5 rounded-full overflow-hidden border border-slate-100">
                                         <div
                                             className="h-full bg-amber-500 rounded-full"
-                                            style={{ width: `${(stats.totalApps > 0 ? (count / stats.totalApps) * 100 : 0)}%` }}
+                                            style={{ width: `${(stats.finalizedTotal > 0 ? (count / stats.finalizedTotal) * 100 : 0)}%` }}
                                         />
                                     </div>
                                 </div>

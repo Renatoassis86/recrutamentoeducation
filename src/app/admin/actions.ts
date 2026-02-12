@@ -367,9 +367,9 @@ export async function getAdminSignedUrl(path: string, forceDownload: boolean = f
 
         if (adminSupabase) {
             supabase = adminSupabase;
-            console.log(`✅ Usando Service Role para: ${path}`);
+            console.log(`✅ Usando Cliente Admin (Service Role) para: ${path}`);
         } else {
-            console.warn("⚠️ Service Role Key não encontrada. Tentando usar sessão do administrador...");
+            console.error("❌ ERRO CRÍTICO: Cliente Admin falhou ao inicializar. Verifique SUPABASE_SERVICE_ROLE_KEY.");
             supabase = await createClient();
         }
 
@@ -379,28 +379,24 @@ export async function getAdminSignedUrl(path: string, forceDownload: boolean = f
             .createSignedUrl(path, 3600, forceDownload ? { download: true } : undefined);
 
         if (error) {
-            console.error("Erro no Supabase Storage:", error);
+            console.error("Storage Error:", error);
 
             if (!adminSupabase) {
                 return {
-                    error: "Erro de Configuração Provedor: A 'SUPABASE_SERVICE_ROLE_KEY' não foi configurada nas variáveis de ambiente do seu servidor (Vercel). Adicione-a nas configurações do projeto para garantir o acesso aos arquivos."
+                    error: "Acesso Negado: O servidor não possui a 'SUPABASE_SERVICE_ROLE_KEY'. Se você já configurou no Vercel, certifique-se de que fez um novo Deploy para as alterações surtirem efeito."
                 };
             }
 
-            if (error.message.includes('Object not found') || error.message.includes('404')) {
-                return { error: "O arquivo não foi encontrado no servidor. Ele pode ter sido removido ou o caminho está incorreto." };
+            if (error.message.includes('not found') || error.message.includes('404')) {
+                return { error: "O arquivo não foi encontrado no servidor." };
             }
-            return { error: `Erro ao acessar o storage: ${error.message}` };
+            return { error: `Erro de permissão ou storage: ${error.message}` };
         }
 
-        if (!data?.signedUrl) {
-            return { error: "O servidor não retornou uma URL válida para o arquivo." };
-        }
-
-        return { signedUrl: data.signedUrl };
+        return { signedUrl: data?.signedUrl };
     } catch (err: any) {
-        console.error("Erro interno em getAdminSignedUrl:", err);
-        return { error: `Erro inesperado: ${err.message}` };
+        console.error("Internal Server Error in getAdminSignedUrl:", err);
+        return { error: `Erro interno: ${err.message}` };
     }
 }
 

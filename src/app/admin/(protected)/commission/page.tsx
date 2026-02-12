@@ -18,6 +18,7 @@ export default function CommissionPage() {
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [position, setPosition] = useState("");
 
     useEffect(() => {
         const checkRole = async () => {
@@ -43,12 +44,13 @@ export default function CommissionPage() {
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        const res = await createCommitteeUser(email, fullName, password) as any;
+        const res = await createCommitteeUser(email, fullName, password, position) as any;
         if (res.success) {
             alert("Membro da comissão cadastrado com sucesso!");
             setFullName("");
             setEmail("");
             setPassword("");
+            setPosition("");
             setIsModalOpen(false);
             loadUsers();
         } else {
@@ -107,7 +109,7 @@ export default function CommissionPage() {
                             </div>
                             <div className="mt-6 pt-4 border-t border-slate-50 flex items-center justify-between">
                                 <span className="text-[10px] font-black uppercase tracking-widest text-blue-600 bg-blue-50 px-3 py-1 rounded-lg">
-                                    Função: Comissão
+                                    Função: {user.position || "Comissão"}
                                 </span>
                                 <span className="text-[10px] font-bold text-slate-300">
                                     Desde {new Date(user.created_at).toLocaleDateString('pt-BR')}
@@ -139,6 +141,17 @@ export default function CommissionPage() {
                                     onChange={(e) => setFullName(e.target.value)}
                                     className="w-full px-4 py-3 rounded-xl border border-slate-100 bg-slate-50 focus:ring-2 focus:ring-amber-500 outline-none text-slate-900"
                                     placeholder="Ex: Dr. Marcelo Ramos"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Cargo / Função</label>
+                                <input
+                                    required
+                                    type="text"
+                                    value={position}
+                                    onChange={(e) => setPosition(e.target.value)}
+                                    className="w-full px-4 py-3 rounded-xl border border-slate-100 bg-slate-50 focus:ring-2 focus:ring-amber-500 outline-none text-slate-900"
+                                    placeholder="Ex: Coordenador Editorial"
                                 />
                             </div>
                             <div>

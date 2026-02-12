@@ -147,7 +147,7 @@ export async function createAdminUser(email: string, fullName: string) {
     revalidatePath("/admin/users");
     return { success: true };
 }
-export async function createCommitteeUser(email: string, fullName: string, password?: string) {
+export async function createCommitteeUser(email: string, fullName: string, password?: string, position?: string) {
     const supabase = await createClient();
     const { data: { user: currentUser } } = await supabase.auth.getUser();
 
@@ -169,10 +169,14 @@ export async function createCommitteeUser(email: string, fullName: string, passw
 
     if (error) return { error: error.message };
 
-    // Update profile to ensure role is committee
+    // Update profile to ensure role is committee and set position
     const { error: profileError } = await adminClient
         .from("profiles")
-        .update({ role: "committee", full_name: fullName }) // Role for Commission
+        .update({
+            role: "committee",
+            full_name: fullName,
+            position: position || "Membro da Comissão"
+        })
         .eq("id", data.user.id);
 
     if (profileError) return { error: profileError.message };
@@ -180,7 +184,7 @@ export async function createCommitteeUser(email: string, fullName: string, passw
     await logAudit({
         entity: 'admin_users',
         entity_id: data.user.id,
-        action: `CRIAÇÃO_COMISSÃO: ${email}`
+        action: `CRIAÇÃO_COMISSÃO: ${email} (Cargo: ${position})`
     });
 
     revalidatePath("/admin/users");
