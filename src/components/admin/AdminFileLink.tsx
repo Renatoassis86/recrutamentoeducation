@@ -18,9 +18,9 @@ export default function AdminFileLink({ path, name }: { path: string, name: stri
             if (res.signedUrl) {
                 window.open(res.signedUrl, '_blank');
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error getting signed URL:", error);
-            alert("Erro ao carregar o arquivo. Verifique se ele ainda existe no storage.");
+            alert(error.message || "Erro ao carregar o arquivo. Verifique se ele ainda existe no storage.");
         } finally {
             setLoading(false);
         }

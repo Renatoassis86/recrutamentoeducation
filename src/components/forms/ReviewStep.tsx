@@ -68,7 +68,7 @@ export default function ReviewStep({ onBack, onSubmit }: ReviewStepProps) {
                 <AlertTriangle className="h-5 w-5 text-amber-600 mt-0.5" />
                 <div>
                     <h4 className="font-bold text-amber-800">Revisão Final</h4>
-                    <p className="text-sm text-amber-700">Por favor, revise todos os seus dados com atenção. Após o envio, não será possível realizar alterações.</p>
+                    <p className="text-sm text-amber-700">Por favor, revise todos os seus dados com atenção. Você poderá atualizar seus documentos ou informações a qualquer momento através do seu painel de candidato.</p>
                 </div>
             </div>
 

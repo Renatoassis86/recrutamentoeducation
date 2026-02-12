@@ -79,7 +79,9 @@ export default function LoginPage() {
                             {isLogin ? "Bem-vindo de volta" : "Criar sua conta"}
                         </h2>
                         <p className="mt-2 text-sm leading-6 text-slate-600">
-                            {isLogin ? "Acesse para continuar sua inscrição na Chamada Editorial." : "Cadastre-se para participar da seleção de autores da Coleção Paideia."}
+                            {isLogin
+                                ? "Acesse para continuar ou atualizar sua inscrição na Chamada Editorial."
+                                : "Cadastre-se para participar da seleção de autores. Você poderá atualizar seus dados a qualquer momento após o cadastro."}
                         </p>
                     </div>
 

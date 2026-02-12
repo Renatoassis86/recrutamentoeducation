@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { Loader2, UploadCloud, FileText, Link as LinkIcon, CheckCircle, AlertCircle } from "lucide-react";
 
@@ -12,9 +12,30 @@ interface DocumentUploadProps {
 export default function DocumentUpload({ onComplete, onBack }: DocumentUploadProps) {
     const [lattesUrl, setLattesUrl] = useState("");
     const [authorialText, setAuthorialText] = useState("");
+    const [hasExistingDoc, setHasExistingDoc] = useState(false);
+    const [loadingInitial, setLoadingInitial] = useState(true);
 
     // File state
     const [combinedFile, setCombinedFile] = useState<File | null>(null);
+
+    useEffect(() => {
+        async function loadInitialData() {
+            const supabase = createClient();
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) {
+                const { data: app } = await supabase.from("applications").select("lattes_url, authorial_text_preview, id").eq("user_id", user.id).single();
+                if (app) {
+                    setLattesUrl(app.lattes_url || "");
+                    setAuthorialText(app.authorial_text_preview || "");
+
+                    const { count } = await supabase.from("documents").select("*", { count: 'exact', head: true }).eq("application_id", app.id);
+                    if (count && count > 0) setHasExistingDoc(true);
+                }
+            }
+            setLoadingInitial(false);
+        }
+        loadInitialData();
+    }, []);
 
     const [uploading, setUploading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -47,7 +68,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
             return;
         }
 
-        if (!combinedFile) {
+        if (!combinedFile && !hasExistingDoc) {
             setError("Por favor, anexe o arquivo PDF único contendo o Currículo e o Texto Autoral.");
             return;
         }
@@ -98,29 +119,32 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                 };
             };
 
-            // Upload single file
-            const fileData = await uploadToStorage(combinedFile, "curriculo_completo", "Documentação");
+            // Upload single file if new one selected
+            let fileData = null;
+            if (combinedFile) {
+                fileData = await uploadToStorage(combinedFile, "curriculo_completo", "Documentação");
 
-            // 4. Save Metadata to Documents Table
-            // First, clear old ones to avoid duplicates/confusion
-            await supabase.from("documents").delete().eq("application_id", application.id);
+                // 4. Save Metadata to Documents Table ONLY if new file uploaded
+                // First, clear old ones to avoid duplicates/confusion
+                await supabase.from("documents").delete().eq("application_id", application.id);
 
-            const documentsToInsert = [
-                {
-                    application_id: application.id,
-                    user_id: user.id,
-                    storage_path: fileData.path,
-                    original_name: fileData.name,
-                    mime_type: fileData.type,
-                    size_bytes: fileData.size,
-                }
-            ];
+                const documentsToInsert = [
+                    {
+                        application_id: application.id,
+                        user_id: user.id,
+                        storage_path: fileData.path,
+                        original_name: fileData.name,
+                        mime_type: fileData.type,
+                        size_bytes: fileData.size,
+                    }
+                ];
 
-            const { error: dbError } = await supabase
-                .from("documents")
-                .insert(documentsToInsert);
+                const { error: dbError } = await supabase
+                    .from("documents")
+                    .insert(documentsToInsert);
 
-            if (dbError) throw dbError;
+                if (dbError) throw dbError;
+            }
 
             onComplete();
 
@@ -153,23 +177,32 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                 {file && <CheckCircle className="w-5 h-5 text-green-500" />}
             </div>
 
-            {file ? (
-                <div className="flex items-center justify-between bg-amber-50 p-3 rounded-md">
-                    <div className="flex items-center overflow-hidden">
-                        <FileText className="h-5 w-5 text-amber-500 flex-shrink-0 mr-2" />
-                        <span className="text-sm text-gray-700 truncate">{file.name}</span>
+            {file || (hasExistingDoc && !file) ? (
+                <div className="flex flex-col gap-3">
+                    <div className="flex items-center justify-between bg-amber-50 p-3 rounded-md">
+                        <div className="flex items-center overflow-hidden">
+                            <FileText className="h-5 w-5 text-amber-500 flex-shrink-0 mr-2" />
+                            <span className="text-sm text-gray-700 truncate">
+                                {file ? file.name : "Arquivo já enviado anteriormente"}
+                            </span>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => {
+                                const inputId = `file-${label.replace(/\s/g, '')}`;
+                                const el = document.getElementById(inputId) as HTMLInputElement;
+                                if (el) el.click();
+                            }}
+                            className="text-xs text-amber-700 font-medium hover:text-amber-900 ml-2"
+                        >
+                            Substituir Arquivo
+                        </button>
                     </div>
-                    <button
-                        type="button"
-                        onClick={() => {
-                            const inputId = `file-${label.replace(/\s/g, '')}`;
-                            const el = document.getElementById(inputId) as HTMLInputElement;
-                            if (el) el.click();
-                        }}
-                        className="text-xs text-amber-700 font-medium hover:text-amber-900 ml-2"
-                    >
-                        Alterar
-                    </button>
+                    {hasExistingDoc && !file && (
+                        <p className="text-[10px] text-green-600 font-medium flex items-center gap-1">
+                            <CheckCircle className="h-3 w-3" /> Você pode manter o arquivo atual ou enviar um novo.
+                        </p>
+                    )}
                 </div>
             ) : (
                 <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -189,6 +222,10 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
             )}
         </div>
     );
+
+    if (loadingInitial) {
+        return <div className="p-12 flex justify-center"><Loader2 className="h-8 w-8 animate-spin text-amber-600" /></div>;
+    }
 
     return (
         <div className="space-y-8">

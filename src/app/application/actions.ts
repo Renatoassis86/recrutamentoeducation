@@ -80,7 +80,30 @@ export async function submitApplication() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return { error: "Unauthorized" };
 
-    // Update status to received
+    // 1. Fetch current application data to verify
+    const { data: app, error: fetchError } = await supabase
+        .from("applications")
+        .select(`
+            *,
+            documents(id)
+        `)
+        .eq("user_id", user.id)
+        .single();
+
+    if (fetchError || !app) return { error: "Candidatura não localizada. Por favor, preencha os dados básicos primeiro." };
+
+    // 2. Strict Validation Check
+    const errors = [];
+    if (!app.full_name || !app.cpf || !app.email) errors.push("Dados pessoais incompletos.");
+    if (!app.graduation_course || !app.graduation_institution) errors.push("Dados de formação acadêmica incompletos.");
+    if (!app.experience_summary || app.experience_summary.length < 50) errors.push("O resumo de experiência é obrigatório (mínimo 50 caracteres).");
+    if (!app.documents || app.documents.length === 0) errors.push("O anexo do Currículo e Texto Autoral em PDF é obrigatório.");
+
+    if (errors.length > 0) {
+        return { error: "Não foi possível finalizar. Corrija os seguintes itens: " + errors.join(" ") };
+    }
+
+    // 3. Update status to received
     const { error } = await supabase
         .from("applications")
         .update({
@@ -96,6 +119,8 @@ export async function submitApplication() {
 
     revalidatePath("/application");
     revalidatePath("/dashboard");
+    revalidatePath("/admin");
+    revalidatePath("/admin/candidates");
     return { success: true };
 }
 

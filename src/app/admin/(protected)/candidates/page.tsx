@@ -9,7 +9,7 @@ import Link from "next/link";
 import {
     Search, Filter, Eye, FileSpreadsheet, Mail,
     MessageCircle, CheckSquare, Square, MoreHorizontal,
-    Trash2, UserCheck, ShieldCheck, X
+    Trash2, UserCheck, ShieldCheck, X, Download
 } from "lucide-react";
 import CommunicationModal from "@/components/admin/CommunicationModal";
 import { deleteApplication } from "@/app/admin/actions";
@@ -25,16 +25,21 @@ export default function CandidatesPage() {
 function CandidatesPageClient() {
     const searchParams = useSearchParams();
     const initialStatus = searchParams.get('status') || "all";
+    const initialProfile = searchParams.get('profile_type') || "all";
 
     const [applications, setApplications] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [filterStatus, setFilterStatus] = useState(initialStatus);
+    const [filterProfile, setFilterProfile] = useState(initialProfile);
 
     useEffect(() => {
         const statusFromUrl = searchParams.get('status');
         if (statusFromUrl) setFilterStatus(statusFromUrl);
+
+        const profileFromUrl = searchParams.get('profile_type');
+        if (profileFromUrl) setFilterProfile(profileFromUrl);
     }, [searchParams]);
 
     // Modal state
@@ -63,8 +68,18 @@ function CandidatesPageClient() {
         const matchesSearch = app.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             app.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
             app.cpf?.includes(searchTerm);
-        const matchesStatus = filterStatus === "all" || app.status === filterStatus;
-        return matchesSearch && matchesStatus;
+
+        let matchesStatus = true;
+        if (filterStatus === "finalized") {
+            matchesStatus = app.status !== "draft" && app.status !== null;
+        } else if (filterStatus === "draft") {
+            matchesStatus = app.status === "draft" || app.status === null;
+        } else if (filterStatus !== "all") {
+            matchesStatus = app.status === filterStatus;
+        }
+
+        const matchesProfile = filterProfile === "all" || app.profile_type === filterProfile;
+        return matchesSearch && matchesStatus && matchesProfile;
     });
 
     const toggleSelect = (id: string) => {
@@ -135,11 +150,26 @@ function CandidatesPageClient() {
                     onChange={(e) => setFilterStatus(e.target.value)}
                     className="py-3 px-4 rounded-xl border border-white bg-white shadow-sm text-sm font-bold text-slate-600 outline-none focus:ring-2 focus:ring-amber-500"
                 >
-                    <option value="all">Todos os Status</option>
-                    <option value="received">Recebidos</option>
-                    <option value="under_review">Em Análise</option>
-                    <option value="interview_invited">Entrevista</option>
-                    <option value="hired">Aprovados</option>
+                    <option value="all">Filtro: Todos os Status</option>
+                    <optgroup label="Macro Status">
+                        <option value="finalized">Finalizadas (Todas)</option>
+                        <option value="draft">Em Aberto (Rascunhos)</option>
+                    </optgroup>
+                    <optgroup label="Fases Únicas">
+                        <option value="received">Recebidos</option>
+                        <option value="under_review">Em Análise</option>
+                        <option value="interview_invited">Entrevista</option>
+                        <option value="hired">Aprovados</option>
+                    </optgroup>
+                </select>
+                <select
+                    value={filterProfile}
+                    onChange={(e) => setFilterProfile(e.target.value)}
+                    className="py-3 px-4 rounded-xl border border-white bg-white shadow-sm text-sm font-bold text-slate-600 outline-none focus:ring-2 focus:ring-amber-500"
+                >
+                    <option value="all">Todos os Perfis</option>
+                    <option value="licenciado">Licenciados</option>
+                    <option value="pedagogo">Pedagogos</option>
                 </select>
                 <div className="flex items-center gap-2 text-xs font-bold text-slate-400 px-2">
                     <div className="h-2 w-2 rounded-full bg-amber-500 animate-pulse"></div>
@@ -190,11 +220,11 @@ function CandidatesPageClient() {
                                     </button>
                                 </th>
                                 <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Candidato / UUID</th>
-                                <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Documento (CPF)</th>
-                                <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Perfil Técnico</th>
+                                <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">CPF</th>
+                                <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Perfil</th>
                                 <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Localidade</th>
                                 <th className="px-6 py-4 text-left text-[10px] font-black text-slate-400 uppercase tracking-widest">Status</th>
-                                <th className="px-6 py-4 text-right"></th>
+                                <th className="px-6 py-4 text-right text-[10px] font-black text-slate-400 uppercase tracking-widest px-12">Ações Rápidas</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-slate-50">
@@ -254,9 +284,16 @@ function CandidatesPageClient() {
                                             <Link
                                                 href={`/admin/candidates/${app.id}`}
                                                 className="inline-flex items-center justify-center h-10 w-10 bg-slate-100 text-slate-800 rounded-xl hover:bg-slate-900 hover:text-white transition-all shadow-sm active:scale-95"
-                                                title="Ver Dossiê Completo"
+                                                title="Ver Dossiê e PDFs"
                                             >
                                                 <Eye className="h-4 w-4" />
+                                            </Link>
+                                            <Link
+                                                href={`/admin/candidates/${app.id}`}
+                                                className="inline-flex items-center justify-center h-10 w-10 bg-blue-50 text-blue-600 rounded-xl hover:bg-blue-600 hover:text-white transition-all shadow-sm active:scale-95"
+                                                title="Baixar Anexos"
+                                            >
+                                                <Download className="h-4 w-4" />
                                             </Link>
                                             <button
                                                 onClick={() => {

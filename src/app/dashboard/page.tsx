@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { FileText, CheckCircle2, Clock, LogOut } from "lucide-react";
+import { FileText, CheckCircle2, Clock, LogOut, AlertTriangle } from "lucide-react";
 import AvatarUpload from "@/components/dashboard/AvatarUpload";
 
 export default async function DashboardPage() {
@@ -18,7 +18,7 @@ export default async function DashboardPage() {
     // Fetch user profile for avatar
     const { data: profile } = await supabase
         .from("profiles")
-        .select("avatar_url, full_name") // Assuming full_name might be here or we get it from metadata/application
+        .select("avatar_url, full_name")
         .eq("id", user.id)
         .single();
 
@@ -52,11 +52,9 @@ export default async function DashboardPage() {
     return (
         <div className="min-h-screen bg-slate-50 py-12 px-4 sm:px-6 lg:px-8 font-sans">
             <div className="max-w-4xl mx-auto space-y-10 mt-8">
-                {/* Added mt-8 for spacing from top, space-y-10 for better diagramming */}
 
                 {/* Profile Header Card */}
                 <div className="relative bg-white rounded-2xl shadow-sm border border-slate-100 p-8 pt-16 sm:pt-20 sm:pl-48">
-                    {/* Avatar positioned absolutely to overlap/break the box */}
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 sm:translate-x-0 sm:left-12 sm:top-1/2 sm:-translate-y-1/2">
                         <AvatarUpload
                             userId={user.id}
@@ -123,20 +121,32 @@ export default async function DashboardPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex justify-end pt-4">
-                                    {application.status === 'draft' || !application.status ? (
-                                        <Link href="/application" className="inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3 bg-amber-600 hover:bg-amber-500 text-white font-bold rounded-lg transition-colors shadow-md">
-                                            Continuar Preenchimento
-                                        </Link>
-                                    ) : (
-                                        <div className="flex items-center gap-3 px-6 py-3 bg-green-50 text-green-700 rounded-lg border border-green-200">
+                                <div className="flex flex-col sm:flex-row items-center gap-4 pt-4">
+                                    <Link href="/application" className={`inline-flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3 font-bold rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 text-lg ${application.status === 'draft' ? 'bg-amber-600 hover:bg-amber-500 text-white' : 'bg-blue-600 hover:bg-blue-500 text-white'}`}>
+                                        {application.status === 'draft' || !application.status ? 'Continuar Inscrição' : 'Atualizar Dados / Anexos'}
+                                    </Link>
+
+                                    {application.status !== 'draft' && (
+                                        <div className="flex items-center gap-3 px-6 py-3 bg-green-50 text-green-700 rounded-lg border border-green-200 w-full sm:w-auto">
                                             <CheckCircle2 className="h-5 w-5" />
-                                            <span className="font-semibold">Sua candidatura foi enviada com sucesso!</span>
+                                            <span className="font-semibold text-sm">Inscrição Finalizada</span>
                                         </div>
                                     )}
                                 </div>
                             </div>
                         )}
+                    </div>
+
+                    <div className="bg-blue-50 border-t border-blue-100 p-6">
+                        <div className="flex gap-4">
+                            <AlertTriangle className="h-6 w-6 text-blue-600 flex-shrink-0" />
+                            <div>
+                                <h4 className="font-bold text-blue-900 text-sm uppercase tracking-wide">Atualização Disponível</h4>
+                                <p className="text-sm text-blue-800 mt-1 leading-relaxed">
+                                    Você pode entrar a qualquer momento com seu login e senha para **atualizar seus dados** ou **anexar novos documentos** durante todo o processo seletivo. Suas alterações serão visualizadas pela comissão.
+                                </p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 

@@ -122,72 +122,72 @@ export default function UsersPage() {
             </div>
 
             {/* Users Grid/List */}
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
                 {filteredUsers.map((user) => (
-                    <div key={user.id} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm hover:shadow-md transition-all group relative overflow-hidden">
-                        <div className="flex items-start justify-between relative z-10">
-                            <div className="flex items-center gap-4">
-                                <div className="h-12 w-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 font-black text-lg">
-                                    {user.full_name?.charAt(0) || <User className="h-5 w-5" />}
+                    <div key={user.id} className="bg-white rounded-[2.5rem] p-8 border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-1 transition-all group relative overflow-hidden flex flex-col justify-between min-h-[220px]">
+
+                        {/* Header Area */}
+                        <div className="flex items-start justify-between gap-4">
+                            <div className="flex items-center gap-4 min-w-0">
+                                {/* Avatar */}
+                                <div className="h-16 w-16 rounded-3xl bg-slate-50 border-2 border-slate-100 flex items-center justify-center text-slate-400 font-serif font-black text-2xl shadow-inner group-hover:scale-110 transition-transform">
+                                    {user.full_name?.charAt(0).toUpperCase() || <User className="h-7 w-7 text-slate-300" />}
                                 </div>
                                 <div className="flex flex-col min-w-0">
-                                    <h3 className="text-sm font-black text-slate-900 truncate">{user.full_name || "Sem Nome"}</h3>
-                                    <span className="text-xs text-slate-400 truncate flex items-center gap-1.5 mt-0.5">
+                                    <h3 className="text-lg font-black text-slate-900 truncate tracking-tight">{user.full_name || "Usuário sem Nome"}</h3>
+                                    <span className="text-xs text-slate-400 truncate flex items-center gap-1.5 mt-1 font-medium">
                                         <Mail className="h-3 w-3" /> {user.email}
                                     </span>
                                 </div>
                             </div>
-                            <div className="flex flex-col items-center gap-1">
-                                <div className={`h-10 w-10 rounded-xl flex items-center justify-center transition-all shadow-sm ${user.role === 'admin' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-500'}`}>
-                                    <Shield className="h-5 w-5" />
+
+                            {/* Top Actions & Role */}
+                            <div className="flex flex-col items-end gap-3 flex-shrink-0">
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => handleDelete(user.id)}
+                                        disabled={deletingId === user.id}
+                                        className="h-10 w-10 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm border border-red-100 animate-in fade-in zoom-in"
+                                        title="Excluir Usuário"
+                                    >
+                                        {deletingId === user.id ? <Loader2 className="h-4 w-4 animate-spin" /> : <Trash2 className="h-5 w-5" />}
+                                    </button>
                                 </div>
-                                <span className="text-[8px] font-black uppercase tracking-tighter opacity-40">{user.role}</span>
+                                <div className={`px-3 py-2 rounded-2xl border flex flex-col items-center min-w-[65px] transition-colors ${user.role === 'admin' ? 'bg-amber-50 border-amber-200 text-amber-700' : 'bg-slate-50 border-slate-200 text-slate-500'}`}>
+                                    <Shield className={`h-5 w-5 ${user.role === 'admin' ? 'animate-pulse text-amber-600' : ''}`} />
+                                    <span className="text-[7px] font-black uppercase tracking-tighter mt-1">{user.role}</span>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="absolute top-4 right-16 flex gap-2">
-                            <button
-                                onClick={() => alert("A edição direta será habilitada na próxima atualização de segurança.")}
-                                className="h-8 w-8 bg-slate-50 text-slate-400 rounded-lg flex items-center justify-center hover:bg-slate-900 hover:text-white transition-all shadow-sm"
-                                title="Editar"
-                            >
-                                <MoreVertical className="h-3.5 w-3.5" />
-                            </button>
-                            <button
-                                onClick={() => handleDelete(user.id)}
-                                disabled={deletingId === user.id}
-                                className="h-8 w-8 bg-red-50 text-red-500 rounded-lg flex items-center justify-center hover:bg-red-600 hover:text-white transition-all shadow-sm"
-                                title="Remover"
-                            >
-                                {deletingId === user.id ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Trash2 className="h-3.5 w-3.5" />}
-                            </button>
-                        </div>
-
-                        <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between relative z-10">
+                        {/* Footer Info Area */}
+                        <div className="mt-8 pt-6 border-t border-slate-50 flex items-center justify-between">
                             <div className="flex flex-col">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Nível de Acesso</span>
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">Nível de Acesso</span>
                                 <button
                                     onClick={() => handleToggleRole(user.id, user.role)}
                                     disabled={updatingId === user.id}
-                                    className={`mt-1 flex items-center gap-1.5 text-xs font-bold transition-all hover:scale-105 ${user.role === 'admin' ? 'text-amber-600' : 'text-slate-600'
+                                    className={`mt-1.5 flex items-center gap-2 px-3 py-1.5 rounded-xl border text-xs font-bold transition-all hover:scale-105 active:scale-95 ${user.role === 'admin'
+                                        ? 'bg-amber-100 text-amber-700 border-amber-200'
+                                        : 'bg-slate-100 text-slate-600 border-slate-200'
                                         }`}
                                 >
-                                    {user.role === 'admin' ? <BadgeCheck className="h-3.5 w-3.5" /> : <Shield className="h-3.5 w-3.5" />}
+                                    {user.role === 'admin' ? <BadgeCheck className="h-4 w-4" /> : <Shield className="h-4 w-4" />}
                                     {user.role === 'admin' ? 'Administrador' : 'Candidato'}
                                     {updatingId === user.id && <Loader2 className="h-3 w-3 animate-spin" />}
                                 </button>
                             </div>
                             <div className="flex flex-col items-end">
-                                <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Desde</span>
-                                <span className="mt-1 text-xs font-bold text-slate-600 flex items-center gap-1">
-                                    <Calendar className="h-3 w-3" /> {new Date(user.created_at).toLocaleDateString('pt-BR')}
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-widest">No Sistema</span>
+                                <span className="mt-2 text-xs font-bold text-slate-600 flex items-center gap-1.5 bg-slate-50 px-3 py-1 rounded-lg border border-slate-100">
+                                    <Calendar className="h-3.5 w-3.5 text-slate-400" /> {new Date(user.created_at).toLocaleDateString('pt-BR')}
                                 </span>
                             </div>
                         </div>
 
-
                         {/* Background Decoration */}
-                        <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-slate-50 rounded-full opacity-50 transition-transform group-hover:scale-125"></div>
+                        <div className="absolute -bottom-8 -right-8 w-32 h-32 bg-slate-50 rounded-full opacity-40 transition-transform group-hover:scale-150 pointer-events-none"></div>
+                        <div className="absolute -top-4 -left-4 w-16 h-16 bg-white border border-slate-50 rounded-full opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none shadow-sm"></div>
                     </div>
                 ))}
 

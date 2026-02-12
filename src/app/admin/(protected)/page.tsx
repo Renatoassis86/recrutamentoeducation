@@ -41,7 +41,7 @@ async function getStats() {
             areaCounts[app.licensure_area] = (areaCounts[app.licensure_area] || 0) + 1;
         }
         if (app.state) {
-            const uf = app.state.toUpperCase();
+            const uf = app.state.trim().toUpperCase();
             stateCounts[uf] = (stateCounts[uf] || 0) + 1;
         }
         const dateKey = format(new Date(app.created_at), 'dd/MM');
@@ -81,12 +81,17 @@ async function getStats() {
     const finalizedTotal = totalApps - (statusCounts['draft'] || 0);
     const draftTotal = statusCounts['draft'] || 0;
 
+    const topStates = Object.entries(stateCounts)
+        .sort(([, a], [, b]) => b - a)
+        .slice(0, 5);
+
     return {
         totalApps,
         statusCounts,
         evolutionData,
         profileData,
         stateCounts,
+        topStates,
         topAreas,
         summariesText,
         authorialText,
@@ -121,7 +126,7 @@ export default async function AdminDashboard() {
 
             {/* KPI Grid - NOW CLICKABLE FOR DRILL-DOWN */}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
-                <Link href="/admin/candidates?status=received">
+                <Link href="/admin/candidates?status=finalized">
                     <KPICard
                         title="Finalizadas"
                         value={stats.finalizedTotal}
@@ -139,20 +144,24 @@ export default async function AdminDashboard() {
                         description="Aguardando conclusão (Clique para ver)"
                     />
                 </Link>
-                <KPICard
-                    title="Licenciados"
-                    value={stats.licenciados}
-                    icon={BookOpen}
-                    color="blue"
-                    description="Candidatos a autores"
-                />
-                <KPICard
-                    title="Pedagogos"
-                    value={stats.pedagogos}
-                    icon={GraduationCap}
-                    color="slate"
-                    description="Especialistas técnicos"
-                />
+                <Link href="/admin/candidates?profile_type=licenciado">
+                    <KPICard
+                        title="Licenciados"
+                        value={stats.licenciados}
+                        icon={BookOpen}
+                        color="blue"
+                        description="Candidatos a autores (Clique para ver)"
+                    />
+                </Link>
+                <Link href="/admin/candidates?profile_type=pedagogo">
+                    <KPICard
+                        title="Pedagogos"
+                        value={stats.pedagogos}
+                        icon={GraduationCap}
+                        color="slate"
+                        description="Especialistas técnicos (Clique para ver)"
+                    />
+                </Link>
             </div>
 
             {/* Visual Analytics */}
@@ -166,13 +175,39 @@ export default async function AdminDashboard() {
                         <EvolutionChart data={stats.evolutionData} />
                     </div>
 
-                    <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col min-h-[500px]">
-                        <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 px-1 flex items-center gap-2">
-                            <MapPin className="h-4 w-4 text-amber-500" />
-                            Distribuição Geográfica Real (Por UF)
-                        </h3>
-                        <div className="flex-1 w-full flex items-center justify-center overflow-hidden">
-                            <StateMap data={stats.stateCounts} />
+                    <div className="bg-white p-8 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col md:flex-row gap-8 min-h-[500px]">
+                        <div className="flex-1">
+                            <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 px-1 flex items-center gap-2">
+                                <MapPin className="h-4 w-4 text-amber-500" />
+                                Distribuição Geográfica Real (Por UF)
+                            </h3>
+                            <div className="w-full flex items-center justify-center overflow-hidden">
+                                <StateMap data={stats.stateCounts} />
+                            </div>
+                        </div>
+
+                        {/* Top States Sidebar */}
+                        <div className="w-full md:w-64 bg-slate-50 rounded-[2.5rem] p-6 border border-slate-100/50">
+                            <h4 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6">Top Estados</h4>
+                            <div className="space-y-4">
+                                {stats.topStates.map(([uf, count]: any) => (
+                                    <div key={uf} className="flex items-center justify-between group">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-xl bg-white border border-slate-200 flex items-center justify-center text-[10px] font-black text-slate-950 shadow-sm group-hover:bg-amber-500 group-hover:border-amber-500 transition-colors">
+                                                {uf}
+                                            </div>
+                                            <span className="text-[11px] font-bold text-slate-600 uppercase">{uf}</span>
+                                        </div>
+                                        <div className="flex flex-col items-end">
+                                            <span className="text-sm font-black text-slate-900">{count}</span>
+                                            <span className="text-[8px] font-bold text-slate-400 uppercase">Inscritos</span>
+                                        </div>
+                                    </div>
+                                ))}
+                                {stats.topStates.length === 0 && (
+                                    <p className="text-[10px] text-slate-400 italic">Nenhum dado registrado.</p>
+                                )}
+                            </div>
                         </div>
                     </div>
 

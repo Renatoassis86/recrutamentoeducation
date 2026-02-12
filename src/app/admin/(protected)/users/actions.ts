@@ -20,6 +20,11 @@ export async function deleteUser(userId: string) {
     // Get info for audit
     const { data: targetProfile } = await supabase.from("profiles").select("*").eq("id", userId).single();
 
+    // Delete profile first to avoid orphan records or foreign key issues if any (though usually it's the other way around)
+    // Actually, delete from profiles
+    const { error: profileError } = await adminClient.from("profiles").delete().eq("id", userId);
+    if (profileError) return { error: "Erro ao excluir perfil: " + profileError.message };
+
     const { error } = await adminClient.auth.admin.deleteUser(userId);
     if (error) return { error: error.message };
 

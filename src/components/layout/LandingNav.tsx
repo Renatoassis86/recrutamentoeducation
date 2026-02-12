@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Menu, Transition } from "@headlessui/react";
-import { Menu as MenuIcon, X, User, LogOut, ChevronDown } from "lucide-react";
+import { Menu as MenuIcon, X, User, LogOut, ChevronDown, ShieldCheck } from "lucide-react";
 import { createClient } from "@/utils/supabase/client";
 
 // WhatsApp Icon Component
@@ -118,26 +118,43 @@ export default function LandingNav({ user }: { user?: any }) {
                                                 <Menu.Item>
                                                     {({ active }) => (
                                                         <Link
-                                                            href="/admin"
+                                                            href="/dashboard"
                                                             className={`${active ? 'bg-gray-100' : ''
                                                                 } flex items-center gap-2 px-4 py-2 text-sm text-gray-700`}
                                                         >
                                                             <User className="w-4 h-4" />
-                                                            Meu Perfil
+                                                            Meu Perfil / Inscrição
                                                         </Link>
                                                     )}
                                                 </Menu.Item>
+
+                                                {/* Hidden Admin Link for specific emails */}
+                                                {(user.email?.includes('secretaria@cidadeviva.org') || user.email?.includes('admin')) && (
+                                                    <Menu.Item>
+                                                        {({ active }) => (
+                                                            <Link
+                                                                href="/admin"
+                                                                className={`${active ? 'bg-gray-100' : ''
+                                                                    } flex items-center gap-2 px-4 py-2 text-sm text-amber-700 font-bold border-t border-gray-100`}
+                                                            >
+                                                                <ShieldCheck className="w-4 h-4" />
+                                                                Painel Administrativo
+                                                            </Link>
+                                                        )}
+                                                    </Menu.Item>
+                                                )}
+
                                                 <Menu.Item>
                                                     {({ active }) => (
                                                         <button
                                                             onClick={async () => {
-                                                                const { createClient } = await import("@/utils/supabase/client");
-                                                                const supabase = createClient();
+                                                                const { createClient: createSupabaseClient } = await import("@/utils/supabase/client");
+                                                                const supabase = createSupabaseClient();
                                                                 await supabase.auth.signOut();
                                                                 window.location.href = "/login";
                                                             }}
                                                             className={`${active ? 'bg-gray-100' : ''
-                                                                } flex items-center gap-2 px-4 py-2 text-sm text-gray-700 w-full text-left`}
+                                                                } flex items-center gap-2 px-4 py-2 text-sm text-gray-700 w-full text-left border-t border-gray-100`}
                                                         >
                                                             <LogOut className="w-4 h-4" />
                                                             Sair

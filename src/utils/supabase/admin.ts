@@ -1,19 +1,23 @@
-import { createClient } from "@supabase/supabase-js";
-
-// Hardcoded keys for immediate fix (Server-side ONLY - safe from client bundle)
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || "https://mhkyutqqciueevjnlsfy.supabase.co";
-const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || "sb_secret_XbDWiAITsTurtfINe32_Ug_V_2soa8o";
+import { createClient } from '@supabase/supabase-js';
 
 export function createAdminClient() {
-    if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
-        console.warn("Supabase Admin credentials missing. Admin operations will be skipped.");
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+        console.error("❌ CRITICAL: Missing Supabase Admin Keys!", {
+            url: !!supabaseUrl,
+            key: !!supabaseServiceKey
+        });
+
+        // Return null or handle error as needed
         return null;
     }
 
-    return createClient(SUPABASE_URL as string, SERVICE_ROLE_KEY as string, {
+    return createClient(supabaseUrl, supabaseServiceKey, {
         auth: {
             autoRefreshToken: false,
-            persistSession: false,
-        },
+            persistSession: false
+        }
     });
 }

@@ -6,7 +6,7 @@ import {
 import Link from "next/link";
 import { format } from "date-fns";
 import StatusUpdater from "../../../../../components/admin/StatusUpdater";
-import AdminFileLink from "../../../../../components/admin/AdminFileLink";
+import AdminFileViewer from "../../../../../components/admin/AdminFileViewer";
 import CandidateNotes from "../../../../../components/admin/CandidateNotes";
 
 export const dynamic = "force-dynamic";
@@ -183,7 +183,7 @@ export default async function CandidateDossierPage({ params }: { params: { id: s
                                             <p className="text-[9px] font-bold text-slate-500 mt-1 uppercase">PDF • {(doc.size_bytes / 1024 / 1024).toFixed(2)} MB</p>
                                         </div>
                                     </div>
-                                    <AdminFileLink path={doc.storage_path} name={doc.original_name} />
+                                    <AdminFileViewer path={doc.storage_path} name={doc.original_name} />
                                 </div>
                             ))}
                             {(!documents || documents.length === 0) && (

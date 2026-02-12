@@ -138,29 +138,38 @@ export async function getAllDocuments() {
 /**
  * GERA URL ASSINADA COM PRIVILÉGIOS DE ADMIN (SERVICE ROLE)
  */
-export async function getAdminSignedUrl(path: string) {
-    const supabase = await createClient(); // This normally uses anon key, we need server client with service role
+import { createAdminClient } from "@/utils/supabase/admin";
 
-    // To use service role, we need a special client. 
-    // Let's modify our server client creator or use it here if available.
-    // For now, I'll use the environment variable directly if I can import it.
+export async function getAdminSignedUrl(path: string, forceDownload: boolean = false) {
+    try {
+        const adminSupabase = createAdminClient();
 
-    const { createClient: createSupabaseClient } = await import('@supabase/supabase-js');
+        if (!adminSupabase) {
+            return { error: "Erro de configuração: Chave Service Role não encontrada no servidor. Verifique as variáveis de ambiente." };
+        }
 
-    const adminSupabase = createSupabaseClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.SUPABASE_SERVICE_ROLE_KEY!
-    );
+        console.log(`Solicitando URL assinada para: ${path}${forceDownload ? ' (Download)' : ''}`);
 
-    const { data, error } = await adminSupabase
-        .storage
-        .from('applications')
-        .createSignedUrl(path, 3600);
+        const { data, error } = await adminSupabase
+            .storage
+            .from('applications')
+            .createSignedUrl(path, 3600, forceDownload ? { download: true } : undefined);
 
-    if (error) {
-        console.error("Storage Error:", error);
-        return { error: error.message };
+        if (error) {
+            console.error("Erro no Supabase Storage:", error);
+            if (error.message.includes('Object not found') || error.message.includes('404')) {
+                return { error: "O arquivo não foi encontrado no servidor. Ele pode ter sido removido ou o caminho está incorreto." };
+            }
+            return { error: `Erro ao acessar o storage: ${error.message}` };
+        }
+
+        if (!data?.signedUrl) {
+            return { error: "O servidor não retornou uma URL válida para o arquivo." };
+        }
+
+        return { signedUrl: data.signedUrl };
+    } catch (err: any) {
+        console.error("Erro interno em getAdminSignedUrl:", err);
+        return { error: `Erro inesperado: ${err.message}` };
     }
-
-    return { signedUrl: data.signedUrl };
 }

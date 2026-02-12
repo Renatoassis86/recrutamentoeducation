@@ -50,7 +50,8 @@ export default function ApplicationPage() {
 
             if (app) {
                 // If already received/submitted, redirect to dashboard
-                if (app.status === 'received' || app.status === 'under_review') {
+                // Removed redirect for 'received' status to allow updates at any time
+                if (app.status === 'under_review') {
                     router.push('/dashboard');
                     return;
                 }
