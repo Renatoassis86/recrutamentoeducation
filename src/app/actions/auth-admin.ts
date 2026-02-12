@@ -29,7 +29,7 @@ export async function loginAdmin(formData: FormData) {
         .eq("id", data.user.id)
         .single();
 
-    if (profile?.role !== "admin") {
+    if (profile?.role !== "admin" && profile?.role !== "committee") {
         await supabase.auth.signOut();
         return { error: "Acesso negado: Este usuário não possui privilégios administrativos." };
     }
