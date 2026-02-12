@@ -19,20 +19,10 @@ export default function Contato() {
         setStatus("submitting");
 
         try {
-            const res = await fetch("https://formsubmit.co/ajax/administrativo.education@cidadeviva.org", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Accept": "application/json"
-                },
-                body: JSON.stringify({
-                    ...formData,
-                    _subject: `[Contato Site] ${formData.subject}`,
-                    _captcha: "false"
-                })
-            });
+            const { sendContactFormEmail } = await import("@/app/admin/actions-email");
+            const res = await sendContactFormEmail(formData);
 
-            if (res.ok) {
+            if (res.success) {
                 setStatus("success");
                 setFormData({
                     name: "",
@@ -42,6 +32,7 @@ export default function Contato() {
                     message: ""
                 });
             } else {
+                console.error("Email Error:", res.error);
                 setStatus("error");
             }
         } catch (error) {

@@ -51,3 +51,45 @@ export async function sendAdminEmail({
         return { error: `Erro inesperado no servidor: ${err.message}` };
     }
 }
+
+export async function sendContactFormEmail(data: {
+    name: string;
+    email: string;
+    phone: string;
+    subject: string;
+    message: string;
+}) {
+    try {
+        const apiKey = process.env.RESEND_API_KEY;
+        if (!apiKey) {
+            return { error: "Erro de configuração de e-mail no servidor." };
+        }
+
+        const resend = new Resend(apiKey);
+
+        const { error } = await resend.emails.send({
+            from: 'Sistema de Recrutamento <administrativo.education@cidadeviva.org>',
+            to: 'administrativo.education@cidadeviva.org',
+            subject: `[CONTATO SITE] ${data.subject}`,
+            replyTo: data.email,
+            html: `
+                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                    <h2 style="color: #0f172a; border-bottom: 2px solid #f59e0b; padding-bottom: 10px;">Nova Mensagem de Contato</h2>
+                    <p><strong>Nome:</strong> ${data.name}</p>
+                    <p><strong>E-mail:</strong> ${data.email}</p>
+                    <p><strong>Telefone:</strong> ${data.phone}</p>
+                    <p><strong>Assunto:</strong> ${data.subject}</p>
+                    <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
+                        <p style="margin-top: 0; color: #64748b; font-size: 12px; text-transform: uppercase; font-weight: bold;">Mensagem:</p>
+                        <div style="white-space: pre-wrap; color: #334155;">${data.message}</div>
+                    </div>
+                </div>
+            `
+        });
+
+        if (error) return { error: error.message };
+        return { success: true };
+    } catch (err: any) {
+        return { error: err.message };
+    }
+}
