@@ -71,16 +71,16 @@ export default function CommissionPage() {
 
     return (
         <div className="space-y-8 animate-in fade-in duration-500 pb-20">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white p-8 rounded-[2.5rem] border border-slate-100 shadow-sm sticky top-0 z-30">
                 <div>
                     <h1 className="text-3xl font-black text-slate-900 font-serif">Comissão Organizadora</h1>
                     <p className="text-slate-500 mt-2 font-medium">Gerencie os membros que auxiliam na triagem e avaliação.</p>
                 </div>
                 <button
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white px-6 py-3 rounded-2xl font-bold transition-all shadow-lg shadow-amber-200"
+                    className="flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-amber-200 active:scale-95"
                 >
-                    <Plus className="h-5 w-5" />
+                    <Plus className="h-6 w-6" />
                     Novo Membro
                 </button>
             </div>
@@ -118,9 +118,16 @@ export default function CommissionPage() {
                         </div>
                     ))}
                     {users.length === 0 && (
-                        <div className="col-span-full py-20 text-center bg-white rounded-[2.5rem] border border-dashed border-slate-200">
-                            <Shield className="h-12 w-12 text-slate-200 mx-auto mb-4" />
-                            <p className="text-slate-400 font-medium">Nenhum membro da comissão cadastrado.</p>
+                        <div className="col-span-full py-20 text-center bg-white rounded-[2.5rem] border border-dashed border-slate-200 flex flex-col items-center">
+                            <Shield className="h-16 w-16 text-slate-200 mb-6" />
+                            <p className="text-slate-400 font-bold text-xl mb-8">Nenhum membro da comissão cadastrado.</p>
+                            <button
+                                onClick={() => setIsModalOpen(true)}
+                                className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-3xl font-black transition-all shadow-2xl active:scale-95 uppercase tracking-widest text-xs"
+                            >
+                                <Plus className="h-5 w-5" />
+                                Cadastrar Primeiro Membro
+                            </button>
                         </div>
                     )}
                 </div>

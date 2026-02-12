@@ -41,11 +41,17 @@ export const metadata: Metadata = {
   },
 };
 
+import { headers } from "next/headers";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const headerList = headers();
+  const pathname = headerList.get("x-pathname") || "";
+  const isAdmin = pathname.startsWith("/admin");
+
   let user = null;
   try {
     const supabase = await createClient();
@@ -64,11 +70,11 @@ export default async function RootLayout({
   return (
     <html lang="pt-BR">
       <body className={`${inter.variable} ${cormorant.variable} ${montserrat.variable} font-sans bg-white`}>
-        <LandingNav user={user} />
+        {!isAdmin && <LandingNav user={user} />}
         <main className="min-h-screen">
           {children}
         </main>
-        <Footer />
+        {!isAdmin && <Footer />}
       </body>
     </html>
   );

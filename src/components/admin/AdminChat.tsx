@@ -53,7 +53,7 @@ export default function AdminChat() {
             .from('admin_chat_messages')
             .select(`
                 *,
-                admin:admin_id(full_name, email)
+                profiles:admin_id(full_name, email)
             `)
             .order('created_at', { ascending: true })
             .limit(100);
@@ -190,7 +190,7 @@ export default function AdminChat() {
                     <div key={msg.id || idx} className="flex flex-col gap-1 animate-fade-in">
                         <div className="flex items-center justify-between px-1">
                             <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">
-                                {msg.admin?.full_name || "Admin"}
+                                {msg.profiles?.full_name || "Admin"}
                             </span>
                             <span className="text-[9px] font-bold text-slate-300">
                                 {format(new Date(msg.created_at), "HH:mm")}
