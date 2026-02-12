@@ -10,13 +10,15 @@ import {
 } from "lucide-react";
 import { logoutAdmin } from "@/app/actions/auth-admin";
 import Image from "next/image";
+import { useEffect } from "react";
+import { createClient } from "@/utils/supabase/client";
 
 const navigation = [
     { name: "Painel de Controle", href: "/admin", icon: LayoutDashboard },
     { name: "Base de Candidatos", href: "/admin/candidates", icon: Users },
     { name: "Jornada do Candidato (Kanban)", href: "/admin/kanban", icon: LayoutGrid },
     { name: "Comissão", href: "/admin/commission", icon: ShieldCheck, adminOnly: true },
-    { name: "Autorizações", href: "/admin/approvals", icon: ClipboardList, adminOnly: true },
+    { name: "Autorizações", href: "/admin/approvals", icon: ClipboardList, adminOnly: true, hasBadge: true },
     { name: "Trilha de Auditoria", href: "/admin/audit", icon: HardDrive, adminOnly: true },
     { name: "Gestão de Usuários", href: "/admin/users", icon: Users, adminOnly: true },
     { name: "Configurações", href: "/admin/settings", icon: Settings },
@@ -25,6 +27,37 @@ const navigation = [
 export default function AdminSidebar({ userRole }: { userRole?: string }) {
     const pathname = usePathname();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+    const [pendingCount, setPendingCount] = useState(0);
+    const supabase = createClient();
+
+    useEffect(() => {
+        if (userRole !== 'admin') return;
+
+        const fetchCount = async () => {
+            const { count } = await supabase
+                .from('pending_authorizations')
+                .select('*', { count: 'exact', head: true })
+                .eq('status', 'pending');
+            setPendingCount(count || 0);
+        };
+
+        fetchCount();
+
+        const channel = supabase
+            .channel('pending_auth_changes')
+            .on('postgres_changes', {
+                event: '*',
+                schema: 'public',
+                table: 'pending_authorizations'
+            }, () => {
+                fetchCount();
+            })
+            .subscribe();
+
+        return () => {
+            supabase.removeChannel(channel);
+        };
+    }, [userRole]);
 
     const filteredNavigation = navigation.filter(item => {
         if (item.adminOnly && userRole !== 'admin') return false;
@@ -82,20 +115,26 @@ export default function AdminSidebar({ userRole }: { userRole?: string }) {
                     <ul role="list" className="-mx-2 space-y-1">
                         {filteredNavigation.map((item) => {
                             const isActive = pathname === item.href;
+                            const showBadge = item.hasBadge && pendingCount > 0;
                             return (
                                 <li key={item.name}>
                                     <Link
                                         href={item.href}
                                         onClick={() => setIsMobileOpen(false)}
                                         className={`
-                    group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors
+                    group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold transition-colors items-center
                     ${isActive
                                                 ? 'bg-amber-600 text-white shadow-lg'
                                                 : 'text-slate-400 hover:text-white hover:bg-slate-800'}
                   `}
                                     >
                                         <item.icon className="h-6 w-6 shrink-0" aria-hidden="true" />
-                                        {item.name}
+                                        <span className="flex-1">{item.name}</span>
+                                        {showBadge && (
+                                            <span className="bg-red-500 text-white text-[10px] font-black h-5 w-5 rounded-full flex items-center justify-center animate-pulse">
+                                                {pendingCount}
+                                            </span>
+                                        )}
                                     </Link>
                                 </li>
                             );
@@ -113,8 +152,6 @@ export default function AdminSidebar({ userRole }: { userRole?: string }) {
 
                         <button
                             onClick={async () => {
-                                const { createClient } = await import("@/utils/supabase/client");
-                                const supabase = createClient();
                                 await supabase.auth.signOut();
                                 window.location.href = "/admin/login";
                             }}

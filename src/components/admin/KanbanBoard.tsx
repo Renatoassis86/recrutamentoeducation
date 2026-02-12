@@ -17,9 +17,15 @@ export default function KanbanBoard({ initialApplications, columns }: { initialA
 
     const handleMove = async (id: string, newStatus: string) => {
         setMovingId(id);
-        const res = await updateApplicationStatus(id, newStatus);
+        const res = await updateApplicationStatus(id, newStatus) as any;
         if (res.success) {
-            setApplications(prev => prev.map(app => app.id === id ? { ...app, status: newStatus } : app));
+            if (res.message) {
+                alert(res.message);
+            } else {
+                setApplications(prev => prev.map(app => app.id === id ? { ...app, status: newStatus } : app));
+            }
+        } else {
+            alert("Erro ao mover: " + (res.error || "Tente novamente."));
         }
         setMovingId(null);
     };

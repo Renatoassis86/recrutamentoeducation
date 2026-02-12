@@ -99,11 +99,12 @@ function CandidatesPageClient() {
     const handleDelete = async (id: string, name: string) => {
         if (!confirm(`Tem certeza que deseja excluir permanentemente a conta e os dados de ${name}? Esta ação não pode ser desfeita.`)) return;
 
-        const res = await deleteApplication(id);
+        const res = await deleteApplication(id) as any;
         if (res.success) {
+            if (res.message) alert(res.message);
             loadApplications();
         } else {
-            alert("Erro ao excluir: " + res.error);
+            alert("Erro ao excluir: " + (res.error || "Ocorreu um erro."));
         }
     };
 
@@ -111,14 +112,15 @@ function CandidatesPageClient() {
         if (!confirm(`Tem certeza que deseja excluir permanentemente estes ${selectedIds.length} candidatos? Todas as contas e dados associados serão removidos.`)) return;
 
         setLoading(true);
-        const res = await deleteApplicationsBulk(selectedIds);
+        const res = await deleteApplicationsBulk(selectedIds) as any;
         setLoading(false);
 
         if (res.success) {
+            if (res.message) alert(res.message);
             setSelectedIds([]);
             loadApplications();
         } else {
-            alert("Erro ao excluir em massa: " + res.error);
+            alert("Erro ao excluir em massa: " + (res.error || res.message || "Erro desconhecido"));
         }
     };
 

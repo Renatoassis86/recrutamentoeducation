@@ -40,7 +40,7 @@ export default function AdminFileViewer({ path, name }: AdminFileViewerProps) {
     const handleDownload = async (e: React.MouseEvent) => {
         e.stopPropagation();
         try {
-            const res = await getAdminSignedUrl(path, true);
+            const res = await getAdminSignedUrl(path, true) as any;
             if (res.signedUrl) {
                 const link = document.createElement('a');
                 link.href = res.signedUrl;

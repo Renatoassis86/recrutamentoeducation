@@ -39,11 +39,11 @@ export default function ApprovalsPage() {
 
     const handleProcess = async (id: string, status: 'approved' | 'rejected') => {
         setProcessingId(id);
-        const res = await processAuthorization(id, status);
+        const res = await processAuthorization(id, status) as any;
         if (res.success) {
             loadRequests();
         } else {
-            alert(res.error);
+            alert(res.error || "Erro ao processar.");
         }
         setProcessingId(null);
     };

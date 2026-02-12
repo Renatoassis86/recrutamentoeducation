@@ -115,6 +115,9 @@ export async function processAuthorization(authId: string, status: 'approved' | 
             await deleteApplication(entity_id);
         } else if (action_type === 'DELETE_BULK') {
             await deleteApplicationsBulk(payload.ids);
+        } else if (action_type === 'DELETE_USER') {
+            const { deleteUser } = await import("@/app/admin/(protected)/users/actions");
+            await deleteUser(entity_id);
         }
     }
 

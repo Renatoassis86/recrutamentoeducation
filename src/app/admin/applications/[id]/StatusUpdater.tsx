@@ -19,14 +19,18 @@ export default function StatusUpdater({ id, currentStatus }: { id: string, curre
 
     const handleUpdate = async (newStatus: string) => {
         setLoading(true);
-        const res = await updateApplicationStatus(id, newStatus);
+        const res = await updateApplicationStatus(id, newStatus) as any;
         setLoading(false);
 
-        if (res?.error) {
-            alert("Erro ao atualizar: " + res.error);
+        if (res.success) {
+            if (res.message) {
+                alert(res.message);
+            } else {
+                setStatus(newStatus);
+                router.refresh();
+            }
         } else {
-            setStatus(newStatus);
-            router.refresh();
+            alert("Erro ao atualizar: " + (res.error || "Tente novamente."));
         }
     };
 

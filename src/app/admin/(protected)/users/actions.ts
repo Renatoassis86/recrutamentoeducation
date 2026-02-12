@@ -13,7 +13,15 @@ export async function deleteUser(userId: string) {
         const { data: profile } = await supabase.from('profiles').select('role').eq('id', currentUser?.id).single();
 
         if (profile?.role === 'committee') {
-            return { error: "Apenas o administrador principal pode excluir usuários." };
+            const { data: targetProfile } = await supabase.from("profiles").select("full_name").eq("id", userId).single();
+            const { requestAuthorization } = await import("@/app/admin/actions");
+            return await requestAuthorization({
+                action_type: 'DELETE_USER',
+                entity_type: 'admin_users',
+                entity_id: userId,
+                payload: {},
+                description: `Solicitação de exclusão do usuário/admin: ${targetProfile?.full_name || userId}`
+            });
         }
         // 1. Get info for audit before they are gone
         const { data: targetProfile } = await supabase.from("profiles").select("*").eq("id", userId).single();

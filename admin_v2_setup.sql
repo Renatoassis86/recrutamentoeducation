@@ -2,13 +2,25 @@
 -- PAIDEIA INTELLIGENCE - ADMIN PANEL V2 SETUP (REAL ESTATE SCHEMA)
 -- ##################################################################
 
+-- 0. FUNÇÕES DE SUPORTE (Permissões Expandidas)
+CREATE OR REPLACE FUNCTION public.is_admin()
+RETURNS boolean AS $$
+BEGIN
+  RETURN EXISTS (
+    SELECT 1 FROM public.profiles
+    WHERE profiles.id = auth.uid()
+    AND profiles.role IN ('admin', 'committee')
+  );
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- 1. TABELA DE AUDITORIA (Audit Trail)
 CREATE TABLE IF NOT EXISTS public.audit_log (
     id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
     admin_id UUID REFERENCES auth.users(id),
-    entity TEXT NOT NULL, -- 'applications', 'kanban', 'comms', 'admin_users'
+    entity TEXT NOT NULL, 
     entity_id UUID,
-    action TEXT NOT NULL, -- e.g., 'MOVIMENTAÇÃO_PHASE', 'EXCLUSÃO_REGISTRO'
+    action TEXT NOT NULL, 
     before_json JSONB,
     after_json JSONB,
     ip TEXT,
@@ -27,15 +39,33 @@ CREATE TABLE IF NOT EXISTS public.kanban_history (
     note TEXT
 );
 
--- 3. CHAT INTERNO (Admin Lounge)
+-- 3. CHAT INTERNO (Admin Lounge - Discord Style)
 CREATE TABLE IF NOT EXISTS public.admin_chat_messages (
     id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
     admin_id UUID REFERENCES auth.users(id),
     content TEXT NOT NULL,
+    type TEXT DEFAULT 'text', -- 'text' ou 'audio'
+    attachment_url TEXT,
     created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 4. AVALIAÇÕES (Scorecard Técnica)
+-- 4. AUTORIZAÇÕES PENDENTES (Workflow de Aprovação)
+CREATE TABLE IF NOT EXISTS public.pending_authorizations (
+    id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
+    requested_by UUID REFERENCES auth.users(id),
+    action_type TEXT NOT NULL, -- 'UPDATE_STATUS', 'DELETE_CANDIDATE', etc.
+    entity_type TEXT NOT NULL,
+    entity_id TEXT NOT NULL,
+    payload JSONB DEFAULT '{}',
+    description TEXT,
+    status TEXT DEFAULT 'pending', -- 'pending', 'approved', 'rejected'
+    reviewed_by UUID REFERENCES auth.users(id),
+    reviewed_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 5. AVALIAÇÕES (Scorecard Técnica)
 CREATE TABLE IF NOT EXISTS public.application_reviews (
     id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
     application_id UUID REFERENCES public.applications(id) ON DELETE CASCADE,
@@ -48,29 +78,6 @@ CREATE TABLE IF NOT EXISTS public.application_reviews (
     UNIQUE(application_id, admin_id)
 );
 
--- 5. CAMPANHAS DE CRM (Bulk Messages)
-CREATE TABLE IF NOT EXISTS public.comms_campaigns (
-    id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
-    channel TEXT CHECK (channel IN ('EMAIL', 'WHATSAPP')),
-    name TEXT NOT NULL,
-    subject TEXT,
-    template_body TEXT NOT NULL,
-    created_by_admin_id UUID REFERENCES auth.users(id),
-    created_at TIMESTAMPTZ DEFAULT NOW()
-);
-
--- 6. MENSAGENS INDIVIDUAIS (Histórico CRM)
-CREATE TABLE IF NOT EXISTS public.comms_messages (
-    id UUID PRIMARY KEY DEFAULT extensions.uuid_generate_v4(),
-    application_id UUID REFERENCES public.applications(id) ON DELETE CASCADE,
-    campaign_id UUID REFERENCES public.comms_campaigns(id) ON DELETE SET NULL,
-    channel TEXT,
-    to_address TEXT,
-    status TEXT DEFAULT 'sent',
-    sent_at TIMESTAMPTZ DEFAULT NOW(),
-    created_by_admin_id UUID REFERENCES auth.users(id)
-);
-
 -- ##################################################################
 -- RLS POLICIES (SEGURANÇA CORPORATIVA)
 -- ##################################################################
@@ -79,31 +86,24 @@ ALTER TABLE public.audit_log ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.kanban_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.admin_chat_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.application_reviews ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.comms_campaigns ENABLE ROW LEVEL SECURITY;
-ALTER TABLE public.comms_messages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.pending_authorizations ENABLE ROW LEVEL SECURITY;
 
--- Política Global para Admins (RBAC)
+-- Política Global de Acesso para Admin e Comissão
 DO $$ 
 DECLARE 
     t TEXT;
 BEGIN
-    FOR t IN SELECT table_name FROM information_schema.tables WHERE table_schema = 'public' AND table_name IN ('audit_log', 'kanban_history', 'admin_chat_messages', 'application_reviews', 'comms_campaigns', 'comms_messages')
+    FOR t IN SELECT table_name FROM information_schema.tables 
+             WHERE table_schema = 'public' 
+             AND table_name IN ('audit_log', 'kanban_history', 'admin_chat_messages', 'application_reviews', 'pending_authorizations')
     LOOP
         EXECUTE format('DROP POLICY IF EXISTS "Admin full access" ON public.%I', t);
+        EXECUTE format('DROP POLICY IF EXISTS "Committee access" ON public.%I', t);
+        
+        -- Admin: Total
         EXECUTE format('CREATE POLICY "Admin full access" ON public.%I FOR ALL USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = ''admin''))', t);
+        
+        -- Comissão: Visualização e Criação (Baseado em is_admin() ajustado)
+        EXECUTE format('CREATE POLICY "Committee access" ON public.%I FOR ALL USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = ''committee''))', t);
     END LOOP;
 END $$;
-
--- Triggers para updated_at
-CREATE OR REPLACE FUNCTION update_updated_at_column()
-RETURNS TRIGGER AS $$
-BEGIN
-    NEW.updated_at = NOW();
-    RETURN NEW;
-END;
-$$ language 'plpgsql';
-
-CREATE TRIGGER update_application_reviews_modtime
-    BEFORE UPDATE ON public.application_reviews
-    FOR EACH ROW
-    EXECUTE PROCEDURE update_updated_at_column();

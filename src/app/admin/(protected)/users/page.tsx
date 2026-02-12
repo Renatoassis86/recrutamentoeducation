@@ -41,14 +41,18 @@ export default function UsersPage() {
         if (!confirm("Tem certeza que deseja excluir este usuário? Esta ação não pode ser desfeita.")) return;
 
         setDeletingId(id);
-        const result = await deleteUser(id);
+        const result = await deleteUser(id) as any;
         setDeletingId(null);
 
-        if (result.error) {
-            setError(result.error);
-            setTimeout(() => setError(null), 3000);
+        if (result.success) {
+            if (result.message) {
+                alert(result.message);
+            } else {
+                setUsers(users.filter(u => u.id !== id));
+            }
         } else {
-            setUsers(users.filter(u => u.id !== id));
+            setError(result.error || "Erro ao excluir usuário.");
+            setTimeout(() => setError(null), 3000);
         }
     }
 

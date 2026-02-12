@@ -21,11 +21,15 @@ export default function StatusUpdater({ id, currentStatus }: { id: string, curre
     async function handleUpdate(newStatus: string) {
         setLoading(true);
         setIsOpen(false);
-        const res = await updateApplicationStatus(id, newStatus);
+        const res = await updateApplicationStatus(id, newStatus) as any;
         if (res.success) {
-            setStatus(newStatus);
+            if (res.message) {
+                alert(res.message);
+            } else {
+                setStatus(newStatus);
+            }
         } else {
-            alert("Erro ao atualizar status: " + res.error);
+            alert("Erro ao atualizar status: " + (res.error || "Tente novamente."));
         }
         setLoading(false);
     }

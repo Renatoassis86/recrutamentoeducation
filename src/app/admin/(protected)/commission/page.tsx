@@ -43,7 +43,7 @@ export default function CommissionPage() {
     const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        const res = await createCommitteeUser(email, fullName, password);
+        const res = await createCommitteeUser(email, fullName, password) as any;
         if (res.success) {
             alert("Membro da comissão cadastrado com sucesso!");
             setFullName("");
@@ -52,16 +52,19 @@ export default function CommissionPage() {
             setIsModalOpen(false);
             loadUsers();
         } else {
-            alert("Erro: " + res.error);
+            alert("Erro: " + (res.error || "Ocorreu um erro."));
         }
         setIsSubmitting(false);
     };
 
     const handleDelete = async (id: string, name: string) => {
         if (!confirm(`Excluir acesso da comissão para ${name}?`)) return;
-        const res = await deleteUser(id);
-        if (res.success) loadUsers();
-        else alert(res.error);
+        const res = await deleteUser(id) as any;
+        if (res.success) {
+            if (res.message) alert(res.message);
+            loadUsers();
+        }
+        else alert(res.error || "Ocorreu um erro ao excluir.");
     };
 
     return (
