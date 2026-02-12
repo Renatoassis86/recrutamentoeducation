@@ -124,6 +124,47 @@ function CandidatesPageClient() {
         }
     };
 
+    const handleExportCSV = () => {
+        if (filteredApps.length === 0) return;
+
+        // Cabeçalhos do CSV
+        const headers = [
+            "ID", "Nome Completo", "Email", "CPF", "Telefone",
+            "Perfil", "Status", "Cidade", "Estado", "Área", "Criado Em"
+        ];
+
+        // Mapeamento dos dados
+        const rows = filteredApps.map(app => [
+            app.id,
+            app.full_name,
+            app.email,
+            `'${app.cpf}'`, // Evitar que o Excel formate como número
+            app.phone,
+            app.profile_type,
+            app.status || 'received',
+            app.city,
+            app.state,
+            app.profile_type === 'licenciado' ? app.licensure_area : (app.pedagogy_areas?.join(" | ") || ""),
+            format(new Date(app.created_at), "dd/MM/yyyy HH:mm")
+        ]);
+
+        // Gerar string CSV
+        const csvContent = [
+            headers.join(","),
+            ...rows.map(row => row.map(val => `"${val}"`).join(","))
+        ].join("\n");
+
+        // Download
+        const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.setAttribute("href", url);
+        link.setAttribute("download", `candidatos_export_${format(new Date(), "yyyy-MM-dd")}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <div className="space-y-6 animate-fade-in">
             {/* Header */}
@@ -133,8 +174,11 @@ function CandidatesPageClient() {
                     <p className="text-slate-500 font-medium">Gestão integrada de dossiês e comunicação ativa.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 shadow-sm transition-all active:scale-95">
-                        <FileSpreadsheet className="h-4 w-4 text-emerald-600" /> Exportar CSV
+                    <button
+                        onClick={handleExportCSV}
+                        className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm font-bold text-slate-700 hover:bg-slate-50 shadow-sm transition-all active:scale-95"
+                    >
+                        <FileSpreadsheet className="h-4 w-4 text-emerald-600" /> Exportar CSV ({filteredApps.length})
                     </button>
                     <button
                         onClick={() => {
@@ -147,8 +191,8 @@ function CandidatesPageClient() {
                         }}
                         disabled={selectedIds.length === 0}
                         className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg ${selectedIds.length > 0
-                                ? 'bg-slate-900 text-white shadow-slate-200 hover:bg-slate-800'
-                                : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                            ? 'bg-slate-900 text-white shadow-slate-200 hover:bg-slate-800'
+                            : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
                             }`}
                         title={selectedIds.length === 0 ? "Selecione candidatos na lista abaixo primeiro" : ""}
                     >
