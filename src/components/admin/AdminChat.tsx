@@ -59,17 +59,34 @@ export default function AdminChat() {
     }, [messages]);
 
     async function fetchMessages() {
-        const { data } = await supabase
-            .from('admin_chat_messages')
-            .select(`
-                *,
-                profiles:admin_id(id, full_name, email, role)
-            `)
-            .order('created_at', { ascending: true })
-            .limit(100);
+        try {
+            // Tenta buscar com os joins de perfil (removido email que pode não existir)
+            const { data, error } = await supabase
+                .from('admin_chat_messages')
+                .select(`
+                    *,
+                    profiles:admin_id(id, full_name, role)
+                `)
+                .order('created_at', { ascending: true })
+                .limit(100);
 
-        if (data) setMessages(data);
-        setLoading(false);
+            if (error) {
+                console.error("Fetch Messages Join Error:", error);
+                // Fallback: Busca apenas as mensagens sem o join se falhar
+                const { data: fallbackData } = await supabase
+                    .from('admin_chat_messages')
+                    .select('*')
+                    .order('created_at', { ascending: true })
+                    .limit(100);
+                if (fallbackData) setMessages(fallbackData);
+            } else if (data) {
+                setMessages(data);
+            }
+        } catch (err) {
+            console.error("Critical Chat Fetch Error:", err);
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function handleSend(e?: React.FormEvent, content?: string, type: 'text' | 'audio' = 'text', attachmentUrl?: string) {
@@ -88,7 +105,12 @@ export default function AdminChat() {
                     attachment_url: attachmentUrl
                 });
 
-            if (error) throw error;
+            if (error) {
+                console.error("Insert Message Error:", error);
+                alert("Erro ao enviar mensagem: " + error.message);
+                throw error;
+            }
+
             setNewMessage("");
             fetchMessages();
         } catch (err) {
