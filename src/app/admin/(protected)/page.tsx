@@ -128,38 +128,38 @@ export default async function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
                 <Link href="/admin/candidates?status=finalized">
                     <KPICard
-                        title="Finalizadas"
+                        title="Submetidas"
                         value={stats.finalizedTotal}
                         icon={ShieldCheck}
                         color="emerald"
-                        description="Candidaturas enviadas (Clique para ver)"
+                        description="Inscrições concluídas com sucesso"
                     />
                 </Link>
                 <Link href="/admin/candidates?status=draft">
                     <KPICard
-                        title="Em Aberto"
+                        title="Incompletas (Rascunhos)"
                         value={stats.draftTotal}
                         icon={Clock}
                         color="amber"
-                        description="Aguardando conclusão (Clique para ver)"
+                        description="Candidatos com cadastro inacabado"
                     />
                 </Link>
                 <Link href="/admin/candidates?profile_type=licenciado">
                     <KPICard
-                        title="Licenciados"
+                        title="Base Licenciados"
                         value={stats.licenciados}
                         icon={BookOpen}
                         color="blue"
-                        description="Candidatos a autores (Clique para ver)"
+                        description="Ver apenas perfil de Licenciatura"
                     />
                 </Link>
                 <Link href="/admin/candidates?profile_type=pedagogo">
                     <KPICard
-                        title="Pedagogos"
+                        title="Base Pedagogos"
                         value={stats.pedagogos}
                         icon={GraduationCap}
                         color="slate"
-                        description="Especialistas técnicos (Clique para ver)"
+                        description="Ver apenas perfil de Pedagogia"
                     />
                 </Link>
             </div>
@@ -179,7 +179,7 @@ export default async function AdminDashboard() {
                         <div className="flex-1">
                             <h3 className="text-sm font-black text-slate-900 uppercase tracking-widest mb-6 px-1 flex items-center gap-2">
                                 <MapPin className="h-4 w-4 text-amber-500" />
-                                Distribuição Geográfica Real (Por UF)
+                                Mapa de Inscritos por Estado
                             </h3>
                             <div className="w-full flex items-center justify-center overflow-hidden">
                                 <StateMap data={stats.stateCounts} />

@@ -120,6 +120,7 @@ export default function EducationForm({ initialData, onSave, onBack }: Education
                             type="text"
                             id="graduation_course"
                             {...register("graduation_course")}
+                            required
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-amber-600 sm:text-sm sm:leading-6"
                             placeholder="Ex: Pedagogia, Letras, Matemática..."
                         />
@@ -136,6 +137,7 @@ export default function EducationForm({ initialData, onSave, onBack }: Education
                             type="number"
                             id="graduation_year"
                             {...register("graduation_year")}
+                            required
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-amber-600 sm:text-sm sm:leading-6"
                             placeholder="Ex: 2015"
                         />
@@ -152,6 +154,7 @@ export default function EducationForm({ initialData, onSave, onBack }: Education
                             type="text"
                             id="graduation_institution"
                             {...register("graduation_institution")}
+                            required
                             className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-amber-600 sm:text-sm sm:leading-6"
                             placeholder="Ex: Universidade Federal da Paraíba"
                         />

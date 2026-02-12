@@ -15,14 +15,21 @@ const navigation = [
     { name: "Painel de Controle", href: "/admin", icon: LayoutDashboard },
     { name: "Base de Candidatos", href: "/admin/candidates", icon: Users },
     { name: "Jornada do Candidato (Kanban)", href: "/admin/kanban", icon: LayoutGrid },
-    { name: "Trilha de Auditoria", href: "/admin/audit", icon: ClipboardList },
-    { name: "Gestão de Usuários", href: "/admin/users", icon: ShieldCheck },
+    { name: "Comissão", href: "/admin/commission", icon: ShieldCheck, adminOnly: true },
+    { name: "Autorizações", href: "/admin/approvals", icon: ClipboardList, adminOnly: true },
+    { name: "Trilha de Auditoria", href: "/admin/audit", icon: HardDrive, adminOnly: true },
+    { name: "Gestão de Usuários", href: "/admin/users", icon: Users, adminOnly: true },
     { name: "Configurações", href: "/admin/settings", icon: Settings },
 ];
 
-export default function AdminSidebar() {
+export default function AdminSidebar({ userRole }: { userRole?: string }) {
     const pathname = usePathname();
     const [isMobileOpen, setIsMobileOpen] = useState(false);
+
+    const filteredNavigation = navigation.filter(item => {
+        if (item.adminOnly && userRole !== 'admin') return false;
+        return true;
+    });
 
     return (
         <>
@@ -73,7 +80,7 @@ export default function AdminSidebar() {
 
                 <nav className="flex flex-1 flex-col px-6 py-8 gap-y-8 overflow-y-auto">
                     <ul role="list" className="-mx-2 space-y-1">
-                        {navigation.map((item) => {
+                        {filteredNavigation.map((item) => {
                             const isActive = pathname === item.href;
                             return (
                                 <li key={item.name}>

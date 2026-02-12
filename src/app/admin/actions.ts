@@ -25,11 +25,121 @@ export async function getApplications(filters: any = {}) {
 }
 
 /**
+ * SOLICITA AUTORIZAÇÃO (Para Comissão Organizadora)
+ */
+export async function requestAuthorization(data: {
+    action_type: string;
+    entity_type: string;
+    entity_id: string;
+    payload: any;
+    description: string;
+}) {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: "Não autorizado" };
+
+    const { error } = await supabase.from('pending_authorizations').insert({
+        requested_by: user.id,
+        action_type: data.action_type,
+        entity_type: data.entity_type,
+        entity_id: data.entity_id,
+        payload: data.payload,
+        description: data.description,
+        status: 'pending'
+    });
+
+    if (error) return { error: error.message };
+
+    revalidatePath("/admin/approvals");
+    return { success: true, message: "Sua solicitação foi enviada para aprovação do administrador principal." };
+}
+
+/**
+ * BUSCA SOLICITAÇÕES PENDENTES
+ */
+export async function getPendingAuthorizations() {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+        .from('pending_authorizations')
+        .select(`
+            *,
+            requested_by_user:requested_by(id)
+        `)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false });
+
+    if (error) throw error;
+
+    // Join manually with profiles if needed, or we assume metadata is enough
+    return data;
+}
+
+/**
+ * APROVA OU REJEITA SOLICITAÇÃO
+ */
+export async function processAuthorization(authId: string, status: 'approved' | 'rejected') {
+    const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: "Não autorizado" };
+
+    // Update Auth record
+    const { data: authReq, error: fetchError } = await supabase
+        .from('pending_authorizations')
+        .select('*')
+        .eq('id', authId)
+        .single();
+
+    if (fetchError || !authReq) return { error: "Solicitação não encontrada" };
+
+    const { error: updateAuthError } = await supabase
+        .from('pending_authorizations')
+        .update({
+            status,
+            reviewed_by: user.id,
+            reviewed_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+        })
+        .eq('id', authId);
+
+    if (updateAuthError) return { error: updateAuthError.message };
+
+    // If approved, execute the original action
+    if (status === 'approved') {
+        const { action_type, entity_id, payload } = authReq;
+
+        if (action_type === 'UPDATE_STATUS') {
+            await updateApplicationStatus(entity_id, payload.status, `[Aprovado via Comissão] ${payload.note || ''}`);
+        } else if (action_type === 'DELETE_CANDIDATE') {
+            await deleteApplication(entity_id);
+        } else if (action_type === 'DELETE_BULK') {
+            await deleteApplicationsBulk(payload.ids);
+        }
+    }
+
+    revalidatePath("/admin/approvals");
+    return { success: true };
+}
+
+/**
  * ATUALIZA STATUS COM TRILHA DE AUDITORIA E HISTÓRICO KANBAN
  */
 export async function updateApplicationStatus(id: string, newStatus: string, note?: string) {
     const supabase = await createClient();
     const { data: { user } } = await supabase.auth.getUser();
+
+    // Verification: if committee, request instead
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user?.id).single();
+    if (profile?.role === 'committee') {
+        return await requestAuthorization({
+            action_type: 'UPDATE_STATUS',
+            entity_type: 'applications',
+            entity_id: id,
+            payload: { status: newStatus, note },
+            description: `Solicitação de mudança de status para: ${newStatus}`
+        });
+    }
 
     // 1. Get current state for audit
     const { data: current } = await supabase
@@ -78,6 +188,20 @@ export async function updateApplicationStatus(id: string, newStatus: string, not
  */
 export async function deleteApplication(id: string) {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // 1. Check if committee, request instead
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user?.id).single();
+    if (profile?.role === 'committee') {
+        const { data: app } = await supabase.from('applications').select('full_name').eq('id', id).single();
+        return await requestAuthorization({
+            action_type: 'DELETE_CANDIDATE',
+            entity_type: 'applications',
+            entity_id: id,
+            payload: {},
+            description: `Solicitação de exclusão definitiva do candidato: ${app?.full_name || id}`
+        });
+    }
 
     try {
         // 1. Get current application to find the user_id
@@ -136,6 +260,20 @@ export async function deleteApplication(id: string) {
  */
 export async function deleteApplicationsBulk(ids: string[]) {
     const supabase = await createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // 1. Check if committee, request instead
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user?.id).single();
+    if (profile?.role === 'committee') {
+        return await requestAuthorization({
+            action_type: 'DELETE_BULK',
+            entity_type: 'applications',
+            entity_id: 'bulk',
+            payload: { ids },
+            description: `Solicitação de exclusão em massa de ${ids.length} candidatos.`
+        });
+    }
+
     const results = { success: 0, errors: 0 };
 
     for (const id of ids) {

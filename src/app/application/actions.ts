@@ -92,15 +92,38 @@ export async function submitApplication() {
 
     if (fetchError || !app) return { error: "Candidatura não localizada. Por favor, preencha os dados básicos primeiro." };
 
-    // 2. Strict Validation Check
+    // 2. Strict Validation Check (All mandatory except Lattes)
     const errors = [];
-    if (!app.full_name || !app.cpf || !app.email) errors.push("Dados pessoais incompletos.");
-    if (!app.graduation_course || !app.graduation_institution) errors.push("Dados de formação acadêmica incompletos.");
-    if (!app.experience_summary || app.experience_summary.length < 50) errors.push("O resumo de experiência é obrigatório (mínimo 50 caracteres).");
-    if (!app.documents || app.documents.length === 0) errors.push("O anexo do Currículo e Texto Autoral em PDF é obrigatório.");
+    if (!app.full_name || !app.cpf || !app.email || !app.phone || !app.city || !app.state) {
+        errors.push("Dados pessoais e de contato incompletos.");
+    }
+
+    if (app.profile_type === 'licenciado' && !app.licensure_area) {
+        errors.push("Selecione sua área de licenciatura.");
+    }
+
+    if (app.profile_type === 'pedagogo' && (!app.pedagogy_areas || app.pedagogy_areas.length === 0)) {
+        errors.push("Selecione ao menos uma área de interesse em pedagogia.");
+    }
+
+    if (!app.graduation_course || !app.graduation_institution || !app.graduation_year) {
+        errors.push("Dados de formação acadêmica (curso, instituição e ano) incompletos.");
+    }
+
+    if (!app.experience_summary || app.experience_summary.length < 50 || !app.experience_years) {
+        errors.push("As informações de experiência profissional são obrigatórias.");
+    }
+
+    if (!app.terms_accepted) {
+        errors.push("Você deve aceitar todas as declarações obrigatórias.");
+    }
+
+    if (!app.documents || app.documents.length === 0) {
+        errors.push("O anexo do Currículo e Texto Autoral em PDF é obrigatório.");
+    }
 
     if (errors.length > 0) {
-        return { error: "Não foi possível finalizar. Corrija os seguintes itens: " + errors.join(" ") };
+        return { error: "Não foi possível finalizar. Itens pendentes: " + errors.join(" ") };
     }
 
     // 3. Update status to received

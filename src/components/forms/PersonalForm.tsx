@@ -75,12 +75,14 @@ export default function PersonalForm({ onSave }: PersonalFormProps) {
                     <FormInput
                         label="Nome Completo"
                         {...register("full_name")}
+                        required
                         error={errors.full_name?.message}
                         className="sm:col-span-3"
                     />
                     <FormInput
                         label="CPF"
                         {...register("cpf")}
+                        required
                         onChange={(e) => {
                             e.target.value = formatCPF(e.target.value);
                             register("cpf").onChange(e);
@@ -99,6 +101,7 @@ export default function PersonalForm({ onSave }: PersonalFormProps) {
                     <FormInput
                         label="Telefone (WhatsApp)"
                         {...register("phone")}
+                        required
                         error={errors.phone?.message}
                         placeholder="(00) 00000-0000"
                         className="sm:col-span-3"
@@ -107,16 +110,26 @@ export default function PersonalForm({ onSave }: PersonalFormProps) {
                         <FormInput
                             label="Cidade"
                             {...register("city")}
+                            required
                             error={errors.city?.message}
                         />
                         <FormInput
                             label="Estado (UF)"
                             {...register("state")}
+                            required
                             error={errors.state?.message}
                             placeholder="Ex: SP"
                             maxLength={2}
                         />
                     </div>
+
+                    <FormInput
+                        label="Currículo Lattes (Opcional)"
+                        {...register("lattes_url")}
+                        error={errors.lattes_url?.message}
+                        placeholder="https://lattes.cnpq.br/..."
+                        className="sm:col-span-6"
+                    />
                 </div>
             </div>
 

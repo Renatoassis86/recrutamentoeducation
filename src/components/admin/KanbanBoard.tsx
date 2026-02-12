@@ -27,10 +27,12 @@ export default function KanbanBoard({ initialApplications, columns }: { initialA
     return (
         <div className="flex gap-6 h-full min-w-max px-2">
             {columns.map(col => {
-                const colApps = applications.filter(app =>
-                    app.status === col.id ||
-                    (col.id === 'received' && (!app.status || app.status === 'received' || app.status === 'draft'))
-                );
+                const colApps = applications.filter(app => {
+                    if (col.id === 'received') {
+                        return app.status === 'received';
+                    }
+                    return app.status === col.id;
+                });
 
                 return (
                     <div key={col.id} className="w-80 flex flex-col bg-slate-50/50 rounded-3xl border border-slate-100 p-4">
