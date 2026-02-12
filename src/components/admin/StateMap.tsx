@@ -42,6 +42,8 @@ const BRAZIL_STATES_PATHS = [
 export default function StateMap({ data }: StateMapProps) {
     const [hoveredState, setHoveredState] = useState<any>(null);
 
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
     // Normalização agressiva para garantir que SP, sp, Sp sejam o mesmo
     const normalizedData = useMemo(() => {
         const result: { [uf: string]: number } = {};
@@ -69,8 +71,19 @@ export default function StateMap({ data }: StateMapProps) {
             ]);
     }, [normalizedData]);
 
+    const handleMouseMove = (e: React.MouseEvent) => {
+        const rect = e.currentTarget.getBoundingClientRect();
+        setMousePos({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top
+        });
+    };
+
     return (
-        <div className="relative w-full h-[600px] bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden p-8 flex flex-col group">
+        <div
+            className="relative w-full h-[600px] bg-white rounded-[3rem] border border-slate-100 shadow-sm overflow-hidden p-8 flex flex-col group cursor-crosshair"
+            onMouseMove={handleMouseMove}
+        >
             {/* Header Info */}
             <div className="mb-4">
                 <div className="flex items-center gap-2 mb-1">
@@ -80,11 +93,11 @@ export default function StateMap({ data }: StateMapProps) {
                     </h4>
                 </div>
                 <h3 className="text-2xl font-black text-slate-900 font-serif">
-                    Mapa de Prospecção Nacional (SVG)
+                    Mapa de Inscritos por Regional
                 </h3>
             </div>
 
-            <div className="flex-1 relative overflow-hidden flex items-center justify-center">
+            <div className="flex-1 relative flex items-center justify-center">
                 <svg
                     viewBox="0 0 450 460"
                     className="w-full h-full filter drop-shadow-2xl"
@@ -102,11 +115,11 @@ export default function StateMap({ data }: StateMapProps) {
                                     fill={count > 0 ? colorScale(count) : "#f8fafc"}
                                     stroke={isHovered ? "#000" : "#ffffff"}
                                     strokeWidth={isHovered ? 1.5 : 0.5}
-                                    className="transition-all duration-200 cursor-pointer hover:opacity-80"
+                                    className="transition-all duration-300 cursor-pointer hover:opacity-90"
                                     onMouseEnter={() => setHoveredState({ ...state, count })}
                                     onMouseLeave={() => setHoveredState(null)}
                                     style={{
-                                        filter: isHovered ? "drop-shadow(0 0 4px rgba(0,0,0,0.2))" : "none"
+                                        filter: isHovered ? "drop-shadow(0 0 8px rgba(0,0,0,0.2))" : "none"
                                     }}
                                 />
                             );
@@ -115,19 +128,27 @@ export default function StateMap({ data }: StateMapProps) {
                 </svg>
             </div>
 
-            {/* Floating Tooltip - Only State Data */}
+            {/* Floating Mouse-Follow Tooltip */}
             {hoveredState && (
-                <div className="absolute bottom-10 left-10 animate-in slide-in-from-bottom-5 duration-300">
-                    <div className="bg-slate-900 text-white p-6 rounded-[2.5rem] shadow-2xl border border-white/10 flex items-center gap-5">
-                        <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-white border border-white/10 font-bold text-lg shadow-lg transition-transform">
+                <div
+                    className="fixed pointer-events-none z-[9999] transition-transform duration-75 ease-out"
+                    style={{
+                        left: `${mousePos.x}px`,
+                        top: `${mousePos.y}px`,
+                        transform: 'translate(20px, -50%)',
+                        position: 'absolute'
+                    }}
+                >
+                    <div className="bg-slate-900/95 backdrop-blur-md text-white p-4 rounded-[1.5rem] shadow-2xl border border-white/20 flex items-center gap-4 min-w-[200px] animate-in fade-in zoom-in duration-200">
+                        <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-white border border-white/10 font-bold text-lg">
                             {hoveredState.uf}
                         </div>
                         <div>
-                            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-0.5">Informação do Estado</p>
-                            <h4 className="text-xl font-black">{hoveredState.name}</h4>
-                            <div className="flex items-center gap-2 mt-1">
-                                <span className="text-blue-400 font-black text-sm">{hoveredState.count}</span>
-                                <span className="text-xs font-bold text-slate-400 uppercase tracking-tighter">Candidatos</span>
+                            <p className="text-[9px] font-black uppercase tracking-widest text-blue-400 mb-0.5">Estado</p>
+                            <h4 className="text-base font-black truncate">{hoveredState.name}</h4>
+                            <div className="flex items-center gap-2 mt-0.5">
+                                <span className="text-white font-black text-sm">{hoveredState.count}</span>
+                                <span className="text-[10px] font-bold text-slate-400 uppercase">Candidatos</span>
                             </div>
                         </div>
                     </div>
@@ -135,8 +156,8 @@ export default function StateMap({ data }: StateMapProps) {
             )}
 
             {/* Interaction Hint */}
-            <div className="absolute bottom-10 right-10 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 bg-white/50 px-4 py-2 rounded-full backdrop-blur-sm pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
-                Passe o mouse para detalhes
+            <div className="absolute bottom-6 right-8 text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 bg-white/50 px-4 py-2 rounded-full backdrop-blur-sm pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity">
+                Explore o Mapa
             </div>
         </div>
     );
