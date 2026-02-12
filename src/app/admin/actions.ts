@@ -74,23 +74,13 @@ export async function updateApplicationStatus(id: string, newStatus: string, not
 }
 
 /**
- * EXCLUSÃO DEFINITIVA DE INSCRIÇÃO E CONTA (ADMIN MASTER)
+ * EXCLUSÃO DEFINITIVA DE INSCRIÇÃO E CONTA (VIA RPC MASTER)
  */
 export async function deleteApplication(id: string) {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    // Verificação de Role (simplificada via profiles)
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user?.id).single();
-    if (profile?.role !== 'admin') return { error: "Acesso negado: Apenas administradores mestre podem excluir registros." };
-
-    const adminClient = createAdminClient();
-    if (!adminClient) {
-        return { error: "Erro de Configuração: SUPABASE_SERVICE_ROLE_KEY não encontrada. A conta não pode ser excluída do sistema de autenticação sem esta chave." };
-    }
 
     try {
-        // 1. Get current application and user_id before delete
+        // 1. Get current application to find the user_id
         const { data: appData, error: fetchError } = await supabase
             .from("applications")
             .select("*, user_id")
@@ -98,31 +88,35 @@ export async function deleteApplication(id: string) {
             .single();
 
         if (fetchError || !appData) {
-            return { error: "Inscrição não encontrada no banco de dados." };
+            return { error: "Inscrição não encontrada ou já excluída." };
         }
 
         const candidateUserId = appData.user_id;
 
-        console.log(`🗑️ Iniciando exclusão definitiva do candidato: ${appData.full_name} (${id})`);
+        console.log(`🗑️ Chamando RPC de exclusão definitiva: ${appData.full_name} (${id})`);
 
-        // 2. Se houver um user_id associado, deletamos via Auth (Cascateia para tudo)
+        // 2. Chamar a função SQL com SECURITY DEFINER
+        // Se houver um candidateUserId, usamos a função de exclusão de conta
         if (candidateUserId) {
-            const { error: authError } = await adminClient.auth.admin.deleteUser(candidateUserId);
-            if (authError) {
-                console.error("Erro ao excluir conta auth:", authError);
-                // Se der erro no auth, tentamos apagar pelo menos a inscrição
-                await supabase.from("applications").delete().eq("id", id);
+            const { error: rpcError } = await supabase.rpc('delete_user_entirely', {
+                target_user_id: candidateUserId
+            });
+
+            if (rpcError) {
+                console.error("Erro no RPC de exclusão:", rpcError);
+                return { error: `Erro no banco de dados: ${rpcError.message}` };
             }
         } else {
-            // Se não houver user_id (caso raro), apaga apenas a linha da inscrição
-            await supabase.from("applications").delete().eq("id", id);
+            // Se não houver user_id (caso raro), apaga apenas a linha da inscrição normalmente
+            const { error: delError } = await supabase.from("applications").delete().eq("id", id);
+            if (delError) return { error: delError.message };
         }
 
         // 3. Log Audit
         await logAudit({
             entity: 'applications',
             entity_id: id,
-            action: 'EXCLUSÃO_DEFINITIVA_CANDIDATO',
+            action: 'EXCLUSÃO_DEFINITIVA_RPC',
             before: appData
         });
 
@@ -137,36 +131,32 @@ export async function deleteApplication(id: string) {
     }
 }
 
-
 /**
- * EXCLUSÃO EM MASSA DE CANDIDATOS E CONTAS
+ * EXCLUSÃO EM MASSA DE CANDIDATOS E CONTAS (VIA RPC)
  */
 export async function deleteApplicationsBulk(ids: string[]) {
     const supabase = await createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    const { data: profile } = await supabase.from("profiles").select("role").eq("id", user?.id).single();
-    if (profile?.role !== 'admin') return { error: "Acesso negado." };
-
-    const adminClient = createAdminClient();
-    if (!adminClient) return { error: "Erro de Configuração." };
-
     const results = { success: 0, errors: 0 };
 
     for (const id of ids) {
         try {
             const { data: appData } = await supabase.from("applications").select("user_id, full_name").eq("id", id).single();
+
             if (appData?.user_id) {
-                const { error } = await adminClient.auth.admin.deleteUser(appData.user_id);
-                if (!error) {
+                const { error: rpcError } = await supabase.rpc('delete_user_entirely', {
+                    target_user_id: appData.user_id
+                });
+
+                if (!rpcError) {
                     results.success++;
                     await logAudit({
                         entity: 'applications',
                         entity_id: id,
-                        action: 'EXCLUSÃO_MASSA_CANDIDATO',
+                        action: 'EXCLUSÃO_MASSA_RPC',
                         before: appData
                     });
                 } else {
+                    console.error(`Erro ao excluir ${id}:`, rpcError);
                     results.errors++;
                 }
             } else {
