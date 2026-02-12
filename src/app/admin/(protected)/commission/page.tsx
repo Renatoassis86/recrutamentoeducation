@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/utils/supabase/client";
-import { getUsers, createCommitteeUser, deleteUser } from "@/app/admin/(protected)/users/actions";
-import { Loader2, Plus, Trash2, Mail, Shield, User } from "lucide-react";
+import { getUsers, createCommitteeUser, deleteUser, updateUser } from "@/app/admin/(protected)/users/actions";
+import { Loader2, Plus, Trash2, Mail, Shield, User, Edit2 } from "lucide-react";
 
 export default function CommissionPage() {
     const router = useRouter();
@@ -13,6 +13,7 @@ export default function CommissionPage() {
     const [loading, setLoading] = useState(true);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [editingUser, setEditingUser] = useState<any>(null);
 
     // Form state
     const [fullName, setFullName] = useState("");
@@ -36,25 +37,55 @@ export default function CommissionPage() {
     const loadUsers = async () => {
         setLoading(true);
         const data = await getUsers();
-        // Filter only committee (or allow seeing all, but focus on committee)
         setUsers(data.filter((u: any) => u.role === 'committee'));
         setLoading(false);
     };
 
-    const handleCreate = async (e: React.FormEvent) => {
+    const handleOpenCreate = () => {
+        setEditingUser(null);
+        setFullName("");
+        setEmail("");
+        setPassword("");
+        setPosition("");
+        setIsModalOpen(true);
+    };
+
+    const handleOpenEdit = (user: any) => {
+        setEditingUser(user);
+        setFullName(user.full_name || "");
+        setEmail(user.email || "");
+        setPassword(""); // Passwords shouldn't be filled
+        setPosition(user.position || "");
+        setIsModalOpen(true);
+    };
+
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        const res = await createCommitteeUser(email, fullName, password, position) as any;
-        if (res.success) {
-            alert("Membro da comissão cadastrado com sucesso!");
-            setFullName("");
-            setEmail("");
-            setPassword("");
-            setPosition("");
-            setIsModalOpen(false);
-            loadUsers();
+
+        if (editingUser) {
+            const res = await updateUser(editingUser.id, {
+                full_name: fullName,
+                email: email,
+                position: position
+            }) as any;
+
+            if (res.success) {
+                alert("Membro da comissão atualizado!");
+                setIsModalOpen(false);
+                loadUsers();
+            } else {
+                alert("Erro ao atualizar: " + res.error);
+            }
         } else {
-            alert("Erro: " + (res.error || "Ocorreu um erro."));
+            const res = await createCommitteeUser(email, fullName, password, position) as any;
+            if (res.success) {
+                alert("Membro da comissão cadastrado!");
+                setIsModalOpen(false);
+                loadUsers();
+            } else {
+                alert("Erro ao cadastrar: " + res.error);
+            }
         }
         setIsSubmitting(false);
     };
@@ -63,10 +94,10 @@ export default function CommissionPage() {
         if (!confirm(`Excluir acesso da comissão para ${name}?`)) return;
         const res = await deleteUser(id) as any;
         if (res.success) {
-            if (res.message) alert(res.message);
             loadUsers();
+        } else {
+            alert(res.error || "Erro ao excluir.");
         }
-        else alert(res.error || "Ocorreu um erro ao excluir.");
     };
 
     return (
@@ -77,7 +108,7 @@ export default function CommissionPage() {
                     <p className="text-slate-500 mt-2 font-medium">Gerencie os membros que auxiliam na triagem e avaliação.</p>
                 </div>
                 <button
-                    onClick={() => setIsModalOpen(true)}
+                    onClick={handleOpenCreate}
                     className="flex items-center gap-2 bg-amber-600 hover:bg-amber-500 text-white px-8 py-4 rounded-2xl font-bold transition-all shadow-xl shadow-amber-200 active:scale-95"
                 >
                     <Plus className="h-6 w-6" />
@@ -95,12 +126,22 @@ export default function CommissionPage() {
                                 <div className="h-14 w-14 rounded-2xl bg-slate-50 flex items-center justify-center text-slate-400">
                                     <User className="h-8 w-8" />
                                 </div>
-                                <button
-                                    onClick={() => handleDelete(user.id, user.full_name)}
-                                    className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-                                >
-                                    <Trash2 className="h-5 w-5" />
-                                </button>
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={() => handleOpenEdit(user)}
+                                        className="p-2 text-slate-300 hover:text-blue-500 hover:bg-blue-50 rounded-xl transition-all"
+                                        title="Editar"
+                                    >
+                                        <Edit2 className="h-5 w-5" />
+                                    </button>
+                                    <button
+                                        onClick={() => handleDelete(user.id, user.full_name)}
+                                        className="p-2 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+                                        title="Excluir"
+                                    >
+                                        <Trash2 className="h-5 w-5" />
+                                    </button>
+                                </div>
                             </div>
                             <h3 className="text-lg font-bold text-slate-900 truncate">{user.full_name || "Sem nome"}</h3>
                             <div className="flex items-center gap-2 text-sm text-slate-400 mt-1">
@@ -122,7 +163,7 @@ export default function CommissionPage() {
                             <Shield className="h-16 w-16 text-slate-200 mb-6" />
                             <p className="text-slate-400 font-bold text-xl mb-8">Nenhum membro da comissão cadastrado.</p>
                             <button
-                                onClick={() => setIsModalOpen(true)}
+                                onClick={handleOpenCreate}
                                 className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-10 py-5 rounded-3xl font-black transition-all shadow-2xl active:scale-95 uppercase tracking-widest text-xs"
                             >
                                 <Plus className="h-5 w-5" />
@@ -133,12 +174,14 @@ export default function CommissionPage() {
                 </div>
             )}
 
-            {/* Modal de Cadastro */}
+            {/* Modal de Cadastro/Edição */}
             {isModalOpen && (
                 <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
                     <div className="bg-white rounded-[2.5rem] w-full max-w-lg p-8 shadow-2xl animate-in zoom-in duration-300">
-                        <h2 className="text-2xl font-black text-slate-900 font-serif mb-6">Cadastrar Comissão</h2>
-                        <form onSubmit={handleCreate} className="space-y-5">
+                        <h2 className="text-2xl font-black text-slate-900 font-serif mb-6">
+                            {editingUser ? "Editar Membro" : "Cadastrar Comissão"}
+                        </h2>
+                        <form onSubmit={handleSubmit} className="space-y-5">
                             <div>
                                 <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Nome Completo</label>
                                 <input
@@ -172,18 +215,20 @@ export default function CommissionPage() {
                                     placeholder="email@escola.com.br"
                                 />
                             </div>
-                            <div>
-                                <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Senha Provisória</label>
-                                <input
-                                    required
-                                    type="password"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
-                                    className="w-full px-4 py-3 rounded-xl border border-slate-100 bg-slate-50 focus:ring-2 focus:ring-amber-500 outline-none text-slate-900"
-                                    placeholder="Mínimo 6 caracteres"
-                                    minLength={6}
-                                />
-                            </div>
+                            {!editingUser && (
+                                <div>
+                                    <label className="block text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Senha Provisória</label>
+                                    <input
+                                        required
+                                        type="password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="w-full px-4 py-3 rounded-xl border border-slate-100 bg-slate-50 focus:ring-2 focus:ring-amber-500 outline-none text-slate-900"
+                                        placeholder="Mínimo 6 caracteres"
+                                        minLength={6}
+                                    />
+                                </div>
+                            )}
 
                             <div className="flex gap-4 pt-4">
                                 <button
@@ -198,7 +243,7 @@ export default function CommissionPage() {
                                     disabled={isSubmitting}
                                     className="flex-1 px-6 py-4 rounded-2xl font-bold bg-slate-900 text-white hover:bg-slate-800 transition-all shadow-lg flex items-center justify-center gap-2"
                                 >
-                                    {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : "Concluir Cadastro"}
+                                    {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : (editingUser ? "Salvar Alterações" : "Concluir Cadastro")}
                                 </button>
                             </div>
                         </form>

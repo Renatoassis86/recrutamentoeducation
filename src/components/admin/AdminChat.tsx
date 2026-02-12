@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { MessageSquare, Send, User, Loader2, X, Mic, Square, Trash2, Play, Pause } from "lucide-react";
+import { MessageSquare, Send, User, Loader2, X, Mic, Square, Trash2, Play, Pause, Users, CheckSquare } from "lucide-react";
 import { format } from "date-fns";
 
 export default function AdminChat() {
@@ -11,6 +11,7 @@ export default function AdminChat() {
     const [loading, setLoading] = useState(true);
     const [sending, setSending] = useState(false);
     const [isOpen, setIsOpen] = useState(false);
+    const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
     // Audio State
     const [isRecording, setIsRecording] = useState(false);
@@ -21,18 +22,27 @@ export default function AdminChat() {
     const supabase = createClient();
 
     useEffect(() => {
+        const getUserId = async () => {
+            const { data: { user } } = await supabase.auth.getUser();
+            if (user) setCurrentUserId(user.id);
+        };
+        getUserId();
+    }, []);
+
+    useEffect(() => {
         if (!isOpen) return;
 
         fetchMessages();
 
         const channel = supabase
-            .channel('admin_chat')
+            .channel('admin_chat_v2')
             .on('postgres_changes', {
                 event: 'INSERT',
                 schema: 'public',
                 table: 'admin_chat_messages'
             }, (payload) => {
-                // Fetch full message with joins to avoid missing user info
+                // Ao receber nova mensagem, fazemos um fetch rápido apenas da nova 
+                // ou simplesmente um refresh total para garantir os Joins
                 fetchMessages();
             })
             .subscribe();
@@ -53,7 +63,7 @@ export default function AdminChat() {
             .from('admin_chat_messages')
             .select(`
                 *,
-                profiles:admin_id(full_name, email)
+                profiles:admin_id(id, full_name, email, role)
             `)
             .order('created_at', { ascending: true })
             .limit(100);
@@ -64,19 +74,16 @@ export default function AdminChat() {
 
     async function handleSend(e?: React.FormEvent, content?: string, type: 'text' | 'audio' = 'text', attachmentUrl?: string) {
         if (e) e.preventDefault();
-
         const textContent = content || newMessage;
         if (!textContent.trim() && !attachmentUrl) return;
 
         setSending(true);
         try {
-            const { data: { user } } = await supabase.auth.getUser();
-
             const { error } = await supabase
                 .from('admin_chat_messages')
                 .insert({
                     content: textContent,
-                    admin_id: user?.id,
+                    admin_id: currentUserId,
                     type,
                     attachment_url: attachmentUrl
                 });
@@ -96,15 +103,10 @@ export default function AdminChat() {
         try {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
             const recorder = new MediaRecorder(stream);
-
+            setAudioChunks([]);
             recorder.ondataavailable = (e) => {
                 if (e.data.size > 0) setAudioChunks((prev) => [...prev, e.data]);
             };
-
-            recorder.onstop = async () => {
-                // Handled in a separate effect or manually below
-            };
-
             recorder.start();
             setMediaRecorder(recorder);
             setIsRecording(true);
@@ -116,23 +118,19 @@ export default function AdminChat() {
 
     const stopAndSendRecording = async () => {
         if (!mediaRecorder) return;
-
         mediaRecorder.addEventListener('stop', async () => {
             const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
             const file = new File([audioBlob], `audio_${Date.now()}.webm`, { type: 'audio/webm' });
 
             setSending(true);
             try {
-                // Upload to Storage
                 const { data: uploadData, error: uploadError } = await supabase
                     .storage
                     .from('chat_audios')
                     .upload(`audio_${Date.now()}.webm`, file);
 
                 if (uploadError) throw uploadError;
-
                 const { data: { publicUrl } } = supabase.storage.from('chat_audios').getPublicUrl(uploadData.path);
-
                 await handleSend(undefined, "Mensagem de áudio", 'audio', publicUrl);
             } catch (err) {
                 console.error("Audio Upload Error:", err);
@@ -141,7 +139,6 @@ export default function AdminChat() {
                 setSending(false);
             }
         }, { once: true });
-
         mediaRecorder.stop();
         mediaRecorder.stream.getTracks().forEach(track => track.stop());
         setIsRecording(false);
@@ -151,74 +148,91 @@ export default function AdminChat() {
         return (
             <button
                 onClick={() => setIsOpen(true)}
-                className="fixed bottom-8 right-8 h-16 w-16 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-all z-[60] border-4 border-white active:scale-95"
+                className="fixed bottom-8 right-8 h-16 w-16 bg-slate-900 text-white rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-all z-[60] border-4 border-white active:scale-95 group"
             >
                 <div className="absolute -top-1 -right-1 h-5 w-5 bg-amber-500 rounded-full border-2 border-white animate-pulse" />
                 <MessageSquare className="h-7 w-7" />
+                <span className="absolute right-20 bg-slate-900 text-white px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap hidden lg:block">Chat da Comissão</span>
             </button>
         );
     }
 
     return (
-        <div className="fixed bottom-8 right-8 w-[400px] h-[550px] bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.2)] flex flex-col z-[60] border border-slate-100 overflow-hidden animate-fade-in-up">
-            <div className="bg-slate-900 p-6 text-white flex items-center justify-between">
+        <div className="fixed bottom-8 right-8 w-[400px] h-[600px] bg-[#f0f2f5] rounded-[2rem] shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex flex-col z-[60] border border-slate-200 overflow-hidden animate-fade-in-up">
+            {/* Header Estilo Grupo WhatsApp */}
+            <div className="bg-[#075e54] p-5 text-white flex items-center justify-between shrink-0">
                 <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 bg-amber-500 rounded-2xl flex items-center justify-center shadow-lg shadow-amber-500/20">
-                        <MessageSquare className="h-5 w-5" />
+                    <div className="h-10 w-10 bg-[#128c7e] rounded-full flex items-center justify-center shadow-inner border border-white/20">
+                        <Users className="h-5 w-5" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black uppercase tracking-tighter">Admin Lounge</h3>
-                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-amber-500">
-                            <div className="h-1.5 w-1.5 bg-green-500 rounded-full animate-pulse" /> Sala Geral
+                        <h3 className="text-sm font-black tracking-tight leading-none mb-1">COMISSÃO EDUCATION</h3>
+                        <div className="flex items-center gap-1.5 text-[10px] font-bold text-[#25d366]">
+                            <div className="h-1.5 w-1.5 bg-[#25d366] rounded-full animate-pulse" /> Grupo Ativo
                         </div>
                     </div>
                 </div>
-                <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-white/10 rounded-full transition-colors">
+                <button onClick={() => setIsOpen(false)} className="p-2 hover:bg-black/10 rounded-full transition-colors">
                     <X className="h-5 w-5" />
                 </button>
             </div>
 
+            {/* Area de Mensagens */}
             <div
                 ref={scrollRef}
-                className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/30"
+                className="flex-1 overflow-y-auto p-4 space-y-3 bg-[url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png')] bg-repeat bg-contain"
             >
                 {loading ? (
                     <div className="h-full flex items-center justify-center">
-                        <Loader2 className="h-6 w-6 animate-spin text-slate-300" />
+                        <Loader2 className="h-6 w-6 animate-spin text-[#075e54]" />
                     </div>
-                ) : messages.map((msg, idx) => (
-                    <div key={msg.id || idx} className="flex flex-col gap-1 animate-fade-in">
-                        <div className="flex items-center justify-between px-1">
-                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-tighter">
-                                {msg.profiles?.full_name || "Admin"}
-                            </span>
-                            <span className="text-[9px] font-bold text-slate-300">
-                                {format(new Date(msg.created_at), "HH:mm")}
-                            </span>
-                        </div>
-                        <div className={`p-3 rounded-2xl shadow-sm border border-slate-100 text-sm font-medium leading-relaxed ${msg.type === 'audio' ? 'bg-amber-50' : 'bg-white text-slate-600'}`}>
-                            {msg.type === 'audio' ? (
-                                <div className="flex items-center gap-3">
-                                    <div className="h-8 w-8 bg-amber-600 rounded-full flex items-center justify-center text-white cursor-pointer" onClick={() => {
-                                        const audio = new Audio(msg.attachment_url);
-                                        audio.play();
-                                    }}>
-                                        <Play className="h-4 w-4 fill-current" />
+                ) : messages.map((msg, idx) => {
+                    const isMine = msg.admin_id === currentUserId;
+                    return (
+                        <div
+                            key={msg.id || idx}
+                            className={`flex flex-col max-w-[85%] ${isMine ? 'ml-auto' : 'mr-auto'}`}
+                        >
+                            {!isMine && (
+                                <span className="text-[10px] font-black text-slate-500 uppercase tracking-tighter ml-2 mb-0.5">
+                                    {msg.profiles?.full_name || "Membro"}
+                                </span>
+                            )}
+                            <div
+                                className={`px-3 py-2 rounded-xl shadow-sm relative text-sm font-medium leading-tight ${isMine ? 'bg-[#dcf8c6] text-slate-800 rounded-tr-none' : 'bg-white text-slate-800 rounded-tl-none'}`}
+                            >
+                                {msg.type === 'audio' ? (
+                                    <div className="flex items-center gap-3 min-w-[150px]">
+                                        <button
+                                            className={`h-9 w-9 rounded-full flex items-center justify-center text-white shadow-sm ${isMine ? 'bg-emerald-600' : 'bg-amber-600'}`}
+                                            onClick={() => new Audio(msg.attachment_url).play()}
+                                        >
+                                            <Play className="h-4 w-4 fill-current ml-0.5" />
+                                        </button>
+                                        <div className="flex-1 h-1 bg-slate-200 rounded-full overflow-hidden">
+                                            <div className="h-full w-full bg-slate-400/30 opacity-20" />
+                                        </div>
+                                        <Mic className="h-3 w-3 text-slate-400" />
                                     </div>
-                                    <div className="flex-1 h-1 bg-amber-200 rounded-full overflow-hidden">
-                                        <div className="h-full w-1/3 bg-amber-600 animate-pulse" />
-                                    </div>
-                                    <span className="text-[10px] text-amber-700 font-black">ÁUDIO</span>
+                                ) : (
+                                    <span className="block whitespace-pre-wrap">{msg.content}</span>
+                                )}
+                                <div className="flex justify-end items-center gap-1 mt-1">
+                                    <span className="text-[9px] font-bold text-slate-400">
+                                        {format(new Date(msg.created_at), "HH:mm")}
+                                    </span>
+                                    {isMine && <CheckSquare className="h-2.5 w-2.5 text-blue-400" />}
                                 </div>
-                            ) : msg.content}
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    );
+                })}
             </div>
 
-            <form onSubmit={handleSend} className="p-6 bg-white border-t border-slate-50 flex gap-2 items-center">
+            {/* Input Barra Inferior */}
+            <form onSubmit={handleSend} className="p-4 bg-[#f0f2f5] flex gap-2 items-center shrink-0">
                 {isRecording ? (
-                    <div className="flex-1 flex items-center gap-3 bg-red-50 text-red-600 px-4 py-3 rounded-2xl animate-pulse">
+                    <div className="flex-1 flex items-center gap-3 bg-red-50 text-red-600 px-4 py-3 rounded-2xl border border-red-100 animate-pulse">
                         <div className="h-2 w-2 bg-red-600 rounded-full" />
                         <span className="text-xs font-black uppercase">Gravando Áudio...</span>
                         <button type="button" onClick={stopAndSendRecording} className="ml-auto bg-red-600 text-white p-2 rounded-xl">
@@ -231,22 +245,22 @@ export default function AdminChat() {
                             type="text"
                             value={newMessage}
                             onChange={(e) => setNewMessage(e.target.value)}
-                            placeholder="Sua ponderação..."
-                            className="flex-1 bg-slate-50 border-none rounded-2xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-amber-500 transition-all outline-none text-slate-900"
+                            placeholder="Mensagem..."
+                            className="flex-1 bg-white border-none rounded-full px-4 py-3 text-sm focus:ring-0 outline-none text-slate-900 shadow-sm"
                         />
                         <button
                             type="button"
                             onClick={startRecording}
-                            className="h-11 w-11 bg-slate-100 text-slate-400 rounded-2xl flex items-center justify-center hover:bg-slate-200 transition-all active:scale-95"
+                            className="h-11 w-11 bg-white text-slate-400 rounded-full flex items-center justify-center hover:bg-slate-50 transition-all shadow-sm"
                         >
                             <Mic className="h-5 w-5" />
                         </button>
                         <button
                             type="submit"
                             disabled={sending}
-                            className="h-11 w-11 bg-slate-900 text-white rounded-2xl flex items-center justify-center hover:bg-slate-800 transition-all active:scale-95 disabled:opacity-50"
+                            className="h-11 w-11 bg-[#128c7e] text-white rounded-full flex items-center justify-center hover:bg-[#075e54] transition-all shadow-md active:scale-95 disabled:opacity-50"
                         >
-                            {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                            {sending ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4 ml-0.5" />}
                         </button>
                     </>
                 )}
