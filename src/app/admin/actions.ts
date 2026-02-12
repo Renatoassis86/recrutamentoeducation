@@ -173,8 +173,9 @@ export async function deleteApplicationsBulk(ids: string[]) {
     revalidatePath("/admin/kanban");
 
     return {
-        success: true,
-        message: `${results.success} candidatos excluídos com sucesso.${results.errors > 0 ? ` ${results.errors} falhas.` : ''}`
+        success: results.errors === 0,
+        message: `${results.success} candidatos excluídos com sucesso.${results.errors > 0 ? ` ${results.errors} falhas.` : ''}`,
+        error: results.errors > 0 ? `${results.errors} falhas ocorreram.` : undefined
     };
 }
 

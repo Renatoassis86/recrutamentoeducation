@@ -1,6 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { logAudit } from "@/lib/audit";
 
@@ -87,6 +88,44 @@ export async function updateUserRole(userId: string, role: string) {
         entity: 'admin_users',
         entity_id: userId,
         action: `ALTERAÇÃO_ROLE: para ${role}`
+    });
+
+    revalidatePath("/admin/users");
+    return { success: true };
+}
+
+export async function createAdminUser(email: string, fullName: string) {
+    const supabase = await createClient();
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+
+    if (!currentUser) return { error: "Não autorizado" };
+
+    const { data: profile } = await supabase.from("profiles").select("role").eq("id", currentUser.id).single();
+    if (profile?.role !== "admin") return { error: "Acesso negado" };
+
+    const adminClient = createAdminClient();
+    if (!adminClient) return { error: "Erro de configuração: Chave mestre não encontrada." };
+
+    const { data, error } = await adminClient.auth.admin.createUser({
+        email,
+        email_confirm: true,
+        user_metadata: { full_name: fullName }
+    });
+
+    if (error) return { error: error.message };
+
+    // Update profile to ensure role is admin
+    const { error: profileError } = await adminClient
+        .from("profiles")
+        .update({ role: "admin", full_name: fullName })
+        .eq("id", data.user.id);
+
+    if (profileError) return { error: profileError.message };
+
+    await logAudit({
+        entity: 'admin_users',
+        entity_id: data.user.id,
+        action: `CRIAÇÃO_ADMIN: ${email}`
     });
 
     revalidatePath("/admin/users");
