@@ -142,21 +142,31 @@ import { createAdminClient } from "@/utils/supabase/admin";
 
 export async function getAdminSignedUrl(path: string, forceDownload: boolean = false) {
     try {
+        let supabase: any;
         const adminSupabase = createAdminClient();
 
-        if (!adminSupabase) {
-            return { error: "Erro de configuração: Chave Service Role não encontrada no servidor. Verifique as variáveis de ambiente." };
+        if (adminSupabase) {
+            supabase = adminSupabase;
+            console.log(`✅ Usando Service Role para: ${path}`);
+        } else {
+            console.warn("⚠️ Service Role Key não encontrada. Tentando usar sessão do administrador...");
+            supabase = await createClient();
         }
 
-        console.log(`Solicitando URL assinada para: ${path}${forceDownload ? ' (Download)' : ''}`);
-
-        const { data, error } = await adminSupabase
+        const { data, error } = await supabase
             .storage
             .from('applications')
             .createSignedUrl(path, 3600, forceDownload ? { download: true } : undefined);
 
         if (error) {
             console.error("Erro no Supabase Storage:", error);
+
+            if (!adminSupabase) {
+                return {
+                    error: "Erro de Configuração Provedor: A 'SUPABASE_SERVICE_ROLE_KEY' não foi configurada nas variáveis de ambiente do seu servidor (Vercel). Adicione-a nas configurações do projeto para garantir o acesso aos arquivos."
+                };
+            }
+
             if (error.message.includes('Object not found') || error.message.includes('404')) {
                 return { error: "O arquivo não foi encontrado no servidor. Ele pode ter sido removido ou o caminho está incorreto." };
             }
@@ -173,3 +183,4 @@ export async function getAdminSignedUrl(path: string, forceDownload: boolean = f
         return { error: `Erro inesperado: ${err.message}` };
     }
 }
+
