@@ -138,14 +138,22 @@ function CandidatesPageClient() {
                     </button>
                     <button
                         onClick={() => {
+                            if (selectedIds.length === 0) return;
+                            const selected = filteredApps.filter(a => selectedIds.includes(a.id));
                             setCommsType('email');
-                            setCommsRecipients(applications.map(a => a.email));
-                            setCommsNames(applications.map(a => a.full_name));
+                            setCommsRecipients(selected.map(a => a.email));
+                            setCommsNames(selected.map(a => a.full_name));
                             setCommsModalOpen(true);
                         }}
-                        className="flex items-center gap-2 px-5 py-2 bg-slate-900 text-white rounded-xl text-sm font-bold shadow-lg shadow-slate-200 hover:bg-slate-800 transition-all active:scale-95"
+                        disabled={selectedIds.length === 0}
+                        className={`flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all active:scale-95 shadow-lg ${selectedIds.length > 0
+                                ? 'bg-slate-900 text-white shadow-slate-200 hover:bg-slate-800'
+                                : 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                            }`}
+                        title={selectedIds.length === 0 ? "Selecione candidatos na lista abaixo primeiro" : ""}
                     >
-                        <Mail className="h-4 w-4 text-amber-500" /> Disparo em Massa
+                        <Mail className={`h-4 w-4 ${selectedIds.length > 0 ? 'text-amber-500' : 'text-slate-300'}`} />
+                        Disparo em Massa {selectedIds.length > 0 && `(${selectedIds.length})`}
                     </button>
                 </div>
             </div>

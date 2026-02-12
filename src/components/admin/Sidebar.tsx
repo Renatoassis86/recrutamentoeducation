@@ -21,7 +21,7 @@ const navigation = [
     { name: "Autorizações", href: "/admin/approvals", icon: ClipboardList, adminOnly: true, hasBadge: true },
     { name: "Trilha de Auditoria", href: "/admin/audit", icon: HardDrive, adminOnly: true },
     { name: "Gestão de Usuários", href: "/admin/users", icon: Users, adminOnly: true },
-    { name: "Configurações", href: "/admin/settings", icon: Settings },
+    { name: "Configurações", href: "/admin/settings", icon: Settings, adminOnly: true },
 ];
 
 export default function AdminSidebar({ userRole }: { userRole?: string }) {
