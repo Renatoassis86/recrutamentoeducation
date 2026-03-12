@@ -1,9 +1,15 @@
 import { Resend } from 'resend';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 export async function sendConfirmationEmail(email: string, name: string) {
     try {
         const apiKey = process.env.RESEND_API_KEY;
-        if (!apiKey) return { success: true };
+        if (!apiKey) {
+            console.error("❌ Erro: RESEND_API_KEY não definida no ambiente.");
+            return { success: true };
+        }
 
         const resend = new Resend(apiKey);
 
