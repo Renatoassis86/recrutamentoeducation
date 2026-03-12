@@ -261,7 +261,7 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
             {/* 2. Authorial Text Paste (For WordCloud analysis) */}
             <div className="space-y-2">
                 <label htmlFor="authorial_text" className="block text-sm font-medium leading-6 text-gray-900">
-                    Texto Autoral (Cole o conteúdo do seu texto abaixo para análise)
+                    Texto Autoral
                 </label>
                 <textarea
                     id="authorial_text"
@@ -271,8 +271,8 @@ export default function DocumentUpload({ onComplete, onBack }: DocumentUploadPro
                     value={authorialText}
                     onChange={(e) => setAuthorialText(e.target.value)}
                 />
-                <p className="text-xs text-gray-500">Este conteúdo será utilizado para análise de perfil e geração de insights estatísticos.</p>
             </div>
+
 
             <div className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm">
                 <div className="mb-6">

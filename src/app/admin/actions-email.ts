@@ -1,54 +1,76 @@
 "use server";
 
 import { Resend } from 'resend';
+import dotenv from 'dotenv';
+
+// Garante que variáveis de ambiente sejam carregadas em qualquer ambiente
+dotenv.config();
 
 export async function sendAdminEmail({
     recipients,
+    names,
     subject,
     message
 }: {
     recipients: string[];
+    names?: string[];
     subject: string;
     message: string;
 }) {
     try {
         const apiKey = process.env.RESEND_API_KEY;
         if (!apiKey) {
+            console.error("❌ Falha: RESEND_API_KEY não encontrada em process.env");
             return { error: "Erro de Configuração: API Key do e-mail não encontrada no servidor." };
         }
 
         const resend = new Resend(apiKey);
+        console.log(`📧 Iniciando envio em massa para ${recipients.length} destinatário(s)`);
 
-        console.log(`📧 Iniciando envio para ${recipients.length} destinatário(s)`);
+        // Preparar os emails (um por destinatário para garantir privacidade e permitir personalização)
+        const emailBatch = recipients.map((email, index) => {
+            const name = names && names[index] ? names[index] : "Candidato(a)";
+            const personalizedMessage = message.replace(/{NOME}/g, name);
 
-        const { data, error } = await resend.emails.send({
-            from: 'Cidade Viva Education <administrativo.education@cidadeviva.org>',
-            to: recipients,
-            subject: subject,
-            html: `
-                <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-                    <h2 style="color: #333; border-bottom: 2px solid #f59e0b; padding-bottom: 10px;">Comunicação Cidade Viva Education</h2>
-                    <div style="font-size: 16px; line-height: 1.6; color: #444; white-space: pre-wrap;">${message}</div>
-                    <hr style="margin-top: 30px; border: 0; border-top: 1px solid #eee;" />
-                    <p style="font-size: 12px; color: #999;">
-                        Este é um e-mail oficial do sistema de recrutamento Cidade Viva Education.<br/>
-                        Caso precise de ajuda, responda diretamente a este e-mail.
-                    </p>
-                </div>
-            `,
-            replyTo: 'administrativo.education@cidadeviva.org'
+            return {
+                from: 'Cidade Viva Education <administrativo.education@cidadeviva.org>',
+                to: email,
+                subject: subject,
+                html: `
+                    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
+                        <h2 style="color: #333; border-bottom: 2px solid #f59e0b; padding-bottom: 10px;">Comunicação Cidade Viva Education</h2>
+                        <div style="font-size: 16px; line-height: 1.6; color: #444; white-space: pre-wrap;">${personalizedMessage}</div>
+                        <hr style="margin-top: 30px; border: 0; border-top: 1px solid #eee;" />
+                        <p style="font-size: 12px; color: #999;">
+                            Este é um e-mail oficial do sistema de recrutamento Cidade Viva Education.<br/>
+                            Caso precise de ajuda, responda diretamente a este e-mail.
+                        </p>
+                    </div>
+                `,
+                replyTo: 'administrativo.education@cidadeviva.org'
+            };
         });
 
-        if (error) {
-            console.error("❌ Erro no Resend:", error);
-            return { error: error.message };
+        // O Resend permite até 100 emails por chamada de batch
+        const chunkSize = 100;
+        const results = [];
+
+        for (let i = 0; i < emailBatch.length; i += chunkSize) {
+            const chunk = emailBatch.slice(i, i + chunkSize);
+            const { data, error } = await resend.batch.send(chunk);
+            
+            if (error) {
+                console.error(`❌ Erro no lote ${Math.floor(i / chunkSize) + 1}:`, error);
+                throw new Error(error.message);
+            }
+            results.push(data);
         }
 
-        console.log("✅ E-mail enviado com sucesso:", data?.id);
+        console.log(`✅ ${recipients.length} e-mails enviados com sucesso em ${Math.ceil(recipients.length / chunkSize)} lote(s)`);
         return { success: true };
     } catch (err: any) {
-        console.error("🔥 Falha Crítica no Envio:", err);
-        return { error: `Erro inesperado no servidor: ${err.message}` };
+        console.error("🔥 Falha Crítica no Envio em Massa:", err);
+        return { error: `Erro no envio em massa: ${err.message}` };
     }
 }
 

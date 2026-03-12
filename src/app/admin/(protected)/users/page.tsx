@@ -73,8 +73,8 @@ export default function UsersPage() {
     }
 
     const filteredUsers = users.filter(u =>
-        u.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        u.email.toLowerCase().includes(searchTerm.toLowerCase())
+        (u.full_name || "").toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (u.email || "").toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     if (loading) {

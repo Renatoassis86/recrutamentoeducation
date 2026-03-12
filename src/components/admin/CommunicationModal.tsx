@@ -31,6 +31,7 @@ export default function CommunicationModal({ isOpen, onClose, recipients, names,
         try {
             const res = await sendAdminEmail({
                 recipients,
+                names,
                 subject: subject || (type === 'email' ? "Importante: Recrutamento Cidade Viva Education" : ""),
                 message
             });
